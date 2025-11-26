@@ -1,0 +1,39 @@
+# Dependências
+/vendor/
+
+# Cache do Composer
+composer.lock
+composer.phar
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+storage/logs/
+
+# Cache do sistema
+.cache/
+tmp/
+temp/
+*.cache
+
+# Configurações do sistema operacional/IDE
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# PHPStorm
+.idea/
+
+# Docker
+docker-compose.override.yml
+
+# Arquivos gerados
+coverage/
