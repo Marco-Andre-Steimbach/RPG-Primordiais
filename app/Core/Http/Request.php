@@ -9,7 +9,7 @@ class Request
     private string $method;
     private string $uri;
 
-    private ?array $user = null;
+    private mixed $user = null;
 
     public function __construct()
     {
@@ -39,12 +39,12 @@ class Request
         return $this->uri;
     }
 
-    public function setUser(array $user): void
+    public function setUser(mixed $user): void
     {
         $this->user = $user;
     }
 
-    public function user(): ?array
+    public function user(): mixed
     {
         return $this->user;
     }

@@ -10,7 +10,7 @@ class User
         public string $last_name,
         public string $nickname,
         public string $email,
-        public string $password,       
+        public string $password,
         public ?string $created_at = null,
         public ?string $updated_at = null
     ) {}
@@ -29,7 +29,7 @@ class User
             "nickname"   => $this->nickname,
             "email"      => $this->email,
             "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at
+            "updated_at" => $this->updated_at,
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Application\DTOs\Users\UserRegisterDTO;
 use App\Infrastructure\Repositories\UserRepository;
 use App\Infrastructure\Repositories\UserRoleRepository;
 use App\Core\Exceptions\ValidationException;
+use App\Core\Exceptions\ConflictException;
 use App\Domain\Models\User;
 
 class CreateUserService
@@ -21,13 +22,17 @@ class CreateUserService
 
     public function execute(UserRegisterDTO $dto): User
     {
-        if ($this->users->existsByEmail($dto->email)) {
-            throw new ValidationException("Email já está em uso.");
+
+
+        if ($this->users->findByEmail($dto->email)) {
+            throw new ConflictException("Email já está em uso.");
         }
 
-        if (!empty($dto->nickname) && $this->users->existsByNickname($dto->nickname)) {
-            throw new ValidationException("Nickname já está em uso.");
+        if ($this->users->findByNickname($dto->nickname)) {
+            throw new ConflictException("Nick já está em uso.");
         }
+
+
 
         $hashedPassword = password_hash($dto->password, PASSWORD_BCRYPT);
 

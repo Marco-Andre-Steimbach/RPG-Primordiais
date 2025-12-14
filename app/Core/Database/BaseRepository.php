@@ -14,7 +14,7 @@ abstract class BaseRepository
         $this->db = Connection::getConnection();
     }
 
-     public function findById(int $id)
+    public function findById(int $id)
     {
         $sql = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
         $stmt = $this->db->prepare($sql);

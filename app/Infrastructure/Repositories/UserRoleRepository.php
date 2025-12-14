@@ -16,7 +16,7 @@ class UserRoleRepository extends BaseRepository
 
         return $stmt->execute([
             'user_id' => $userId,
-            'role_id' => $roleId
+            'role_id' => $roleId,
         ]);
     }
 

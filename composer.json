@@ -3,11 +3,18 @@
   "description": "RPG automation system in PHP with custom MVC.",
   "type": "project",
   "require": {
-    "php": ">=8.1"
+    "php": ">=8.1",
+    "firebase/php-jwt": "^6.11"
   },
   "autoload": {
     "psr-4": {
       "App\\": "app/"
     }
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.92"
+  },
+  "scripts": {
+    "fix": "php vendor/bin/php-cs-fixer fix"
   }
 }

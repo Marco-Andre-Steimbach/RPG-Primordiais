@@ -4,13 +4,12 @@ namespace App\Application\DTOs\Users;
 
 use App\Core\Exceptions\ValidationException;
 
-class UserRegisterDTO
+class UserUpdateDTO
 {
     public string $first_name;
     public string $last_name;
     public ?string $nickname;
     public string $email;
-    public string $password;
 
     public function __construct(array $data)
     {
@@ -18,7 +17,6 @@ class UserRegisterDTO
         $this->last_name  = trim($data['last_name'] ?? '');
         $this->nickname   = isset($data['nickname']) ? trim($data['nickname']) : null;
         $this->email      = strtolower(trim($data['email'] ?? ''));
-        $this->password   = $data['password'] ?? '';
 
         $this->validate();
     }
@@ -37,10 +35,6 @@ class UserRegisterDTO
             throw new ValidationException("Email inválido.");
         }
 
-        if (strlen($this->password) < 6) {
-            throw new ValidationException("Senha deve ter pelo menos 6 caracteres.");
-        }
-
         if ($this->nickname !== null && strlen($this->nickname) < 3) {
             throw new ValidationException("Nickname muito curto.");
         }
@@ -53,7 +47,6 @@ class UserRegisterDTO
             'last_name'  => $this->last_name,
             'nickname'   => $this->nickname,
             'email'      => $this->email,
-            'password'   => $this->password,
         ];
     }
 }
