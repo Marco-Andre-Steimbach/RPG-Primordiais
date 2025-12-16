@@ -39,4 +39,28 @@ class RaceAttributeRepository extends BaseRepository
 
         return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
+    public function replaceAttributes(int $raceId, array $attributes): void
+    {
+        $this->db->beginTransaction();
+
+        $this->db
+            ->prepare("DELETE FROM race_attributes WHERE race_id = :race_id")
+            ->execute(['race_id' => $raceId]);
+
+        $stmt = $this->db->prepare("
+        INSERT INTO race_attributes (race_id, attribute_name, attribute_value)
+        VALUES (:race_id, :name, :value)
+    ");
+
+        foreach ($attributes as $name => $value) {
+            $stmt->execute([
+                'race_id' => $raceId,
+                'name'    => $name,
+                'value'   => $value,
+            ]);
+        }
+
+        $this->db->commit();
+    }
+
 }

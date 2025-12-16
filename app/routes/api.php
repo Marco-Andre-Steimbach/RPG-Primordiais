@@ -3,6 +3,7 @@
 use App\Core\Http\Router;
 use App\Application\Controllers\Users\UserController;
 use App\Application\Controllers\Races\RaceController;
+use App\Application\Controllers\Perks\PerkController;
 
 $router = new Router();
 
@@ -14,5 +15,8 @@ $router->middleware('auth')->add('PUT', '/users/update-password', [UserControlle
 $router->middleware('auth')->middleware('role:admin')->add('POST', '/users/give-role', [UserController::class, 'giveRole']);
 
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/races', [RaceController::class, 'store']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT', '/races/update', [RaceController::class, 'update']);
+
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/perks', [PerkController::class, 'store']);
 
 return $router;
