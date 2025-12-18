@@ -11,7 +11,8 @@ class CreatePerkDTO
     public string $type;
     public int $mana_cost;
 
-    public int $race_id;
+    public ?int $race_id;
+    public ?int $order_id;
     public int $required_level;
 
     public array $element_types;
@@ -26,7 +27,8 @@ class CreatePerkDTO
         $this->type = (string) ($data['type'] ?? '');
         $this->mana_cost = (int) ($data['mana_cost'] ?? 0);
 
-        $this->race_id = (int) ($data['race_id'] ?? 0);
+        $this->race_id = isset($data['race_id']) ? (int) $data['race_id'] : null;
+        $this->order_id = isset($data['order_id']) ? (int) $data['order_id'] : null;
         $this->required_level = (int) ($data['required_level'] ?? 1);
 
         $this->element_types = $this->normalizeElementTypes($data['element_types'] ?? []);
@@ -57,12 +59,24 @@ class CreatePerkDTO
             $errors['mana_cost'][] = 'mana_cost não pode ser negativo.';
         }
 
-        if ($this->race_id <= 0) {
-            $errors['race_id'][] = 'race_id é obrigatório.';
-        }
-
         if ($this->required_level <= 0) {
             $errors['required_level'][] = 'required_level deve ser >= 1.';
+        }
+
+        if ($this->race_id && $this->order_id) {
+            $errors['relation'][] = 'Envie apenas race_id ou order_id, nunca ambos.';
+        }
+
+        if (!$this->race_id && !$this->order_id) {
+            $errors['relation'][] = 'É obrigatório enviar race_id ou order_id.';
+        }
+
+        if ($this->race_id !== null && $this->race_id <= 0) {
+            $errors['race_id'][] = 'race_id inválido.';
+        }
+
+        if ($this->order_id !== null && $this->order_id <= 0) {
+            $errors['order_id'][] = 'order_id inválido.';
         }
 
         if (!empty($this->element_types) && count(array_unique($this->element_types)) !== count($this->element_types)) {
@@ -141,9 +155,7 @@ class CreatePerkDTO
             }
         }
 
-        $flags = array_values(array_unique($flags));
-
-        return $flags;
+        return array_values(array_unique($flags));
     }
 
     private function normalizeAttributes(mixed $value): array

@@ -42,13 +42,20 @@ class PerkRepository extends BaseRepository
         }
 
         return new Perk(
-            (int) $row['id'],
-            $row['name'],
-            $row['description'],
-            $row['type'],
-            (int) $row['mana_cost'],
-            $row['created_at'],
-            $row['updated_at']
+            id: (int) $row['id'],
+            name: $row['name'],
+            description: $row['description'],
+            type: $row['type'],
+            mana_cost: (int) $row['mana_cost'],
+            race_id: null,
+            order_id: null,
+            required_level: 1,
+            element_types: [],
+            flags: [],
+            attributes: [],
+            ability: [],
+            created_at: $row['created_at'] ?? null,
+            updated_at: $row['updated_at'] ?? null
         );
     }
 

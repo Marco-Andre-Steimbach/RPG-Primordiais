@@ -8,9 +8,39 @@ use App\Application\Middlewares\ValidateSchemaMiddleware;
 use App\Application\DTOs\Races\RaceCreateDTO;
 use App\Domain\Services\Races\CreateRaceService;
 use App\Domain\Services\Races\UpdateRaceService;
+use App\Domain\Services\Races\GetAllRacesService;
+use App\Domain\Services\Races\GetRaceByIdService;
+use App\Core\Exceptions\ValidationException;
 
 class RaceController
 {
+    public function index()
+    {
+        $service = new GetAllRacesService();
+        $races = $service->execute();
+
+        return Response::json([
+            'races' => $races,
+        ]);
+    }
+
+    public function show(Request $request)
+    {
+        $id = (int) $request->param('id');
+
+        if ($id <= 0) {
+            throw new ValidationException('ID da raça inválido.');
+        }
+
+        $service = new GetRaceByIdService();
+        $race = $service->execute($id);
+
+        return Response::json([
+            'race' => $race->toArray(),
+        ]);
+    }
+
+
     public function store(Request $request)
     {
         $schema = new ValidateSchemaMiddleware([
@@ -31,6 +61,7 @@ class RaceController
             'race' => $race,
         ], 201);
     }
+
     public function update(Request $request)
     {
         $schema = new ValidateSchemaMiddleware([
@@ -50,5 +81,4 @@ class RaceController
             'race'    => $race->toArray(),
         ]);
     }
-
 }

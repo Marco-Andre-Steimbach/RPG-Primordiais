@@ -34,43 +34,62 @@ class Router
         $method = $request->method();
         $uri = $request->uri();
 
-        if (!isset($this->routes[$method][$uri])) {
+        if (!isset($this->routes[$method])) {
             throw new NotFoundException('Rota não encontrada');
         }
 
-        if (isset($this->routeMiddlewares[$method][$uri])) {
+        foreach ($this->routes[$method] as $route => $action) {
 
-            $middlewareMap = [
-                'auth' => AuthMiddleware::class,
-                'role' => RoleMiddleware::class,
-            ];
+            $pattern = preg_replace('#:([\w]+)#', '(?P<$1>[^/]+)', $route);
+            $pattern = "#^{$pattern}$#";
 
-            foreach ($this->routeMiddlewares[$method][$uri] as $middleware) {
+            if (preg_match($pattern, $uri, $matches)) {
 
-                [$name, $params] = array_pad(explode(':', $middleware, 2), 2, null);
-
-                if (!isset($middlewareMap[$name])) {
-                    continue;
+                $params = [];
+                foreach ($matches as $key => $value) {
+                    if (!is_int($key)) {
+                        $params[$key] = $value;
+                    }
                 }
 
-                $instance = new $middlewareMap[$name]();
+                $request->setParams($params);
 
-                if ($params !== null) {
-                    $instance->handle($request, explode(',', $params));
-                } else {
-                    $instance->handle($request);
+                if (isset($this->routeMiddlewares[$method][$route])) {
+
+                    $middlewareMap = [
+                        'auth' => AuthMiddleware::class,
+                        'role' => RoleMiddleware::class,
+                    ];
+
+                    foreach ($this->routeMiddlewares[$method][$route] as $middleware) {
+
+                        [$name, $paramsMw] = array_pad(explode(':', $middleware, 2), 2, null);
+
+                        if (!isset($middlewareMap[$name])) {
+                            continue;
+                        }
+
+                        $instance = new $middlewareMap[$name]();
+
+                        if ($paramsMw !== null) {
+                            $instance->handle($request, explode(',', $paramsMw));
+                        } else {
+                            $instance->handle($request);
+                        }
+                    }
                 }
+
+                if (is_array($action)) {
+                    [$controller, $methodName] = $action;
+                    $controller = new $controller();
+                    return $controller->$methodName($request);
+                }
+
+                return $action($request);
             }
         }
 
-        $action = $this->routes[$method][$uri];
-
-        if (is_array($action)) {
-            [$controller, $methodName] = $action;
-            $controller = new $controller();
-            return $controller->$methodName($request);
-        }
-
-        return $action($request);
+        throw new NotFoundException('Rota não encontrada');
     }
+
 }

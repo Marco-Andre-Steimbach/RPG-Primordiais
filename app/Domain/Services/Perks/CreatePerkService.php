@@ -8,6 +8,7 @@ use App\Core\Exceptions\ValidationException;
 use App\Domain\Models\Perk;
 use App\Infrastructure\Repositories\PerkRepository;
 use App\Infrastructure\Repositories\RacePerkRepository;
+use App\Infrastructure\Repositories\OrderPerkRepository;
 use App\Infrastructure\Repositories\PerkAttributeRepository;
 use App\Infrastructure\Repositories\PerkFlagRepository;
 use App\Infrastructure\Repositories\PerkElementTypeRepository;
@@ -17,6 +18,7 @@ class CreatePerkService
 {
     private PerkRepository $perks;
     private RacePerkRepository $racePerks;
+    private OrderPerkRepository $orderPerks;
     private PerkAttributeRepository $attributes;
     private PerkFlagRepository $flags;
     private PerkElementTypeRepository $elements;
@@ -26,6 +28,7 @@ class CreatePerkService
     {
         $this->perks = new PerkRepository();
         $this->racePerks = new RacePerkRepository();
+        $this->orderPerks = new OrderPerkRepository();
         $this->attributes = new PerkAttributeRepository();
         $this->flags = new PerkFlagRepository();
         $this->elements = new PerkElementTypeRepository();
@@ -49,11 +52,21 @@ class CreatePerkService
             throw new ValidationException('Falha ao criar perk.');
         }
 
-        $this->racePerks->attachPerk(
-            $dto->race_id,
-            $perkId,
-            $dto->required_level
-        );
+        if ($dto->race_id !== null) {
+            $this->racePerks->attachPerk(
+                $dto->race_id,
+                $perkId,
+                $dto->required_level
+            );
+        }
+
+        if ($dto->order_id !== null) {
+            $this->orderPerks->attachPerk(
+                $dto->order_id,
+                $perkId,
+                $dto->required_level
+            );
+        }
 
         foreach ($dto->attributes as $attribute) {
             $this->attributes->attach(
@@ -71,11 +84,7 @@ class CreatePerkService
             $this->elements->attach($perkId, $elementId);
         }
 
-        if (
-            $dto->type === 'active'
-            && $dto->ability !== null
-            && isset($dto->ability['name'], $dto->ability['description'])
-        ) {
+        if ($dto->type === 'active' && $dto->hasAbility()) {
             $this->abilities->create($perkId, $dto->ability);
         }
 
@@ -84,6 +93,14 @@ class CreatePerkService
         if (!$perk) {
             throw new ValidationException('Erro ao carregar perk criado.');
         }
+
+        $perk->race_id = $dto->race_id;
+        $perk->order_id = $dto->order_id;
+        $perk->required_level = $dto->required_level;
+        $perk->attributes = $dto->attributes;
+        $perk->flags = $dto->flags;
+        $perk->element_types = $dto->element_types;
+        $perk->ability = $dto->ability;
 
         return $perk;
     }

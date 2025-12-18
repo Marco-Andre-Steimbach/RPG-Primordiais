@@ -6,6 +6,7 @@ class Request
 {
     private array $body;
     private array $query;
+    private array $params = [];
     private string $method;
     private string $uri;
 
@@ -29,6 +30,21 @@ class Request
         return $this->query;
     }
 
+    public function params(): array
+    {
+        return $this->params;
+    }
+
+    public function param(string $key, mixed $default = null): mixed
+    {
+        return $this->params[$key] ?? $default;
+    }
+
+    public function setParams(array $params): void
+    {
+        $this->params = $params;
+    }
+
     public function method(): string
     {
         return strtoupper($this->method);
@@ -36,7 +52,7 @@ class Request
 
     public function uri(): string
     {
-        return $this->uri;
+        return rtrim($this->uri, '/') ?: '/';
     }
 
     public function setUser(mixed $user): void

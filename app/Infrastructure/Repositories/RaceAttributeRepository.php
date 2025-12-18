@@ -11,20 +11,21 @@ class RaceAttributeRepository extends BaseRepository
     public function attachAttributes(int $raceId, array $attributes): void
     {
         $sql = "
-            INSERT INTO {$this->table} (race_id, attribute_name, attribute_value)
-            VALUES (:race_id, :attribute_name, :attribute_value)
-        ";
+        INSERT INTO {$this->table} (race_id, attribute_name, attribute_value)
+        VALUES (:race_id, :attribute_name, :attribute_value)
+    ";
 
         $stmt = $this->db->prepare($sql);
 
-        foreach ($attributes as $name => $value) {
+        foreach ($attributes as $attribute) {
             $stmt->execute([
                 'race_id' => $raceId,
-                'attribute_name' => $name,
-                'attribute_value' => $value,
+                'attribute_name' => $attribute['name'],
+                'attribute_value' => $attribute['value'],
             ]);
         }
     }
+
 
     public function getByRace(int $raceId): array
     {
@@ -52,15 +53,16 @@ class RaceAttributeRepository extends BaseRepository
         VALUES (:race_id, :name, :value)
     ");
 
-        foreach ($attributes as $name => $value) {
+        foreach ($attributes as $attribute) {
             $stmt->execute([
                 'race_id' => $raceId,
-                'name'    => $name,
-                'value'   => $value,
+                'name'    => $attribute['name'],
+                'value'   => $attribute['value'],
             ]);
         }
 
         $this->db->commit();
     }
+
 
 }
