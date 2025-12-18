@@ -199,19 +199,7 @@ CREATE TABLE user_characters (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
-   12. WEAPON_DAMAGE_TYPES
-================================================================ */
-CREATE TABLE weapon_damage_types (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    description TEXT,
-    primary_attribute_name VARCHAR(100) NOT NULL,
-    secondary_attribute_name VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-/* ================================================================
-   13. ELEMENT_TYPES
+   12. ELEMENT_TYPES
 ================================================================ */
 CREATE TABLE element_types (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -367,9 +355,8 @@ VALUES (
 );
 
 /* ================================================================
-   13.1 element_type_relations
+   13. ELEMENT_TYPE_RELATIONS
 ================================================================ */
-
 CREATE TABLE element_type_relations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     source_element_id INT NOT NULL,
@@ -391,200 +378,200 @@ CREATE TABLE element_type_relations (
         UNIQUE (source_element_id, target_element_id, relation_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `element_type_relations` (`id`, `source_element_id`, `target_element_id`, `relation_type`, `created_at`) VALUES
-(11, 1, 10, 'weakness', '2025-12-15 22:20:47'),
-(12, 1, 14, 'weakness', '2025-12-15 22:20:47'),
-(13, 1, 16, 'weakness', '2025-12-15 22:20:47'),
-(14, 2, 4, 'strength', '2025-12-15 22:21:38'),
-(15, 2, 8, 'strength', '2025-12-15 22:21:38'),
-(16, 2, 12, 'strength', '2025-12-15 22:21:38'),
-(17, 2, 3, 'weakness', '2025-12-15 22:21:57'),
-(18, 2, 6, 'weakness', '2025-12-15 22:21:57'),
-(19, 2, 7, 'weakness', '2025-12-15 22:21:57'),
-(20, 2, 28, 'immunity', '2025-12-15 22:22:09'),
-(21, 3, 2, 'strength', '2025-12-15 22:23:31'),
-(22, 3, 7, 'strength', '2025-12-15 22:23:31'),
-(23, 3, 6, 'strength', '2025-12-15 22:23:31'),
-(24, 3, 5, 'weakness', '2025-12-15 22:23:42'),
-(25, 3, 4, 'weakness', '2025-12-15 22:23:42'),
-(26, 3, 8, 'weakness', '2025-12-15 22:23:42'),
-(27, 3, 2, 'immunity', '2025-12-15 22:23:53'),
-(28, 4, 3, 'strength', '2025-12-15 22:24:44'),
-(29, 4, 6, 'strength', '2025-12-15 22:24:44'),
-(30, 4, 7, 'strength', '2025-12-15 22:24:44'),
-(31, 4, 2, 'weakness', '2025-12-15 22:24:54'),
-(32, 4, 8, 'weakness', '2025-12-15 22:24:54'),
-(33, 4, 11, 'weakness', '2025-12-15 22:24:54'),
-(34, 4, 3, 'immunity', '2025-12-15 22:25:06'),
-(35, 5, 3, 'strength', '2025-12-15 22:26:15'),
-(36, 5, 9, 'strength', '2025-12-15 22:26:15'),
-(37, 5, 24, 'strength', '2025-12-15 22:26:15'),
-(38, 5, 6, 'weakness', '2025-12-15 22:26:15'),
-(39, 5, 7, 'weakness', '2025-12-15 22:26:15'),
-(40, 5, 28, 'immunity', '2025-12-15 22:26:15'),
-(41, 6, 5, 'strength', '2025-12-15 22:27:29'),
-(42, 6, 2, 'strength', '2025-12-15 22:27:29'),
-(43, 6, 11, 'strength', '2025-12-15 22:27:29'),
-(44, 6, 3, 'weakness', '2025-12-15 22:27:29'),
-(45, 6, 4, 'weakness', '2025-12-15 22:27:29'),
-(46, 6, 8, 'weakness', '2025-12-15 22:27:29'),
-(47, 6, 5, 'immunity', '2025-12-15 22:27:29'),
-(48, 7, 2, 'strength', '2025-12-15 22:28:00'),
-(49, 7, 12, 'strength', '2025-12-15 22:28:00'),
-(50, 7, 9, 'strength', '2025-12-15 22:28:00'),
-(51, 7, 3, 'weakness', '2025-12-15 22:28:00'),
-(52, 7, 4, 'weakness', '2025-12-15 22:28:00'),
-(53, 7, 10, 'weakness', '2025-12-15 22:28:00'),
-(54, 7, 28, 'immunity', '2025-12-15 22:28:00'),
-(55, 8, 4, 'strength', '2025-12-15 22:28:41'),
-(56, 8, 6, 'strength', '2025-12-15 22:28:41'),
-(57, 8, 9, 'strength', '2025-12-15 22:28:41'),
-(58, 8, 2, 'weakness', '2025-12-15 22:28:41'),
-(59, 8, 10, 'weakness', '2025-12-15 22:28:41'),
-(60, 8, 7, 'weakness', '2025-12-15 22:28:41'),
-(61, 8, 3, 'immunity', '2025-12-15 22:28:41'),
-(62, 9, 4, 'strength', '2025-12-15 22:29:37'),
-(63, 9, 12, 'strength', '2025-12-15 22:29:37'),
-(64, 9, 10, 'strength', '2025-12-15 22:29:37'),
-(65, 9, 5, 'weakness', '2025-12-15 22:29:37'),
-(66, 9, 8, 'weakness', '2025-12-15 22:29:37'),
-(67, 9, 7, 'weakness', '2025-12-15 22:29:37'),
-(68, 9, 6, 'immunity', '2025-12-15 22:29:37'),
-(69, 10, 1, 'strength', '2025-12-15 22:30:28'),
-(70, 10, 7, 'strength', '2025-12-15 22:30:28'),
-(71, 10, 8, 'strength', '2025-12-15 22:30:28'),
-(72, 10, 14, 'weakness', '2025-12-15 22:30:28'),
-(73, 10, 15, 'weakness', '2025-12-15 22:30:28'),
-(74, 10, 9, 'weakness', '2025-12-15 22:30:28'),
-(75, 11, 4, 'strength', '2025-12-15 22:31:16'),
-(76, 11, 1, 'strength', '2025-12-15 22:31:16'),
-(77, 11, 12, 'strength', '2025-12-15 22:31:16'),
-(78, 11, 6, 'weakness', '2025-12-15 22:31:16'),
-(79, 11, 14, 'weakness', '2025-12-15 22:31:16'),
-(80, 11, 13, 'weakness', '2025-12-15 22:31:16'),
-(81, 11, 25, 'immunity', '2025-12-15 22:31:16'),
-(82, 12, 4, 'strength', '2025-12-15 22:31:54'),
-(83, 12, 14, 'strength', '2025-12-15 22:31:54'),
-(84, 12, 16, 'strength', '2025-12-15 22:31:54'),
-(85, 12, 2, 'weakness', '2025-12-15 22:31:54'),
-(86, 12, 7, 'weakness', '2025-12-15 22:31:54'),
-(87, 12, 9, 'weakness', '2025-12-15 22:31:54'),
-(88, 12, 28, 'immunity', '2025-12-15 22:31:54'),
-(89, 13, 12, 'strength', '2025-12-15 22:32:26'),
-(90, 13, 4, 'strength', '2025-12-15 22:32:26'),
-(91, 13, 17, 'strength', '2025-12-15 22:32:26'),
-(92, 13, 2, 'weakness', '2025-12-15 22:32:26'),
-(93, 13, 5, 'weakness', '2025-12-15 22:32:26'),
-(94, 13, 3, 'weakness', '2025-12-15 22:32:26'),
-(95, 13, 11, 'immunity', '2025-12-15 22:32:26'),
-(96, 14, 10, 'strength', '2025-12-15 23:51:33'),
-(97, 14, 11, 'strength', '2025-12-15 23:51:33'),
-(98, 14, 1, 'strength', '2025-12-15 23:51:33'),
-(99, 14, 16, 'weakness', '2025-12-15 23:51:33'),
-(100, 14, 12, 'weakness', '2025-12-15 23:51:33'),
-(101, 14, 15, 'weakness', '2025-12-15 23:51:33'),
-(102, 15, 1, 'strength', '2025-12-15 23:52:27'),
-(103, 15, 10, 'strength', '2025-12-15 23:52:27'),
-(104, 15, 12, 'strength', '2025-12-15 23:52:27'),
-(105, 15, 14, 'weakness', '2025-12-15 23:52:27'),
-(106, 15, 16, 'weakness', '2025-12-15 23:52:27'),
-(107, 15, 21, 'weakness', '2025-12-15 23:52:27'),
-(108, 15, 1, 'immunity', '2025-12-15 23:52:28'),
-(109, 16, 14, 'strength', '2025-12-15 23:52:50'),
-(110, 16, 15, 'strength', '2025-12-15 23:52:50'),
-(111, 16, 1, 'strength', '2025-12-15 23:52:50'),
-(112, 16, 21, 'weakness', '2025-12-15 23:52:50'),
-(113, 16, 17, 'weakness', '2025-12-15 23:52:50'),
-(114, 16, 19, 'weakness', '2025-12-15 23:52:50'),
-(115, 17, 16, 'strength', '2025-12-15 23:53:12'),
-(116, 17, 18, 'strength', '2025-12-15 23:53:12'),
-(117, 17, 10, 'strength', '2025-12-15 23:53:12'),
-(118, 17, 13, 'weakness', '2025-12-15 23:53:12'),
-(119, 17, 11, 'weakness', '2025-12-15 23:53:12'),
-(120, 17, 28, 'weakness', '2025-12-15 23:53:12'),
-(121, 17, 18, 'immunity', '2025-12-15 23:53:12'),
-(122, 18, 2, 'strength', '2025-12-15 23:53:32'),
-(123, 18, 3, 'strength', '2025-12-15 23:53:32'),
-(124, 18, 5, 'strength', '2025-12-15 23:53:32'),
-(125, 18, 17, 'weakness', '2025-12-15 23:53:32'),
-(126, 18, 16, 'weakness', '2025-12-15 23:53:32'),
-(127, 18, 8, 'weakness', '2025-12-15 23:53:32'),
-(128, 18, 1, 'immunity', '2025-12-15 23:53:32'),
-(129, 19, 25, 'strength', '2025-12-15 23:53:58'),
-(130, 19, 20, 'strength', '2025-12-15 23:53:58'),
-(131, 19, 16, 'strength', '2025-12-15 23:53:58'),
-(132, 19, 26, 'weakness', '2025-12-15 23:53:58'),
-(133, 19, 27, 'weakness', '2025-12-15 23:53:58'),
-(134, 19, 1, 'immunity', '2025-12-15 23:53:58'),
-(135, 20, 19, 'strength', '2025-12-15 23:54:19'),
-(136, 20, 25, 'strength', '2025-12-15 23:54:19'),
-(137, 20, 14, 'strength', '2025-12-15 23:54:19'),
-(138, 20, 21, 'weakness', '2025-12-15 23:54:19'),
-(139, 20, 19, 'weakness', '2025-12-15 23:54:19'),
-(140, 20, 17, 'weakness', '2025-12-15 23:54:19'),
-(141, 20, 1, 'immunity', '2025-12-15 23:54:19'),
-(142, 21, 16, 'strength', '2025-12-15 23:54:50'),
-(143, 21, 15, 'strength', '2025-12-15 23:54:50'),
-(144, 21, 20, 'strength', '2025-12-15 23:54:50'),
-(145, 21, 27, 'weakness', '2025-12-15 23:54:50'),
-(146, 21, 26, 'weakness', '2025-12-15 23:54:50'),
-(147, 21, 13, 'weakness', '2025-12-15 23:54:50'),
-(148, 22, 19, 'strength', '2025-12-15 23:55:14'),
-(149, 22, 20, 'strength', '2025-12-15 23:55:14'),
-(150, 22, 23, 'strength', '2025-12-15 23:55:14'),
-(151, 22, 28, 'weakness', '2025-12-15 23:55:14'),
-(152, 22, 10, 'weakness', '2025-12-15 23:55:14'),
-(153, 22, 12, 'weakness', '2025-12-15 23:55:14'),
-(154, 22, 1, 'immunity', '2025-12-15 23:55:14'),
-(155, 23, 1, 'strength', '2025-12-15 23:55:35'),
-(156, 23, 12, 'strength', '2025-12-15 23:55:35'),
-(157, 23, 25, 'strength', '2025-12-15 23:55:35'),
-(158, 23, 22, 'weakness', '2025-12-15 23:55:35'),
-(159, 23, 5, 'weakness', '2025-12-15 23:55:35'),
-(160, 23, 3, 'weakness', '2025-12-15 23:55:35'),
-(161, 23, 11, 'immunity', '2025-12-15 23:55:35'),
-(162, 24, 1, 'strength', '2025-12-15 23:55:55'),
-(163, 24, 12, 'strength', '2025-12-15 23:55:55'),
-(164, 24, 16, 'strength', '2025-12-15 23:55:55'),
-(165, 24, 5, 'weakness', '2025-12-15 23:55:55'),
-(166, 24, 3, 'weakness', '2025-12-15 23:55:55'),
-(167, 24, 22, 'weakness', '2025-12-15 23:55:55'),
-(168, 24, 11, 'immunity', '2025-12-15 23:55:55'),
-(169, 25, 1, 'strength', '2025-12-15 23:56:19'),
-(170, 25, 14, 'strength', '2025-12-15 23:56:19'),
-(171, 25, 12, 'strength', '2025-12-15 23:56:19'),
-(172, 25, 19, 'weakness', '2025-12-15 23:56:19'),
-(173, 25, 21, 'weakness', '2025-12-15 23:56:19'),
-(174, 25, 2, 'weakness', '2025-12-15 23:56:19'),
-(175, 25, 11, 'immunity', '2025-12-15 23:56:19'),
-(176, 26, 19, 'strength', '2025-12-15 23:56:42'),
-(177, 26, 13, 'strength', '2025-12-15 23:56:42'),
-(178, 26, 24, 'strength', '2025-12-15 23:56:42'),
-(179, 26, 27, 'weakness', '2025-12-15 23:56:42'),
-(180, 26, 28, 'weakness', '2025-12-15 23:56:42'),
-(181, 26, 17, 'weakness', '2025-12-15 23:56:42'),
-(182, 26, 1, 'immunity', '2025-12-15 23:56:42'),
-(183, 27, 21, 'strength', '2025-12-15 23:57:07'),
-(184, 27, 19, 'strength', '2025-12-15 23:57:07'),
-(185, 27, 24, 'strength', '2025-12-15 23:57:07'),
-(186, 27, 26, 'weakness', '2025-12-15 23:57:08'),
-(187, 27, 28, 'weakness', '2025-12-15 23:57:08'),
-(188, 27, 29, 'weakness', '2025-12-15 23:57:08'),
-(189, 27, 6, 'immunity', '2025-12-15 23:57:08'),
-(190, 28, 22, 'strength', '2025-12-15 23:57:27'),
-(191, 28, 17, 'strength', '2025-12-15 23:57:27'),
-(192, 28, 26, 'strength', '2025-12-15 23:57:27'),
-(193, 28, 7, 'weakness', '2025-12-15 23:57:27'),
-(194, 28, 13, 'weakness', '2025-12-15 23:57:27'),
-(195, 28, 3, 'weakness', '2025-12-15 23:57:27'),
-(196, 28, 15, 'immunity', '2025-12-15 23:57:27'),
-(197, 29, 27, 'strength', '2025-12-15 23:57:38'),
-(198, 29, 1, 'strength', '2025-12-15 23:57:38'),
-(199, 29, 10, 'strength', '2025-12-15 23:57:38'),
-(200, 29, 21, 'weakness', '2025-12-15 23:57:38'),
-(201, 29, 8, 'weakness', '2025-12-15 23:57:38'),
-(202, 29, 11, 'weakness', '2025-12-15 23:57:38'),
-(204, 29, 15, 'immunity', '2025-12-15 23:58:13');
+INSERT INTO `element_type_relations` (`source_element_id`, `target_element_id`, `relation_type`) VALUES
+(1, 10, 'weakness'),
+(1, 14, 'weakness'),
+(1, 16, 'weakness'),
+(2, 4, 'strength'),
+(2, 8, 'strength'),
+(2, 12, 'strength'),
+(2, 3, 'weakness'),
+(2, 6, 'weakness'),
+(2, 7, 'weakness'),
+(2, 28, 'immunity'),
+(3, 2, 'strength'),
+(3, 7, 'strength'),
+(3, 6, 'strength'),
+(3, 5, 'weakness'),
+(3, 4, 'weakness'),
+(3, 8, 'weakness'),
+(3, 2, 'immunity'),
+(4, 3, 'strength'),
+(4, 6, 'strength'),
+(4, 7, 'strength'),
+(4, 2, 'weakness'),
+(4, 8, 'weakness'),
+(4, 11, 'weakness'),
+(4, 3, 'immunity'),
+(5, 3, 'strength'),
+(5, 9, 'strength'),
+(5, 24, 'strength'),
+(5, 6, 'weakness'),
+(5, 7, 'weakness'),
+(5, 28, 'immunity'),
+(6, 5, 'strength'),
+(6, 2, 'strength'),
+(6, 11, 'strength'),
+(6, 3, 'weakness'),
+(6, 4, 'weakness'),
+(6, 8, 'weakness'),
+(6, 5, 'immunity'),
+(7, 2, 'strength'),
+(7, 12, 'strength'),
+(7, 9, 'strength'),
+(7, 3, 'weakness'),
+(7, 4, 'weakness'),
+(7, 10, 'weakness'),
+(7, 28, 'immunity'),
+(8, 4, 'strength'),
+(8, 6, 'strength'),
+(8, 9, 'strength'),
+(8, 2, 'weakness'),
+(8, 10, 'weakness'),
+(8, 7, 'weakness'),
+(8, 3, 'immunity'),
+(9, 4, 'strength'),
+(9, 12, 'strength'),
+(9, 10, 'strength'),
+(9, 5, 'weakness'),
+(9, 8, 'weakness'),
+(9, 7, 'weakness'),
+(9, 6, 'immunity'),
+(10, 1, 'strength'),
+(10, 7, 'strength'),
+(10, 8, 'strength'),
+(10, 14, 'weakness'),
+(10, 15, 'weakness'),
+(10, 9, 'weakness'),
+(11, 4, 'strength'),
+(11, 1, 'strength'),
+(11, 12, 'strength'),
+(11, 6, 'weakness'),
+(11, 14, 'weakness'),
+(11, 13, 'weakness'),
+(11, 25, 'immunity'),
+(12, 4, 'strength'),
+(12, 14, 'strength'),
+(12, 16, 'strength'),
+(12, 2, 'weakness'),
+(12, 7, 'weakness'),
+(12, 9, 'weakness'),
+(12, 28, 'immunity'),
+(13, 12, 'strength'),
+(13, 4, 'strength'),
+(13, 17, 'strength'),
+(13, 2, 'weakness'),
+(13, 5, 'weakness'),
+(13, 3, 'weakness'),
+(13, 11, 'immunity'),
+(14, 10, 'strength'),
+(14, 11, 'strength'),
+(14, 1, 'strength'),
+(14, 16, 'weakness'),
+(14, 12, 'weakness'),
+(14, 15, 'weakness'),
+(15, 1, 'strength'),
+(15, 10, 'strength'),
+(15, 12, 'strength'),
+(15, 14, 'weakness'),
+(15, 16, 'weakness'),
+(15, 21, 'weakness'),
+(15, 1, 'immunity'),
+(16, 14, 'strength'),
+(16, 15, 'strength'),
+(16, 1, 'strength'),
+(16, 21, 'weakness'),
+(16, 17, 'weakness'),
+(16, 19, 'weakness'),
+(17, 16, 'strength'),
+(17, 18, 'strength'),
+(17, 10, 'strength'),
+(17, 13, 'weakness'),
+(17, 11, 'weakness'),
+(17, 28, 'weakness'),
+(17, 18, 'immunity'),
+(18, 2, 'strength'),
+(18, 3, 'strength'),
+(18, 5, 'strength'),
+(18, 17, 'weakness'),
+(18, 16, 'weakness'),
+(18, 8, 'weakness'),
+(18, 1, 'immunity'),
+(19, 25, 'strength'),
+(19, 20, 'strength'),
+(19, 16, 'strength'),
+(19, 26, 'weakness'),
+(19, 27, 'weakness'),
+(19, 1, 'immunity'),
+(20, 19, 'strength'),
+(20, 25, 'strength'),
+(20, 14, 'strength'),
+(20, 21, 'weakness'),
+(20, 19, 'weakness'),
+(20, 17, 'weakness'),
+(20, 1, 'immunity'),
+(21, 16, 'strength'),
+(21, 15, 'strength'),
+(21, 20, 'strength'),
+(21, 27, 'weakness'),
+(21, 26, 'weakness'),
+(21, 13, 'weakness'),
+(22, 19, 'strength'),
+(22, 20, 'strength'),
+(22, 23, 'strength'),
+(22, 28, 'weakness'),
+(22, 10, 'weakness'),
+(22, 12, 'weakness'),
+(22, 1, 'immunity'),
+(23, 1, 'strength'),
+(23, 12, 'strength'),
+(23, 25, 'strength'),
+(23, 22, 'weakness'),
+(23, 5, 'weakness'),
+(23, 3, 'weakness'),
+(23, 11, 'immunity'),
+(24, 1, 'strength'),
+(24, 12, 'strength'),
+(24, 16, 'strength'),
+(24, 5, 'weakness'),
+(24, 3, 'weakness'),
+(24, 22, 'weakness'),
+(24, 11, 'immunity'),
+(25, 1, 'strength'),
+(25, 14, 'strength'),
+(25, 12, 'strength'),
+(25, 19, 'weakness'),
+(25, 21, 'weakness'),
+(25, 2, 'weakness'),
+(25, 11, 'immunity'),
+(26, 19, 'strength'),
+(26, 13, 'strength'),
+(26, 24, 'strength'),
+(26, 27, 'weakness'),
+(26, 28, 'weakness'),
+(26, 17, 'weakness'),
+(26, 1, 'immunity'),
+(27, 21, 'strength'),
+(27, 19, 'strength'),
+(27, 24, 'strength'),
+(27, 26, 'weakness'),
+(27, 28, 'weakness'),
+(27, 29, 'weakness'),
+(27, 6, 'immunity'),
+(28, 22, 'strength'),
+(28, 17, 'strength'),
+(28, 26, 'strength'),
+(28, 7, 'weakness'),
+(28, 13, 'weakness'),
+(28, 3, 'weakness'),
+(28, 15, 'immunity'),
+(29, 27, 'strength'),
+(29, 1, 'strength'),
+(29, 10, 'strength'),
+(29, 21, 'weakness'),
+(29, 8, 'weakness'),
+(29, 11, 'weakness'),
+(29, 15, 'immunity');
 
 /* ================================================================
    14. ABILITIES (personagem)
@@ -658,23 +645,11 @@ CREATE TABLE items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     description TEXT,
-
-    is_weapon TINYINT(1) NOT NULL DEFAULT 1,
-    is_magic  TINYINT(1) NOT NULL DEFAULT 0,
-
-    base_damage INT NOT NULL DEFAULT 0,
-    base_accuracy INT NOT NULL DEFAULT 0,
-    bonus_speed INT NOT NULL DEFAULT 0,
-
-    weapon_damage_type_id INT NULL,
+    value INT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_items_weapon_type
-        FOREIGN KEY (weapon_damage_type_id) REFERENCES weapon_damage_types(id)
-        ON DELETE SET NULL
+        ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -702,9 +677,219 @@ CREATE TABLE item_element_types (
 
 
 /* ================================================================
-   18. ITEM_MAGIC_ABILITIES
+   18. ITEM_ABILITIES
 ================================================================ */
-CREATE TABLE item_magic_abilities (
+CREATE TABLE item_abilities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    title VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+
+    dice_formula VARCHAR(50) NULL,
+
+    base_damage INT NOT NULL DEFAULT 0,
+    bonus_damage INT NOT NULL DEFAULT 0,
+    bonus_accuracy INT NOT NULL DEFAULT 0,
+    bonus_speed INT NOT NULL DEFAULT 0,
+
+    is_consumable BOOLEAN NOT NULL DEFAULT 0,
+    max_uses INT NULL,
+
+    override_element_type_id INT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_item_abilities_override_element
+        FOREIGN KEY (override_element_type_id) REFERENCES element_types(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+/* ================================================================
+   19. ITEM_ITEM_ABILITIES
+================================================================ */
+CREATE TABLE item_item_abilities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_id INT NOT NULL,
+    item_ability_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE (item_id, item_ability_id),
+
+    CONSTRAINT fk_iia_item
+        FOREIGN KEY (item_id) REFERENCES items(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_iia_ability
+        FOREIGN KEY (item_ability_id) REFERENCES item_abilities(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   20. WEAPON_DAMAGE_TYPES
+================================================================ */
+CREATE TABLE weapon_damage_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+
+    primary_attribute VARCHAR(50) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   21. WEAPONS
+================================================================ */
+CREATE TABLE weapons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_id INT NOT NULL,
+
+    weapon_damage_type_id INT NOT NULL,
+
+    dice_formula VARCHAR(50) NOT NULL,
+    base_damage INT NOT NULL DEFAULT 0,
+    bonus_accuracy INT NOT NULL DEFAULT 0,
+    bonus_speed INT NOT NULL DEFAULT 0,
+
+    ammo_item_id INT NULL,
+    ammo_per_use INT NOT NULL DEFAULT 1,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_weapons_item
+        FOREIGN KEY (item_id) REFERENCES items(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_weapons_damage_type
+        FOREIGN KEY (weapon_damage_type_id) REFERENCES weapon_damage_types(id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_weapons_ammo_item
+        FOREIGN KEY (ammo_item_id) REFERENCES items(id)
+        ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   22. WEAPON_ELEMENT_TYPES
+================================================================ */
+CREATE TABLE weapon_element_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_id INT NOT NULL,
+    element_type_id INT NOT NULL,
+
+    UNIQUE (weapon_id, element_type_id),
+
+    CONSTRAINT fk_weapon_element_weapon
+        FOREIGN KEY (weapon_id) REFERENCES weapons(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_weapon_element_type
+        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   23. WEAPON_ABILITIES
+================================================================ */
+CREATE TABLE weapon_abilities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    title VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+
+    dice_formula VARCHAR(50) NULL,
+
+    base_damage INT NOT NULL DEFAULT 0,
+    bonus_damage INT NOT NULL DEFAULT 0,
+    bonus_accuracy INT NOT NULL DEFAULT 0,
+    bonus_speed INT NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   24. WEAPON_ABILITY_ELEMENT_TYPES
+================================================================ */
+CREATE TABLE weapon_ability_element_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_ability_id INT NOT NULL,
+    element_type_id INT NOT NULL,
+
+    UNIQUE (weapon_ability_id, element_type_id),
+
+    CONSTRAINT fk_waet_ability
+        FOREIGN KEY (weapon_ability_id) REFERENCES weapon_abilities(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_waet_element
+        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+/* ================================================================
+   20. ARMOR_SLOTS
+================================================================ */
+CREATE TABLE armor_slots (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    is_exclusive BOOLEAN NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   21. ARMORS
+================================================================ */
+
+CREATE TABLE armors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_id INT NOT NULL,
+
+    armor_slot_id INT NOT NULL,
+
+    armor_class_bonus INT NOT NULL DEFAULT 0,
+
+    min_strength_required INT NOT NULL DEFAULT 0,
+    speed_penalty INT NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_armors_item
+        FOREIGN KEY (item_id) REFERENCES items(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_armors_slot
+        FOREIGN KEY (armor_slot_id) REFERENCES armor_slots(id)
+        ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   22. ARMOR_ELEMENT_TYPES
+================================================================ */
+CREATE TABLE armor_element_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    armor_id INT NOT NULL,
+    element_type_id INT NOT NULL,
+
+    UNIQUE (armor_id, element_type_id),
+
+    CONSTRAINT fk_armor_element_armor
+        FOREIGN KEY (armor_id) REFERENCES armors(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_armor_element_type
+        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   23. ARMOR_ABILITIES
+================================================================ */
+
+CREATE TABLE armor_abilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
     title VARCHAR(150) NOT NULL,
@@ -713,48 +898,36 @@ CREATE TABLE item_magic_abilities (
     dice_formula VARCHAR(50) NULL,
     base_damage INT NOT NULL DEFAULT 0,
 
-    daily_uses_limit INT NOT NULL DEFAULT 1,
-    bonus_accuracy INT NOT NULL DEFAULT 0,
-    bonus_damage INT NOT NULL DEFAULT 0,
+    armor_class_bonus INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
-
-    element_type_id INT NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_item_magic_ability_element
-        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
-        ON DELETE SET NULL
+        ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
-
 /* ================================================================
-   19. ITEM_MAGIC_ABILITY_LINKS
+   24. ARMOR_ARMOR_ABILITIES
 ================================================================ */
-CREATE TABLE item_magic_ability_links (
+
+CREATE TABLE armor_armor_abilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    item_id INT NOT NULL,
-    item_magic_ability_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    armor_id INT NOT NULL,
+    armor_ability_id INT NOT NULL,
 
-    UNIQUE (item_id, item_magic_ability_id),
+    UNIQUE (armor_id, armor_ability_id),
 
-    CONSTRAINT fk_item_magic_link_item
-        FOREIGN KEY (item_id) REFERENCES items(id)
+    CONSTRAINT fk_aaa_armor
+        FOREIGN KEY (armor_id) REFERENCES armors(id)
         ON DELETE CASCADE,
 
-    CONSTRAINT fk_item_magic_link_ability
-        FOREIGN KEY (item_magic_ability_id) REFERENCES item_magic_abilities(id)
+    CONSTRAINT fk_aaa_ability
+        FOREIGN KEY (armor_ability_id) REFERENCES armor_abilities(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
-
 /* ================================================================
-   20. MONSTERS
+   25. MONSTERS
 ================================================================ */
 CREATE TABLE monsters (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -764,6 +937,8 @@ CREATE TABLE monsters (
     base_hp INT NOT NULL DEFAULT 1,
     base_ac INT NOT NULL DEFAULT 10,
     base_speed INT NOT NULL DEFAULT 6,
+
+    actions_per_turn INT NOT NULL DEFAULT 3,
 
     base_str INT NOT NULL DEFAULT 1,
     base_dex INT NOT NULL DEFAULT 1,
@@ -777,9 +952,8 @@ CREATE TABLE monsters (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-
 /* ================================================================
-   21. MONSTER_ELEMENT_TYPES
+   26. MONSTER_ELEMENT_TYPES (N:N)
 ================================================================ */
 CREATE TABLE monster_element_types (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -799,44 +973,108 @@ CREATE TABLE monster_element_types (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+/* ================================================================
+   27. MONSTER_ATTACKS (ataques básicos reutilizáveis)
+================================================================ */
+CREATE TABLE monster_attacks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+
+    dice_formula VARCHAR(50) NOT NULL,
+    base_damage INT NOT NULL DEFAULT 0,
+    bonus_accuracy INT NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 /* ================================================================
-   22. MONSTER_ABILITIES
+   28. MONSTER_ATTACK_ELEMENT_TYPES (N:N)
+================================================================ */
+CREATE TABLE monster_attack_element_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    monster_attack_id INT NOT NULL,
+    element_type_id INT NOT NULL,
+
+    UNIQUE (monster_attack_id, element_type_id),
+
+    CONSTRAINT fk_maet_attack
+        FOREIGN KEY (monster_attack_id) REFERENCES monster_attacks(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_maet_element
+        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+/* ================================================================
+   29. MONSTER_ATTACK_LINKS (N:N)
+================================================================ */
+CREATE TABLE monster_attack_links (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    monster_id INT NOT NULL,
+    monster_attack_id INT NOT NULL,
+
+    UNIQUE (monster_id, monster_attack_id),
+
+    CONSTRAINT fk_mal_monster
+        FOREIGN KEY (monster_id) REFERENCES monsters(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_mal_attack
+        FOREIGN KEY (monster_attack_id) REFERENCES monster_attacks(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+/* ================================================================
+   30. MONSTER_ABILITIES (habilidades especiais)
 ================================================================ */
 CREATE TABLE monster_abilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
     title VARCHAR(150) NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
 
     dice_formula VARCHAR(50) NULL,
     base_damage INT NOT NULL DEFAULT 0,
+    bonus_damage INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
 
-    physical_type_id INT NULL,
-    element_type_id INT NULL,
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_monster_abilities_physical
-        FOREIGN KEY (physical_type_id) REFERENCES weapon_damage_types(id)
-        ON DELETE SET NULL,
-
-    CONSTRAINT fk_monster_abilities_element
-        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
-        ON DELETE SET NULL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+/* ================================================================
+   31. MONSTER_ABILITY_ELEMENT_TYPES (N:N)
+================================================================ */
+CREATE TABLE monster_ability_element_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    monster_ability_id INT NOT NULL,
+    element_type_id INT NOT NULL,
+
+    UNIQUE (monster_ability_id, element_type_id),
+
+    CONSTRAINT fk_maet_ability
+        FOREIGN KEY (monster_ability_id) REFERENCES monster_abilities(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_maet_element
+        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 /* ================================================================
-   23. MONSTER_ABILITY_LINKS
+   32. MONSTER_ABILITY_LINKS (N:N)
 ================================================================ */
 CREATE TABLE monster_ability_links (
     id INT AUTO_INCREMENT PRIMARY KEY,
     monster_id INT NOT NULL,
     monster_ability_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     UNIQUE (monster_id, monster_ability_id),
 
@@ -851,8 +1089,9 @@ CREATE TABLE monster_ability_links (
 
 
 
+
 /* ================================================================
-   24. CAMPAIGNS
+   33. CAMPAIGNS
 ================================================================ */
 CREATE TABLE campaigns (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -873,7 +1112,7 @@ CREATE TABLE campaigns (
 
 
 /* ================================================================
-   25. CAMPAIGN_CHARACTERS
+   34. CAMPAIGN_CHARACTERS
 ================================================================ */
 CREATE TABLE campaign_characters (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -902,7 +1141,7 @@ CREATE TABLE campaign_characters (
 
 
 /* ================================================================
-   26. CAMPAIGN_CHARACTER_ABILITIES
+   35. CAMPAIGN_CHARACTER_ABILITIES
 ================================================================ */
 CREATE TABLE campaign_character_abilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -924,13 +1163,17 @@ CREATE TABLE campaign_character_abilities (
 
 
 /* ================================================================
-   27. CAMPAIGN_CHARACTER_ITEMS
+   36. CAMPAIGN_CHARACTER_ITEMS
 ================================================================ */
 CREATE TABLE campaign_character_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     campaign_character_id INT NOT NULL,
     item_id INT NOT NULL,
+
     quantity INT NOT NULL DEFAULT 1,
+    is_active BOOLEAN NOT NULL DEFAULT 1,
+    is_equipped BOOLEAN NOT NULL DEFAULT 0,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_cc_items_cc
@@ -942,10 +1185,54 @@ CREATE TABLE campaign_character_items (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+/* ================================================================
+   37. CAMPAIGN_CHARACTER_WEAPON
+================================================================ */
+CREATE TABLE campaign_character_weapons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    campaign_character_id INT NOT NULL,
+    weapon_id INT NOT NULL,
+
+    is_equipped BOOLEAN NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT 1,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_cc_weapons_cc
+        FOREIGN KEY (campaign_character_id) REFERENCES campaign_characters(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_cc_weapons_weapon
+        FOREIGN KEY (weapon_id) REFERENCES weapons(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 /* ================================================================
-   28. ENCOUNTERS
+   38. CAMPAIGN_CHARACTER_ARMORS
+================================================================ */
+
+CREATE TABLE campaign_character_armors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    campaign_character_id INT NOT NULL,
+    armor_id INT NOT NULL,
+
+    is_equipped BOOLEAN NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT 1,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_cc_armors_cc
+        FOREIGN KEY (campaign_character_id) REFERENCES campaign_characters(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_cc_armors_armor
+        FOREIGN KEY (armor_id) REFERENCES armors(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   39. ENCOUNTERS
 ================================================================ */
 CREATE TABLE encounters (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -966,7 +1253,7 @@ CREATE TABLE encounters (
 
 
 /* ================================================================
-   29. ENCOUNTER_PLAYERS
+   40. ENCOUNTER_PLAYERS
 ================================================================ */
 CREATE TABLE encounter_players (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -988,7 +1275,7 @@ CREATE TABLE encounter_players (
 
 
 /* ================================================================
-   30. ENCOUNTER_MONSTERS
+   41. ENCOUNTER_MONSTERS
 ================================================================ */
 CREATE TABLE encounter_monsters (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -1009,30 +1296,8 @@ CREATE TABLE encounter_monsters (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
-
 /* ================================================================
-   31. ENCOUNTER_MONSTER_ABILITIES
-================================================================ */
-CREATE TABLE encounter_monster_abilities (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    encounter_monster_id INT NOT NULL,
-    monster_ability_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    UNIQUE (encounter_monster_id, monster_ability_id),
-
-    CONSTRAINT fk_enc_m_abilities_em
-        FOREIGN KEY (encounter_monster_id) REFERENCES encounter_monsters(id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_enc_m_abilities_ma
-        FOREIGN KEY (monster_ability_id) REFERENCES monster_abilities(id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-/* ================================================================
-   32. PERKS
+   42. PERKS
 ================================================================ */
 
 CREATE TABLE perks (
@@ -1050,7 +1315,7 @@ CREATE TABLE perks (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
-   33. PERKS_ATTRIBUTES
+   43. PERKS_ATTRIBUTES
 ================================================================ */
 
 CREATE TABLE perk_attributes (
@@ -1068,7 +1333,7 @@ CREATE TABLE perk_attributes (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
-   34. PERKS_FLAGS
+   44. PERKS_FLAGS
 ================================================================ */
 
 CREATE TABLE perk_flags (
@@ -1085,7 +1350,7 @@ CREATE TABLE perk_flags (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
-   35. ORDER_PERKS
+   45. ORDER_PERKS
 ================================================================ */
 
 CREATE TABLE order_perks (
@@ -1107,7 +1372,7 @@ CREATE TABLE order_perks (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
-   36. RACE_PERKS
+   46. RACE_PERKS
 ================================================================ */
 
 CREATE TABLE race_perks (
@@ -1129,7 +1394,7 @@ CREATE TABLE race_perks (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
-   37. RACE_PERKS
+   47. RACE_PERKS
 ================================================================ */
 
 CREATE TABLE perk_element_types (
@@ -1150,7 +1415,7 @@ CREATE TABLE perk_element_types (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
-   38. PERK_ABILITIES
+   48. PERK_ABILITIES
 ================================================================ */
 
 CREATE TABLE perk_abilities (
