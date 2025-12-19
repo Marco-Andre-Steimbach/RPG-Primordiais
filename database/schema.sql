@@ -1004,11 +1004,10 @@ CREATE TABLE monster_attack_element_types (
         FOREIGN KEY (monster_attack_id) REFERENCES monster_attacks(id)
         ON DELETE CASCADE,
 
-    CONSTRAINT fk_maet_element
+    CONSTRAINT fk_maet_attack_element
         FOREIGN KEY (element_type_id) REFERENCES element_types(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 /* ================================================================
    29. MONSTER_ATTACK_LINKS (N:N)
@@ -1062,11 +1061,10 @@ CREATE TABLE monster_ability_element_types (
         FOREIGN KEY (monster_ability_id) REFERENCES monster_abilities(id)
         ON DELETE CASCADE,
 
-    CONSTRAINT fk_maet_element
+    CONSTRAINT fk_maet_ability_element
         FOREIGN KEY (element_type_id) REFERENCES element_types(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 /* ================================================================
    32. MONSTER_ABILITY_LINKS (N:N)

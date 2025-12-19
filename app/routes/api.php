@@ -5,6 +5,9 @@ use App\Application\Controllers\Users\UserController;
 use App\Application\Controllers\Races\RaceController;
 use App\Application\Controllers\Perks\PerkController;
 use App\Application\Controllers\Orders\OrderController;
+use App\Application\Controllers\Monsters\MonsterAttackController;
+use App\Application\Controllers\Monsters\MonsterController;
+use App\Application\Controllers\Monsters\MonsterAbilityController;
 
 $router = new Router();
 
@@ -28,6 +31,11 @@ $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST'
 $router->middleware('auth')->add('GET', '/races/:id/perks', [PerkController::class, 'byRace']);
 $router->middleware('auth')->add('GET', '/orders/:id/perks', [PerkController::class, 'byOrder']);
 $router->middleware('auth')->add('GET', '/perks/:id', [PerkController::class, 'show']);
+
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/monsters', [MonsterController::class, 'store']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/monsters/attacks', [MonsterAttackController::class, 'store']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/monsters/ability', [MonsterAbilityController::class, 'store']);
+
 
 
 return $router;
