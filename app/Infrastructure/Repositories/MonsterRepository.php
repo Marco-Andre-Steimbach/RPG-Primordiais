@@ -61,4 +61,46 @@ class MonsterRepository extends BaseRepository
             updated_at: $row['updated_at'] ?? null
         );
     }
+
+    public function existsById(int $id): bool
+    {
+        $sql = "SELECT 1 FROM {$this->table} WHERE id = :id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $id]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
+    public function findAllBasic(): array
+    {
+        $sql = "
+        SELECT id, name, description
+        FROM {$this->table}
+        ORDER BY name
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function findAllByElementTypes(array $elementTypes): array
+    {
+        $placeholders = implode(',', array_fill(0, count($elementTypes), '?'));
+
+        $sql = "
+        SELECT DISTINCT m.id, m.name, m.description
+        FROM monsters m
+        INNER JOIN monster_element_types met
+            ON met.monster_id = m.id
+        WHERE met.element_type_id IN ($placeholders)
+        ORDER BY m.name
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($elementTypes);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

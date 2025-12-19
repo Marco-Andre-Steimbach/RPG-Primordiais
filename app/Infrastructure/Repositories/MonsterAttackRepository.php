@@ -49,6 +49,29 @@ class MonsterAttackRepository extends BaseRepository
 
         return (bool) $stmt->fetchColumn();
     }
+    public function existsById(int $id): bool
+    {
+        $sql = "SELECT 1 FROM {$this->table} WHERE id = :id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $id]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+    public function findManyByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $sql = "SELECT * FROM {$this->table} WHERE id IN ($placeholders)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($ids);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
 
     private function mapToModel(array $row): MonsterAttack
     {

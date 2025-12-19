@@ -7,6 +7,8 @@ use App\Core\Http\Response;
 use App\Application\Middlewares\ValidateSchemaMiddleware;
 use App\Application\DTOs\Monsters\CreateMonsterDTO;
 use App\Domain\Services\Monsters\CreateMonsterService;
+use App\Domain\Services\Monsters\GetAllMonstersService;
+use App\Domain\Services\Monsters\GetMonsterByIdService;
 
 class MonsterController
 {
@@ -42,5 +44,28 @@ class MonsterController
             'message' => 'Monstro criado com sucesso.',
             'monster' => $monster,
         ], 201);
+    }
+    public function index(Request $request)
+    {
+        $filters = $request->query();
+
+        $service = new GetAllMonstersService();
+        $monsters = $service->execute($filters);
+
+        return Response::json([
+            'monsters' => $monsters
+        ]);
+    }
+    public function show(Request $request)
+    {
+        $params = $request->params();
+        $monsterId = (int) ($params['id'] ?? 0);
+
+        $service = new GetMonsterByIdService();
+        $monster = $service->execute($monsterId);
+
+        return Response::json([
+            'monster' => $monster
+        ]);
     }
 }

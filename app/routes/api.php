@@ -35,7 +35,10 @@ $router->middleware('auth')->add('GET', '/perks/:id', [PerkController::class, 's
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/monsters', [MonsterController::class, 'store']);
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/monsters/attacks', [MonsterAttackController::class, 'store']);
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/monsters/ability', [MonsterAbilityController::class, 'store']);
-
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/monsters/:id/attacks', [MonsterAttackController::class, 'linkToMonster']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/monsters/:id/ability', [MonsterAbilityController::class, 'linkToMonster']);
+$router->middleware('auth')->add('GET', '/monsters', [MonsterController::class, 'index']);
+$router->middleware('auth')->add('GET', '/monsters/:id', [MonsterController::class, 'show']);
 
 
 return $router;

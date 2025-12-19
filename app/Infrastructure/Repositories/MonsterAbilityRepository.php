@@ -55,6 +55,21 @@ class MonsterAbilityRepository extends BaseRepository
         );
     }
 
+    public function findManyByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $sql = "SELECT * FROM {$this->table} WHERE id IN ($placeholders)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($ids);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function existsByTitle(string $title): bool
     {
         $sql = "SELECT 1 FROM {$this->table} WHERE title = :title LIMIT 1";

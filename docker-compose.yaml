@@ -1,0 +1,31 @@
+services:
+  db-service:
+    container_name: "db_service"
+    image: mysql:8.0
+    ports:
+      - '3306:3306'
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'db_senha'
+      MYSQL_PASSWORD: 'db_senha'
+      MYSQL_DATABASE: 'db_testing'
+      MYSQL_USER: 'eumesmo'
+    volumes:
+      - mysqldb:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+  phpadmin:
+    container_name: "phpmyadmin"
+    image: phpmyadmin
+    ports:
+      - '8080:80'
+    depends_on:
+      - db-service
+    environment:
+      PMA_HOST: db-service
+      PMA_USER: 'eumesmo'
+      PMA_PORT: 3306
+      PMA_PASSWORD: 'db_senha'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+volumes:
+  mysqldb:
