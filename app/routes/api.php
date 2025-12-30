@@ -8,6 +8,21 @@ use App\Application\Controllers\Orders\OrderController;
 use App\Application\Controllers\Monsters\MonsterAttackController;
 use App\Application\Controllers\Monsters\MonsterController;
 use App\Application\Controllers\Monsters\MonsterAbilityController;
+use App\Application\Controllers\Items\ItemController;
+use App\Application\Controllers\Items\ItemAbilityController;
+use App\Application\Controllers\Weapons\WeaponController;
+use App\Application\Controllers\Weapons\WeaponAbilityController;
+use App\Application\Controllers\Armors\ArmorController;
+use App\Application\Controllers\Armors\ArmorAbilityController;
+use App\Application\Controllers\Characters\CharacterController;
+use App\Application\Controllers\Abilities\AbilityController;
+use App\Application\Controllers\Campaigns\CampaignController;
+use App\Application\Controllers\Campaigns\CampaignCharacterController;
+use App\Application\Controllers\Campaigns\CampaignCharacterAbilityController;
+use App\Application\Controllers\Campaigns\CampaignCharacterPerkController;
+use App\Application\Controllers\Campaigns\CampaignCharacterItemController;
+use App\Application\Controllers\Campaigns\CampaignCharacterWeaponController;
+use App\Application\Controllers\Campaigns\CampaignCharacterArmorController;
 
 $router = new Router();
 
@@ -40,5 +55,37 @@ $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST'
 $router->middleware('auth')->add('GET', '/monsters', [MonsterController::class, 'index']);
 $router->middleware('auth')->add('GET', '/monsters/:id', [MonsterController::class, 'show']);
 
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/items', [ItemController::class, 'store']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/items/ability', [ItemAbilityController::class, 'store']);
+$router->middleware('auth')->add('GET', '/items', [ItemController::class, 'index']);
+$router->middleware('auth')->add('GET', '/items/:id', [ItemController::class, 'show']);
+$router->middleware('auth')->add('GET', '/items/:id/abilities', [ItemAbilityController::class, 'abilities']);
+
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/weapons', [WeaponController::class, 'store']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/weapons/:id/ability', [WeaponAbilityController::class, 'store']);
+$router->middleware('auth')->add('GET', '/weapons', [WeaponController::class, 'index']);
+$router->middleware('auth')->add('GET', '/weapons/:id', [WeaponController::class, 'show']);
+
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/armors', [ArmorController::class, 'store']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/armors/ability', [ArmorAbilityController::class, 'store']);
+$router->middleware('auth')->add('GET', '/armors', [ArmorController::class, 'index']);
+$router->middleware('auth')->add('GET', '/armors/:id', [ArmorController::class, 'show']);
+
+$router->middleware('auth')->add('POST', '/character', [CharacterController::class, 'store']);
+$router->middleware('auth')->add('POST', '/character/:id/abilities', [AbilityController::class, 'store']);
+$router->middleware('auth')->add('GET', '/character', [CharacterController::class, 'index']);
+$router->middleware('auth')->add('GET', '/character/me', [CharacterController::class, 'myCharacters']);
+$router->middleware('auth')->add('GET', '/character/:id', [CharacterController::class, 'show']);
+
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/campaign', [CampaignController::class, 'store']);
+$router->middleware('auth')->add('POST', '/campaign/:id/characters', [CampaignCharacterController::class, 'store']);
+$router->middleware('auth')->add('POST', '/campaign/:id/ability', [CampaignCharacterAbilityController::class, 'store']);
+$router->middleware('auth')->add('POST', '/campaign/:id/perk', [CampaignCharacterPerkController::class, 'store']);
+$router->middleware('auth')->add('POST', '/campaign/:id/item', [CampaignCharacterItemController::class, 'store']);
+$router->middleware('auth')->add('POST', '/campaign/:id/weapon', [CampaignCharacterWeaponController::class, 'store']);
+$router->middleware('auth')->add('POST', '/campaign/:id/armor', [CampaignCharacterArmorController::class, 'store']);
+$router->middleware('auth')->add('GET', '/campaign', [CampaignController::class, 'index']);
+$router->middleware('auth')->add('GET', '/campaign/:id', [CampaignController::class, 'show']);
+$router->middleware('auth')->add('GET', '/campaign/:campaign_id/character/:character_id/sheet', [CampaignController::class, 'getCharacterSheet']);
 
 return $router;

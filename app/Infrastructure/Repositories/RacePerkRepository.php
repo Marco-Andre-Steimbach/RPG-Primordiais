@@ -77,5 +77,29 @@ class RacePerkRepository extends BaseRepository
 
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
+    
+     public function isAllowed(
+        int $raceId,
+        int $perkId,
+        int $level
+    ): bool {
+        $sql = "
+            SELECT 1
+            FROM {$this->table}
+            WHERE race_id = :race
+              AND perk_id = :perk
+              AND required_level <= :level
+            LIMIT 1
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'race'  => $raceId,
+            'perk'  => $perkId,
+            'level' => $level,
+        ]);
+
+        return (bool) $stmt->fetchColumn();
+    }
 
 }

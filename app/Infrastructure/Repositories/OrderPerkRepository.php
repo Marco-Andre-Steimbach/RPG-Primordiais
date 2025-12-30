@@ -78,4 +78,27 @@ class OrderPerkRepository extends BaseRepository
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
+      public function isAllowed(
+        int $orderId,
+        int $perkId,
+        int $level
+    ): bool {
+        $sql = "
+            SELECT 1
+            FROM {$this->table}
+            WHERE order_id = :order
+              AND perk_id = :perk
+              AND required_level <= :level
+            LIMIT 1
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'order' => $orderId,
+            'perk'  => $perkId,
+            'level' => $level,
+        ]);
+
+        return (bool) $stmt->fetchColumn();
+    }
 }

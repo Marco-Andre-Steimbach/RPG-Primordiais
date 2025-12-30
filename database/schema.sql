@@ -156,11 +156,19 @@ CREATE TABLE order_attributes (
 ================================================================ */
 CREATE TABLE characters (
     id INT AUTO_INCREMENT PRIMARY KEY,
+
     name VARCHAR(120) NOT NULL,
     description TEXT,
+
     race_id INT,
     order_id INT,
+
+    mana_modifier ENUM('str','dex','con','int','wis','cha') NOT NULL,
+
+    level INT NOT NULL DEFAULT 0,
+
     created_by INT NULL,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
@@ -582,17 +590,15 @@ CREATE TABLE abilities (
     title VARCHAR(150) NOT NULL,
     description TEXT NOT NULL,
 
-    arcane_title VARCHAR(150),
-    arcane_description TEXT,
+    arcane_title VARCHAR(150) NOT NULL,
+    arcane_description TEXT NOT NULL,
 
     mana_cost INT NOT NULL DEFAULT 0,
-    arcane_mana_cost INT DEFAULT NULL,
+    arcane_mana_cost INT NOT NULL,
 
     dice_formula VARCHAR(50) NULL,
     base_damage INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
-
-    element_type_id INT NULL,
 
     required_race_id INT NULL,
     required_order_id INT NULL,
@@ -600,10 +606,6 @@ CREATE TABLE abilities (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_abilities_element
-        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
-        ON DELETE SET NULL,
 
     CONSTRAINT fk_abilities_required_race
         FOREIGN KEY (required_race_id) REFERENCES races(id)
@@ -614,7 +616,24 @@ CREATE TABLE abilities (
         ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+/* ================================================================
+   ABILITY_ELEMENT_TYPES
+================================================================ */
+CREATE TABLE ability_element_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ability_id INT NOT NULL,
+    element_type_id INT NOT NULL,
 
+    UNIQUE (ability_id, element_type_id),
+
+    CONSTRAINT fk_aet_ability
+        FOREIGN KEY (ability_id) REFERENCES abilities(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_aet_element
+        FOREIGN KEY (element_type_id) REFERENCES element_types(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
    15. CHARACTER_ABILITIES
@@ -740,6 +759,19 @@ CREATE TABLE weapon_damage_types (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO weapon_damage_types (id, name, description, primary_attribute, created_at) VALUES
+(1, 'Cortante',
+ 'Dano causado por lâminas e golpes de corte.',
+ 'STR', NOW()),
+
+(2, 'Perfurante',
+ 'Dano causado por estocadas, flechas e projéteis.',
+ 'DEX', NOW()),
+
+(3, 'Concussão',
+ 'Dano causado por impacto bruto e força contundente.',
+ 'STR', NOW());
+
 /* ================================================================
    21. WEAPONS
 ================================================================ */
@@ -797,6 +829,8 @@ CREATE TABLE weapon_element_types (
 CREATE TABLE weapon_abilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
+    weapon_id INT NOT NULL,
+
     title VARCHAR(150) NOT NULL,
     description TEXT NOT NULL,
 
@@ -807,7 +841,11 @@ CREATE TABLE weapon_abilities (
     bonus_accuracy INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_weapon_abilities_weapon
+        FOREIGN KEY (weapon_id) REFERENCES weapons(id)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
@@ -839,6 +877,13 @@ CREATE TABLE armor_slots (
     is_exclusive BOOLEAN NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO armor_slots (id, name, is_exclusive, created_at) VALUES
+(1, 'Capacete', 1, NOW()),
+(2, 'Armadura', 1, NOW()),
+(3, 'Botas', 1, NOW()),
+(4, 'Diversos', 0, NOW());
+
 
 /* ================================================================
    21. ARMORS
@@ -1229,6 +1274,32 @@ CREATE TABLE campaign_character_armors (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE campaign_character_attributes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    campaign_character_id INT NOT NULL,
+
+    str INT NOT NULL DEFAULT 0,
+    dex INT NOT NULL DEFAULT 0,
+    con INT NOT NULL DEFAULT 0,
+    intt INT NOT NULL DEFAULT 0,
+    wis INT NOT NULL DEFAULT 0,
+    cha INT NOT NULL DEFAULT 0,
+
+    sanity INT NOT NULL DEFAULT 15,
+    sanity_max INT NOT NULL DEFAULT 15,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE (campaign_character_id),
+
+    CONSTRAINT fk_cc_attributes_cc
+        FOREIGN KEY (campaign_character_id)
+        REFERENCES campaign_characters(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 /* ================================================================
    39. ENCOUNTERS
 ================================================================ */
@@ -1439,3 +1510,24 @@ CREATE TABLE perk_abilities (
         FOREIGN KEY (perk_id) REFERENCES perks(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE campaign_character_perks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    campaign_character_id INT NOT NULL,
+    perk_id INT NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE (campaign_character_id, perk_id),
+
+    CONSTRAINT fk_cc_perks_cc
+        FOREIGN KEY (campaign_character_id)
+        REFERENCES campaign_characters(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_cc_perks_perk
+        FOREIGN KEY (perk_id)
+        REFERENCES perks(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
