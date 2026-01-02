@@ -23,6 +23,7 @@ use App\Application\Controllers\Campaigns\CampaignCharacterPerkController;
 use App\Application\Controllers\Campaigns\CampaignCharacterItemController;
 use App\Application\Controllers\Campaigns\CampaignCharacterWeaponController;
 use App\Application\Controllers\Campaigns\CampaignCharacterArmorController;
+use App\Application\Controllers\Elements\ElementTypeController;
 
 $router = new Router();
 
@@ -88,4 +89,7 @@ $router->middleware('auth')->add('GET', '/campaign', [CampaignController::class,
 $router->middleware('auth')->add('GET', '/campaign/:id', [CampaignController::class, 'show']);
 $router->middleware('auth')->add('GET', '/campaign/:campaign_id/character/:character_id/sheet', [CampaignController::class, 'getCharacterSheet']);
 
+$router->middleware('auth')->add('GET', '/elements', [ElementTypeController::class, 'index']);
+$router->middleware('auth')->add('GET', '/elements/:id', [ElementTypeController::class, 'show']);
+$router->middleware('auth')->add('POST', '/elements/damage', [ElementTypeController::class, 'calculateDamage']);
 return $router;
