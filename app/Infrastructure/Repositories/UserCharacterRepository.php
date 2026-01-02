@@ -34,7 +34,7 @@ class UserCharacterRepository extends BaseRepository
         $stmt->execute(['user_id' => $userId]);
 
         return array_map(
-            fn ($row) => (int) $row['character_id'],
+            fn($row) => (int) $row['character_id'],
             $stmt->fetchAll(\PDO::FETCH_ASSOC)
         );
     }

@@ -53,7 +53,7 @@ class MonsterController
         $monsters = $service->execute($filters);
 
         return Response::json([
-            'monsters' => $monsters
+            'monsters' => $monsters,
         ]);
     }
     public function show(Request $request)
@@ -65,7 +65,7 @@ class MonsterController
         $monster = $service->execute($monsterId);
 
         return Response::json([
-            'monster' => $monster
+            'monster' => $monster,
         ]);
     }
 }

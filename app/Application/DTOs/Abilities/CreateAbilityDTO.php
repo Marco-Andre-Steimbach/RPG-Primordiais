@@ -82,13 +82,13 @@ class CreateAbilityDTO
 
         if ($this->arcane_mana_cost !== null) {
             if ($this->arcane_mana_cost <= $this->mana_cost) {
-                $errors['arcane_mana_cost'][] =
-                    'arcane_mana_cost deve ser maior que mana_cost.';
+                $errors['arcane_mana_cost'][]
+                    = 'arcane_mana_cost deve ser maior que mana_cost.';
             }
 
             if ($this->arcane_title === '' || $this->arcane_description === '') {
-                $errors['arcane'][] =
-                    'Título e descrição arcana são obrigatórios quando arcane_mana_cost é informado.';
+                $errors['arcane'][]
+                    = 'Título e descrição arcana são obrigatórios quando arcane_mana_cost é informado.';
             }
         }
 
@@ -101,8 +101,8 @@ class CreateAbilityDTO
         }
 
         if (empty($this->element_types)) {
-            $errors['element_types'][] =
-                'A habilidade deve possuir ao menos um tipo elemental.';
+            $errors['element_types'][]
+                = 'A habilidade deve possuir ao menos um tipo elemental.';
         }
 
         if (count($this->element_types) !== count(array_unique($this->element_types))) {

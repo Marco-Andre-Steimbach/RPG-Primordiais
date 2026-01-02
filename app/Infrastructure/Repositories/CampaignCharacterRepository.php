@@ -51,17 +51,17 @@ class CampaignCharacterRepository extends BaseRepository
         return $row ?: null;
     }
     public function countByCampaign(int $campaignId): int
-{
-    $sql = "SELECT COUNT(*) FROM {$this->table} WHERE campaign_id = :id";
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['id' => $campaignId]);
+    {
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE campaign_id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $campaignId]);
 
-    return (int) $stmt->fetchColumn();
-}
+        return (int) $stmt->fetchColumn();
+    }
 
-public function findByCampaignId(int $campaignId): array
-{
-    $sql = "
+    public function findByCampaignId(int $campaignId): array
+    {
+        $sql = "
         SELECT
             id,
             campaign_id,
@@ -72,15 +72,15 @@ public function findByCampaignId(int $campaignId): array
         WHERE campaign_id = :campaign_id
     ";
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['campaign_id' => $campaignId]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['campaign_id' => $campaignId]);
 
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
-public function findByCampaignAndCharacter(int $campaignId, int $characterId): ?array
-{
-    $sql = "
+    public function findByCampaignAndCharacter(int $campaignId, int $characterId): ?array
+    {
+        $sql = "
         SELECT *
         FROM {$this->table}
         WHERE campaign_id = :campaign_id
@@ -88,14 +88,14 @@ public function findByCampaignAndCharacter(int $campaignId, int $characterId): ?
         LIMIT 1
     ";
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute([
-        'campaign_id' => $campaignId,
-        'character_id' => $characterId,
-    ]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'campaign_id' => $campaignId,
+            'character_id' => $characterId,
+        ]);
 
-    return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-}
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+    }
 
 
 }

@@ -6,25 +6,18 @@ class Ability
 {
     public function __construct(
         public int $id,
-
         public string $title,
         public string $description,
-
         public ?string $arcane_title = null,
         public ?string $arcane_description = null,
-
         public int $mana_cost = 0,
         public ?int $arcane_mana_cost = null,
-
         public ?string $dice_formula = null,
         public int $base_damage = 0,
         public int $bonus_speed = 0,
-
         public array $element_types = [],
-
         public ?int $required_race_id = null,
         public ?int $required_order_id = null,
-
         public ?string $created_at = null,
         public ?string $updated_at = null
     ) {}

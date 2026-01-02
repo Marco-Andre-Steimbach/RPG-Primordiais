@@ -8,14 +8,11 @@ class Armor
         public int $id,
         public int $item_id,
         public int $armor_slot_id,
-
         public int $armor_class_bonus,
         public int $min_strength_required,
         public int $speed_penalty,
-
         public array $element_types = [],
         public array $armor_abilities = [],
-
         public ?string $created_at = null
     ) {}
 

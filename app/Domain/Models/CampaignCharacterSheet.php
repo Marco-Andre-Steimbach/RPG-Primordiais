@@ -13,11 +13,9 @@ class CampaignCharacterSheet
         public int $campaign_character_id,
         public int $level,
         public string $mana_modifier,
-
         array $baseAttributes,
         array $raceAttributes = [],
         array $orderAttributes = [],
-
         public int $sanity_max,
         public int $sanity_current
     ) {
@@ -44,10 +42,10 @@ class CampaignCharacterSheet
         $final = [];
 
         foreach ($this->baseAttributes as $key => $value) {
-            $final[$key] =
-                $value +
-                $this->raceAttributes[$key] +
-                $this->orderAttributes[$key];
+            $final[$key]
+                = $value
+                + $this->raceAttributes[$key]
+                + $this->orderAttributes[$key];
         }
 
         return $final;

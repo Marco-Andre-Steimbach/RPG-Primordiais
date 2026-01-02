@@ -36,8 +36,8 @@ class GetCampaignByIdService
 
         $master = $this->users->findById($campaign->created_by);
 
-        $campaignCharacters =
-            $this->campaignCharacters->findByCampaignId($campaignId);
+        $campaignCharacters
+            = $this->campaignCharacters->findByCampaignId($campaignId);
 
         $characters = [];
 

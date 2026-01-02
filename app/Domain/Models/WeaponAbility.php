@@ -7,19 +7,14 @@ class WeaponAbility
     public function __construct(
         public int $id,
         public int $weapon_id,
-
         public string $title,
         public string $description,
-
         public ?string $dice_formula = null,
-
         public int $base_damage = 0,
         public int $bonus_damage = 0,
         public int $bonus_accuracy = 0,
         public int $bonus_speed = 0,
-
         public array $element_types = [],
-
         public ?string $created_at = null
     ) {}
 

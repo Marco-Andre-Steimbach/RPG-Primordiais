@@ -72,29 +72,22 @@ class AbilityRepository extends BaseRepository
             id: (int) $row['id'],
             title: $row['title'],
             description: $row['description'],
-
             arcane_title: $row['arcane_title'] ?? null,
             arcane_description: $row['arcane_description'] ?? null,
-
             mana_cost: (int) $row['mana_cost'],
             arcane_mana_cost: $row['arcane_mana_cost'] !== null
                 ? (int) $row['arcane_mana_cost']
                 : null,
-
             dice_formula: $row['dice_formula'] ?? null,
             base_damage: (int) $row['base_damage'],
             bonus_speed: (int) $row['bonus_speed'],
-
             element_types: [],
-
             required_race_id: $row['required_race_id'] !== null
                 ? (int) $row['required_race_id']
                 : null,
-
             required_order_id: $row['required_order_id'] !== null
                 ? (int) $row['required_order_id']
                 : null,
-
             created_at: $row['created_at'] ?? null,
             updated_at: $row['updated_at'] ?? null
         );

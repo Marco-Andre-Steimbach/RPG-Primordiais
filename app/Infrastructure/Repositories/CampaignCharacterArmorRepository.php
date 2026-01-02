@@ -22,7 +22,7 @@ class CampaignCharacterArmorRepository extends BaseRepository
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             'cid' => $campaignCharacterId,
-            'aid' => $armorId
+            'aid' => $armorId,
         ]);
 
         return (bool) $stmt->fetchColumn();
@@ -41,7 +41,7 @@ class CampaignCharacterArmorRepository extends BaseRepository
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             'cid'  => $campaignCharacterId,
-            'slot' => $slotId
+            'slot' => $slotId,
         ]);
     }
 
@@ -58,7 +58,7 @@ class CampaignCharacterArmorRepository extends BaseRepository
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             'cid'  => $campaignCharacterId,
-            'slot' => $slotId
+            'slot' => $slotId,
         ]);
     }
 
@@ -74,18 +74,18 @@ class CampaignCharacterArmorRepository extends BaseRepository
         return (int) $this->db->lastInsertId();
     }
     public function findActiveByCampaignCharacter(int $campaignCharacterId): array
-{
-    $sql = "
+    {
+        $sql = "
         SELECT *
         FROM {$this->table}
         WHERE campaign_character_id = :id
           AND is_active = 1
     ";
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['id' => $campaignCharacterId]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $campaignCharacterId]);
 
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
 }

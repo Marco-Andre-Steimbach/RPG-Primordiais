@@ -13,30 +13,30 @@ use App\Domain\Services\Characters\GetCharactersByUserService;
 
 class CharacterController
 {
-public function store(Request $request)
-{
-    $authUser = $request->user();
+    public function store(Request $request)
+    {
+        $authUser = $request->user();
 
-    $schema = new ValidateSchemaMiddleware([
-        'name' => 'string|required|min:2',
-        'description' => 'string',
-        'race_id' => 'int',
-        'order_id' => 'int',
-        'mana_modifier' => 'string|required',
-    ]);
+        $schema = new ValidateSchemaMiddleware([
+            'name' => 'string|required|min:2',
+            'description' => 'string',
+            'race_id' => 'int',
+            'order_id' => 'int',
+            'mana_modifier' => 'string|required',
+        ]);
 
-    $schema->handle($request->body());
+        $schema->handle($request->body());
 
-    $dto = new CreateCharacterDTO($request->body());
+        $dto = new CreateCharacterDTO($request->body());
 
-    $service = new CreateCharacterService();
-    $character = $service->execute($dto, $authUser->id);
+        $service = new CreateCharacterService();
+        $character = $service->execute($dto, $authUser->id);
 
-    return Response::json([
-        'message' => 'Personagem criado com sucesso.',
-        'character' => $character,
-    ], 201);
-}
+        return Response::json([
+            'message' => 'Personagem criado com sucesso.',
+            'character' => $character,
+        ], 201);
+    }
 
 
     public function index()
@@ -44,7 +44,7 @@ public function store(Request $request)
         $service = new GetAllCharactersService();
 
         return Response::json([
-            'characters' => $service->execute()
+            'characters' => $service->execute(),
         ]);
     }
 
@@ -56,20 +56,20 @@ public function store(Request $request)
         $character = $service->execute($characterId);
 
         return Response::json([
-            'character' => $character
+            'character' => $character,
         ]);
     }
 
     public function myCharacters(Request $request)
-{
-    $authUser = $request->user();
+    {
+        $authUser = $request->user();
 
-    $service = new GetCharactersByUserService();
-    $characters = $service->execute($authUser->id);
+        $service = new GetCharactersByUserService();
+        $characters = $service->execute($authUser->id);
 
-    return Response::json([
-        'characters' => $characters
-    ]);
-}
+        return Response::json([
+            'characters' => $characters,
+        ]);
+    }
 
 }

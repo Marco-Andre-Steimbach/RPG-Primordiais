@@ -43,16 +43,16 @@ class ItemAbilityController
         ], 201);
     }
     public function abilities(Request $request)
-{
-    $params = $request->params();
-    $itemId = (int) ($params['id'] ?? 0);
+    {
+        $params = $request->params();
+        $itemId = (int) ($params['id'] ?? 0);
 
-    $service = new GetItemAbilitiesByItemIdService();
-    $abilities = $service->execute($itemId);
+        $service = new GetItemAbilitiesByItemIdService();
+        $abilities = $service->execute($itemId);
 
-    return Response::json([
-        'abilities' => $abilities
-    ]);
-}
+        return Response::json([
+            'abilities' => $abilities,
+        ]);
+    }
 
 }

@@ -21,8 +21,8 @@ class GetAllWeaponsService
         $weapons = $this->weapons->findAllWithItemAndDamageType();
 
         foreach ($weapons as &$weapon) {
-            $weapon['element_types'] =
-                $this->elements->getByWeaponId((int) $weapon['id']);
+            $weapon['element_types']
+                = $this->elements->getByWeaponId((int) $weapon['id']);
         }
 
         return $weapons;

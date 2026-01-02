@@ -207,7 +207,7 @@ class GetCampaignCharacterSheetService
                 'slot' => $slot,
                 'elements' => $armorElementRepo->getByArmorId($armor->id),
                 'abilities' => $abilities,
-                'is_equipped' => (bool) $armorRow['is_equipped']
+                'is_equipped' => (bool) $armorRow['is_equipped'],
             ];
         }
 
@@ -222,8 +222,8 @@ class GetCampaignCharacterSheetService
 
             $abilities = $weaponAbilityRepo->findByWeaponId($weaponRow['weapon_id']);
             foreach ($abilities as &$ability) {
-                $ability->element_types =
-                    $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
+                $ability->element_types
+                    = $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
                 $ability = $ability->toArray();
             }
 
@@ -244,7 +244,7 @@ class GetCampaignCharacterSheetService
                 'item' => $item->toArray(),
                 'quantity' => (int) $itemRow['quantity'],
                 'elements' => $itemElementRepo->getByItemId($item->id),
-                'abilities' => $itemAbilityRepo->getByItemId($item->id)
+                'abilities' => $itemAbilityRepo->getByItemId($item->id),
             ];
         }
 
@@ -257,7 +257,7 @@ class GetCampaignCharacterSheetService
 
             $abilities[] = [
                 'ability' => $ability->toArray(),
-                'elements' => $abilityElementRepo->getByAbilityId($ability->id)
+                'elements' => $abilityElementRepo->getByAbilityId($ability->id),
             ];
         }
 
@@ -267,13 +267,13 @@ class GetCampaignCharacterSheetService
             'order' => $order ? $order->toArray() : null,
             'derived' => [
                 'armor_class' => $armorClass,
-                'speed' => max(0, $speed)
+                'speed' => max(0, $speed),
             ],
             'perks' => $perks,
             'weapons' => $weapons,
             'armors' => $armors,
             'items' => $items,
-            'abilities' => $abilities
+            'abilities' => $abilities,
         ];
     }
 }

@@ -59,7 +59,7 @@ class MonsterAbilityController
         $service->execute($dto);
 
         return Response::json([
-            'message' => 'Habilidades vinculadas ao monstro com sucesso.'
+            'message' => 'Habilidades vinculadas ao monstro com sucesso.',
         ]);
     }
 }

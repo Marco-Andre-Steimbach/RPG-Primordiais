@@ -8,13 +8,10 @@ class ArmorAbility
         public int $id,
         public string $title,
         public string $description,
-
         public ?string $dice_formula = null,
-
         public int $base_damage = 0,
         public int $armor_class_bonus = 0,
         public int $bonus_speed = 0,
-
         public ?string $created_at = null,
         public ?string $updated_at = null
     ) {}

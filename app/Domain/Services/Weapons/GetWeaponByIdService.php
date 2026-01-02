@@ -34,14 +34,14 @@ class GetWeaponByIdService
             );
         }
 
-        $weapon['element_types'] =
-            $this->weaponElements->getByWeaponId($weaponId);
+        $weapon['element_types']
+            = $this->weaponElements->getByWeaponId($weaponId);
 
         $abilities = $this->abilities->findByWeaponId($weaponId);
 
         foreach ($abilities as &$ability) {
-            $ability->element_types =
-                $this->abilityElements->getByWeaponAbilityId($ability->id);
+            $ability->element_types
+                = $this->abilityElements->getByWeaponAbilityId($ability->id);
 
             $ability = $ability->toArray();
         }

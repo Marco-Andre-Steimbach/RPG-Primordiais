@@ -43,19 +43,19 @@ class ArmorAbilityRepository extends BaseRepository
     }
 
     public function getByArmorId(int $armorId): array
-{
-    $sql = "
+    {
+        $sql = "
         SELECT a.*
         FROM {$this->table} aa
         INNER JOIN abilities a ON a.id = aa.ability_id
         WHERE aa.armor_id = :id
     ";
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['id' => $armorId]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $armorId]);
 
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
 
     private function mapToModel(array $row): ArmorAbility

@@ -20,7 +20,7 @@ class CampaignCharacterAbilityController
         $service->execute($campaignCharacterId, $dto);
 
         return Response::json([
-            'message' => 'Habilidade adicionada à campanha com sucesso.'
+            'message' => 'Habilidade adicionada à campanha com sucesso.',
         ], 201);
     }
 }

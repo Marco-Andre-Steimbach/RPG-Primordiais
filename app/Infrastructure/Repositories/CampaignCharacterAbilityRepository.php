@@ -54,17 +54,17 @@ class CampaignCharacterAbilityRepository extends BaseRepository
         return (int) $stmt->fetchColumn();
     }
     public function findByCampaignCharacter(int $campaignCharacterId): array
-{
-    $sql = "
+    {
+        $sql = "
         SELECT *
         FROM {$this->table}
         WHERE campaign_character_id = :id
     ";
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['id' => $campaignCharacterId]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $campaignCharacterId]);
 
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
 }

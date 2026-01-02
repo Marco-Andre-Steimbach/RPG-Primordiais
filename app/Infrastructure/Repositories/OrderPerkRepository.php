@@ -78,7 +78,7 @@ class OrderPerkRepository extends BaseRepository
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-      public function isAllowed(
+    public function isAllowed(
         int $orderId,
         int $perkId,
         int $level

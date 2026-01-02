@@ -42,13 +42,13 @@ class WeaponController
             'weapon' => $weapon,
         ], 201);
     }
-     public function index(Request $request)
+    public function index(Request $request)
     {
         $service = new GetAllWeaponsService();
         $weapons = $service->execute();
 
         return Response::json([
-            'weapons' => $weapons
+            'weapons' => $weapons,
         ]);
     }
     public function show(Request $request)
@@ -60,7 +60,7 @@ class WeaponController
         $weapon = $service->execute($weaponId);
 
         return Response::json([
-            'weapon' => $weapon
+            'weapon' => $weapon,
         ]);
     }
 }

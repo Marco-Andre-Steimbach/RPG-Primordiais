@@ -18,4 +18,3 @@ class GetAllArmorsService
         return $this->armors->findAllWithItemAndSlot();
     }
 }
-

@@ -38,31 +38,31 @@ class CampaignCharacterPerkRepository extends BaseRepository
     }
 
     public function countByCampaignCharacter(int $campaignCharacterId): int
-{
-    $sql = "
+    {
+        $sql = "
         SELECT COUNT(*)
         FROM campaign_character_perks
         WHERE campaign_character_id = :id
     ";
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['id' => $campaignCharacterId]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $campaignCharacterId]);
 
-    return (int) $stmt->fetchColumn();
-}
-public function findByCampaignCharacter(int $campaignCharacterId): array
-{
-    $sql = "
+        return (int) $stmt->fetchColumn();
+    }
+    public function findByCampaignCharacter(int $campaignCharacterId): array
+    {
+        $sql = "
         SELECT *
         FROM {$this->table}
         WHERE campaign_character_id = :id
     ";
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['id' => $campaignCharacterId]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $campaignCharacterId]);
 
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
 
 }

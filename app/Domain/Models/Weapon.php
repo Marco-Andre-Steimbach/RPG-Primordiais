@@ -8,17 +8,13 @@ class Weapon
         public int $id,
         public int $item_id,
         public int $weapon_damage_type_id,
-
         public string $dice_formula,
         public int $base_damage = 0,
         public int $bonus_accuracy = 0,
         public int $bonus_speed = 0,
-
         public ?int $ammo_item_id = null,
         public int $ammo_per_use = 1,
-
         public array $element_types = [],
-
         public ?string $created_at = null
     ) {}
 

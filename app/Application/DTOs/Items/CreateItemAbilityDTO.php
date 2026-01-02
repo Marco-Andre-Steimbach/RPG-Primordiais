@@ -45,33 +45,33 @@ class CreateItemAbilityDTO
         $this->validate();
     }
 
-private function validate(): void
-{
-    $errors = [];
+    private function validate(): void
+    {
+        $errors = [];
 
-    if ($this->title === '') {
-        $errors['title'][] = 'Título da habilidade é obrigatório.';
-    }
+        if ($this->title === '') {
+            $errors['title'][] = 'Título da habilidade é obrigatório.';
+        }
 
-    if ($this->description === '') {
-        $errors['description'][] = 'Descrição da habilidade é obrigatória.';
-    }
+        if ($this->description === '') {
+            $errors['description'][] = 'Descrição da habilidade é obrigatória.';
+        }
 
-    if ($this->base_damage < 0) {
-        $errors['base_damage'][] = 'base_damage não pode ser negativo.';
-    }
+        if ($this->base_damage < 0) {
+            $errors['base_damage'][] = 'base_damage não pode ser negativo.';
+        }
 
-    if ($this->is_consumable && ($this->max_uses === null || $this->max_uses <= 0)) {
-        $errors['max_uses'][] = 'max_uses é obrigatório para habilidades consumíveis.';
-    }
+        if ($this->is_consumable && ($this->max_uses === null || $this->max_uses <= 0)) {
+            $errors['max_uses'][] = 'max_uses é obrigatório para habilidades consumíveis.';
+        }
 
-    if (!$this->is_consumable && $this->max_uses !== null) {
-        $errors['max_uses'][] = 'max_uses só pode ser usado se is_consumable for true.';
-    }
+        if (!$this->is_consumable && $this->max_uses !== null) {
+            $errors['max_uses'][] = 'max_uses só pode ser usado se is_consumable for true.';
+        }
 
-    if ($errors) {
-        throw new ValidationException('Dados inválidos.', $errors);
+        if ($errors) {
+            throw new ValidationException('Dados inválidos.', $errors);
+        }
     }
-}
 
 }

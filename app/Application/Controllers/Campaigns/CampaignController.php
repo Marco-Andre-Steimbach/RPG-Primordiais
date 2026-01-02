@@ -41,7 +41,7 @@ class CampaignController
         $service = new GetAllCampaignsService();
 
         return Response::json([
-            'campaigns' => $service->execute()
+            'campaigns' => $service->execute(),
         ]);
     }
 
@@ -53,33 +53,33 @@ class CampaignController
         $campaign = $service->execute($campaignId);
 
         return Response::json([
-            'campaign' => $campaign
+            'campaign' => $campaign,
         ]);
     }
 
     public function getCharacterSheet(Request $request)
-{
-    $params = $request->params();
+    {
+        $params = $request->params();
 
-    $campaignId = (int) ($params['campaign_id'] ?? 0);
-    $campaignCharacterId = (int) ($params['character_id'] ?? 0);
+        $campaignId = (int) ($params['campaign_id'] ?? 0);
+        $campaignCharacterId = (int) ($params['character_id'] ?? 0);
 
-    if ($campaignId <= 0 || $campaignCharacterId <= 0) {
-        throw new ValidationException(
-            'Dados inválidos.',
-            [
-                'campaign_id' => ['ID da campanha inválido.'],
-                'character_id' => ['ID do personagem inválido.'],
-            ]
-        );
+        if ($campaignId <= 0 || $campaignCharacterId <= 0) {
+            throw new ValidationException(
+                'Dados inválidos.',
+                [
+                    'campaign_id' => ['ID da campanha inválido.'],
+                    'character_id' => ['ID do personagem inválido.'],
+                ]
+            );
+        }
+
+        $service = new GetCampaignCharacterSheetService();
+        $sheet = $service->execute($campaignId, $campaignCharacterId);
+
+        return Response::json([
+            'sheet' => $sheet,
+        ]);
     }
-
-    $service = new GetCampaignCharacterSheetService();
-    $sheet = $service->execute($campaignId, $campaignCharacterId);
-
-    return Response::json([
-        'sheet' => $sheet
-    ]);
-}
 
 }

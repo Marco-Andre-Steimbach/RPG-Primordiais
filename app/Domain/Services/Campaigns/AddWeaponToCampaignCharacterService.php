@@ -72,9 +72,9 @@ class AddWeaponToCampaignCharacterService
                 ->findById($dto->deactivate_weapon_id);
 
             if (
-                !$weaponToDeactivate ||
-                (int) $weaponToDeactivate['campaign_character_id'] !== $campaignCharacterId ||
-                !$weaponToDeactivate['is_active']
+                !$weaponToDeactivate
+                || (int) $weaponToDeactivate['campaign_character_id'] !== $campaignCharacterId
+                || !$weaponToDeactivate['is_active']
             ) {
                 throw new ValidationException(
                     'Arma inválida.',

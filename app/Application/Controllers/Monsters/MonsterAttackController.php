@@ -43,7 +43,7 @@ class MonsterAttackController
         $schema = new ValidateSchemaMiddleware([
             'attack_ids' => 'array|required',
         ]);
-        
+
         $schema->handle($request->body());
 
         $params = $request->params();
@@ -58,7 +58,7 @@ class MonsterAttackController
         $service->execute($dto);
 
         return Response::json([
-            'message' => 'Ataques vinculados ao monstro com sucesso.'
+            'message' => 'Ataques vinculados ao monstro com sucesso.',
         ]);
     }
 }

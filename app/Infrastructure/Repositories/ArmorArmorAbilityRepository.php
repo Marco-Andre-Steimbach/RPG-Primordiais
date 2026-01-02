@@ -35,7 +35,7 @@ class ArmorArmorAbilityRepository extends BaseRepository
         $stmt->execute(['armor_id' => $armorId]);
 
         return array_map(
-            fn ($row) => (int) $row['armor_ability_id'],
+            fn($row) => (int) $row['armor_ability_id'],
             $stmt->fetchAll(PDO::FETCH_ASSOC)
         );
     }

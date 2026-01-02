@@ -31,15 +31,15 @@ class ArmorRepository extends BaseRepository
         return (bool) $stmt->fetchColumn();
     }
     public function findByItemId(int $itemId): ?Armor
-{
-    $sql = "SELECT * FROM {$this->table} WHERE item_id = :item_id LIMIT 1";
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['item_id' => $itemId]);
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE item_id = :item_id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['item_id' => $itemId]);
 
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    return $row ? $this->mapToModel($row) : null;
-}
+        return $row ? $this->mapToModel($row) : null;
+    }
 
 
     public function findById(int $id): ?Armor
@@ -68,8 +68,8 @@ class ArmorRepository extends BaseRepository
         );
     }
     public function findAllWithItemAndSlot(): array
-{
-    $sql = "
+    {
+        $sql = "
         SELECT
             a.id AS armor_id,
             a.item_id,
@@ -86,10 +86,10 @@ class ArmorRepository extends BaseRepository
         ORDER BY i.name
     ";
 
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute();
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
 
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
 }

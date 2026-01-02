@@ -51,16 +51,16 @@ class WeaponRepository extends BaseRepository
         return $row ? $this->mapToModel($row) : null;
     }
 
-public function findByItemId(int $itemId): ?Weapon
-{
-    $sql = "SELECT * FROM {$this->table} WHERE item_id = :item_id LIMIT 1";
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(['item_id' => $itemId]);
+    public function findByItemId(int $itemId): ?Weapon
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE item_id = :item_id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['item_id' => $itemId]);
 
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    return $row ? $this->mapToModel($row) : null;
-}
+        return $row ? $this->mapToModel($row) : null;
+    }
 
 
     public function findByIdWithItemAndDamageType(int $weaponId): ?array

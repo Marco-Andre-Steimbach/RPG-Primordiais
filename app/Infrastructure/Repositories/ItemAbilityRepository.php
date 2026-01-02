@@ -80,7 +80,7 @@ class ItemAbilityRepository extends BaseRepository
         $stmt->execute(['item_id' => $itemId]);
 
         return array_map(
-            fn ($row) => (int) $row['item_ability_id'],
+            fn($row) => (int) $row['item_ability_id'],
             $stmt->fetchAll(PDO::FETCH_ASSOC)
         );
     }

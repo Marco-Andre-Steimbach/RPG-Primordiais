@@ -8,14 +8,10 @@ class Character
         public int $id,
         public string $name,
         public ?string $description = null,
-
         public ?int $race_id = null,
         public ?int $order_id = null,
-
         public string $mana_modifier,
-
         public ?int $created_by = null,
-
         public ?string $created_at = null,
         public ?string $updated_at = null
     ) {}

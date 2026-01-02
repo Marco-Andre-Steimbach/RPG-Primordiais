@@ -30,7 +30,7 @@ class GetCharacterByIdService
 
         return [
             'character' => $character->toArray(),
-            'abilities' => $abilities
+            'abilities' => $abilities,
         ];
     }
 }

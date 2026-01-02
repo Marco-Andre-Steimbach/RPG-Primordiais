@@ -89,7 +89,6 @@ class AddCharacterToCampaignService
             campaign_character_id: $campaignCharacterId,
             level: 1,
             mana_modifier: $character->mana_modifier,
-
             str: (int) $dto->attributes['str'],
             dex: (int) $dto->attributes['dex'],
             con: (int) $dto->attributes['con'],

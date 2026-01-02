@@ -52,7 +52,7 @@ class WeaponAbilityRepository extends BaseRepository
         $stmt->execute(['weapon_id' => $weaponId]);
 
         return array_map(
-            fn ($row) => $this->mapToModel($row),
+            fn($row) => $this->mapToModel($row),
             $stmt->fetchAll(PDO::FETCH_ASSOC)
         );
     }

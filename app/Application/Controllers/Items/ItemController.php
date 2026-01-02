@@ -44,7 +44,7 @@ class ItemController
         $items = $service->execute($filters);
 
         return Response::json([
-            'items' => $items
+            'items' => $items,
         ]);
     }
 
@@ -57,7 +57,7 @@ class ItemController
         $item = $service->execute($itemId);
 
         return Response::json([
-            'item' => $item
+            'item' => $item,
         ]);
     }
 }

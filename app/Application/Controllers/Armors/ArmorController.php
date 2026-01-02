@@ -43,7 +43,7 @@ class ArmorController
         $service = new GetAllArmorsService();
 
         return Response::json([
-            'armors' => $service->execute()
+            'armors' => $service->execute(),
         ]);
     }
 
@@ -55,7 +55,7 @@ class ArmorController
         $armor = $service->execute($id);
 
         return Response::json([
-            'armor' => $armor
+            'armor' => $armor,
         ]);
     }
 }

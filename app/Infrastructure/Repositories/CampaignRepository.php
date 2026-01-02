@@ -62,7 +62,7 @@ class CampaignRepository extends BaseRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-     public function findAllWithBasicInfo(): array
+    public function findAllWithBasicInfo(): array
     {
         $sql = "
             SELECT
