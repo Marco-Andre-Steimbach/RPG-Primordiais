@@ -70,7 +70,7 @@ class ItemRepository extends BaseRepository
         $sql = "
             SELECT id, name, description, value
             FROM {$this->table}
-            ORDER BY name
+            ORDER BY id
         ";
 
         $stmt = $this->db->prepare($sql);
