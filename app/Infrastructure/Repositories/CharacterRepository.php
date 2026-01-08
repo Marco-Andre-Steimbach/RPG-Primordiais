@@ -33,18 +33,25 @@ class CharacterRepository extends BaseRepository
         return $row ? $this->mapToModel($row) : null;
     }
 
-    public function findAllBasic(): array
-    {
-        $sql = "
-            SELECT id, name, race_id, order_id
-            FROM {$this->table}
-            ORDER BY name
-        ";
+public function findAllBasic(): array
+{
+    $sql = "
+        SELECT
+            c.id,
+            c.name,
+            c.race_id,
+            c.order_id,
+            u.nickname AS created_by
+        FROM {$this->table} c
+        INNER JOIN users u ON u.id = c.created_by
+        ORDER BY c.name
+    ";
 
-        return $this->db
-            ->query($sql)
-            ->fetchAll(PDO::FETCH_ASSOC);
-    }
+    return $this->db
+        ->query($sql)
+        ->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
     public function findByUser(int $userId): array
     {

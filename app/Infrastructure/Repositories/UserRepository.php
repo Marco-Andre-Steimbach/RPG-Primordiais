@@ -83,6 +83,25 @@ class UserRepository extends BaseRepository
         return $this->findByNickname($login);
     }
 
+    public function findNicknameById(int $id): ?string
+{
+    $sql = '
+        SELECT nickname
+        FROM users
+        WHERE id = :id
+        LIMIT 1
+    ';
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+
+    $nickname = $stmt->fetchColumn();
+
+    return $nickname !== false ? $nickname : null;
+}
+
+
     public function updateUser(int $id, array $data): bool
     {
         return $this->update($id, $data);
