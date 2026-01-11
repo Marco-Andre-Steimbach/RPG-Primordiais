@@ -17,7 +17,10 @@ use App\Core\Http\Request;
 
 set_exception_handler([ExceptionHandler::class, 'handle']);
 
-Env::load(__DIR__ . '/../.env');
+$envPath = __DIR__ . '/../.env';
+if (file_exists($envPath)) {
+    Env::load($envPath);
+}
 
 $router = require __DIR__ . '/../app/routes/api.php';
 
