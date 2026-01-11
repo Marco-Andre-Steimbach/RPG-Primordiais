@@ -40,7 +40,7 @@ $router->middleware('auth')->add('GET', '/races', [RaceController::class, 'index
 $router->middleware('auth')->add('GET', '/races/:id', [RaceController::class, 'show']);
 
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/orders', [OrderController::class, 'store']);
-$router->add('GET', '/orders', [OrderController::class, 'index']);
+$router->middleware('auth')->add('GET', '/orders', [OrderController::class, 'index']);
 $router->middleware('auth')->add('GET', '/orders/:id', [OrderController::class, 'show']);
 
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/perks', [PerkController::class, 'store']);
