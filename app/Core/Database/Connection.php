@@ -22,7 +22,11 @@ class Connection
         }
 
         $rootPath = dirname(__DIR__, 3);
-        Env::load($rootPath . '/.env');
+        $envPath = $rootPath . '/.env';
+
+        if (file_exists($envPath)) {
+            Env::load($envPath);
+        }
 
         $config = require $rootPath . '/config/database.php';
 
