@@ -1,12 +1,12 @@
 /* ================================================================
    CRIAÇÃO DO BANCO DE DADOS
 ================================================================ */
-CREATE DATABASE IF NOT EXISTS rpg_system
-    DEFAULT CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
-
-USE rpg_system;
-
+--CREATE DATABASE IF NOT EXISTS rpg_system
+--    DEFAULT CHARACTER SET utf8mb4
+--    COLLATE utf8mb4_unicode_ci;
+--
+--USE rpg_system;
+--
 /* ================================================================
    1. USERS
 ================================================================ */
