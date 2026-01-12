@@ -16,8 +16,17 @@ class Connection
             return self::$pdo;
         }
 
+        if (getenv('DATABASE_URL')) {
+            self::$pdo = self::connectFromDatabaseUrl();
+            return self::$pdo;
+        }
+
         $rootPath = dirname(__DIR__, 3);
-        Env::load($rootPath . '/.env');
+        $envPath = $rootPath . '/.env';
+
+        if (file_exists($envPath)) {
+            Env::load($envPath);
+        }
 
         $config = require $rootPath . '/config/database.php';
 
@@ -52,5 +61,43 @@ class Connection
         }
 
         return self::$pdo;
+    }
+
+    private static function connectFromDatabaseUrl(): PDO
+    {
+        $url = parse_url(getenv('DATABASE_URL'));
+
+        $driver = $url['scheme'];
+        $host   = $url['host'];
+        $port   = $url['port'] ?? 3306;
+        $db     = ltrim($url['path'], '/');
+        $user   = $url['user'];
+        $pass   = $url['pass'];
+
+        $dsn = sprintf(
+            "%s:host=%s;port=%s;dbname=%s;charset=utf8mb4",
+            $driver,
+            $host,
+            $port,
+            $db
+        );
+
+        try {
+            return new PDO(
+                $dsn,
+                $user,
+                $pass,
+                [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                ]
+            );
+        } catch (PDOException $e) {
+            throw new \RuntimeException(
+                'Erro ao conectar ao banco (DATABASE_URL): ' . $e->getMessage(),
+                500
+            );
+        }
     }
 }

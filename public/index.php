@@ -1,11 +1,21 @@
 <?php
 
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+$allowedOrigins = [
+    'http://localhost:5173',
+    'https://rpg-primordiais-front-end.vercel.app'
+];
 
-header("Access-Control-Allow-Origin: $origin");
-header("Access-Control-Allow-Credentials: true");
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowedOrigins, true)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Credentials: true");
+    header("Vary: Origin");
+}
+
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Expose-Headers: X-Refresh-Token");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -20,7 +30,10 @@ use App\Core\Http\Request;
 
 set_exception_handler([ExceptionHandler::class, 'handle']);
 
-Env::load(__DIR__ . '/../.env');
+$envPath = __DIR__ . '/../.env';
+if (file_exists($envPath)) {
+    Env::load($envPath);
+}
 
 $router = require __DIR__ . '/../app/routes/api.php';
 

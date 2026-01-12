@@ -11,10 +11,12 @@ class AuthMiddleware
 {
     public function handle(Request $request)
     {
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? ($headers['authorization'] ?? '');
+        $authHeader =
+            $_SERVER['HTTP_AUTHORIZATION']
+            ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+            ?? '';
 
-        if (!str_starts_with($authHeader, 'Bearer ')) {
+        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
             Response::json(['error' => 'Token não fornecido'], 401);
             exit;
         }
