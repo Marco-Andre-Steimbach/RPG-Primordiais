@@ -991,11 +991,18 @@ CREATE TABLE monsters (
     base_wis INT NOT NULL DEFAULT 1,
     base_int INT NOT NULL DEFAULT 1,
 
+    weakness_damage_type_id INT NULL,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ON UPDATE CURRENT_TIMESTAMP,
 
+    CONSTRAINT fk_monsters_weakness_damage_type
+        FOREIGN KEY (weakness_damage_type_id)
+        REFERENCES weapon_damage_types(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
    26. MONSTER_ELEMENT_TYPES (N:N)

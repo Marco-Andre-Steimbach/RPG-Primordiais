@@ -157,7 +157,7 @@ class GetCampaignCharacterSheetService
         $sheet = new CampaignCharacterSheet(
             campaign_character_id: $campaignCharacterId,
             level: (int) $campaignCharacter['level'],
-            mana_modifier: 'int',
+            mana_modifier: $character->mana_modifier,
             baseAttributes: $baseAttributes,
             raceAttributes: $raceAttributes,
             orderAttributes: $orderAttributes,

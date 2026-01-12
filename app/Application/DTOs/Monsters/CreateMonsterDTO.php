@@ -23,6 +23,8 @@ class CreateMonsterDTO
 
     public array $element_types;
 
+    public ?int $weakness_damage_type_id;
+
     public function __construct(array $data)
     {
         $this->name = trim($data['name'] ?? '');
@@ -50,5 +52,9 @@ class CreateMonsterDTO
         if (!is_array($this->element_types)) {
             throw new ValidationException('Tipos elementais devem ser um array.');
         }
+
+        $this->weakness_damage_type_id = isset($data['weakness_damage_type_id'])
+            ? (int) $data['weakness_damage_type_id']
+            : null;
     }
 }

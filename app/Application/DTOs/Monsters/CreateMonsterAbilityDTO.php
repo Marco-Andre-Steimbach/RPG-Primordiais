@@ -21,9 +21,8 @@ class CreateMonsterAbilityDTO
         $this->title = trim((string) ($data['title'] ?? ''));
         $this->description = trim((string) ($data['description'] ?? ''));
 
-        $this->dice_formula = isset($data['dice_formula'])
-            ? trim((string) $data['dice_formula'])
-            : null;
+$this->dice_formula = trim((string) ($data['dice_formula'] ?? ''));
+
 
         $this->base_damage = (int) ($data['base_damage'] ?? 0);
         $this->bonus_damage = (int) ($data['bonus_damage'] ?? 0);
@@ -44,10 +43,6 @@ class CreateMonsterAbilityDTO
 
         if ($this->description === '') {
             $errors['description'][] = 'Descrição da habilidade é obrigatória.';
-        }
-
-        if ($this->dice_formula !== null && $this->dice_formula === '') {
-            $errors['dice_formula'][] = 'dice_formula inválida.';
         }
 
         foreach ([

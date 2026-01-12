@@ -8,16 +8,23 @@ class Monster
         public int $id,
         public string $name,
         public ?string $description = null,
+
         public int $base_hp = 1,
         public int $base_ac = 10,
         public int $base_speed = 6,
+
         public int $actions_per_turn = 3,
+
         public int $base_str = 1,
         public int $base_dex = 1,
         public int $base_con = 1,
         public int $base_wis = 1,
         public int $base_int = 1,
+
+        public ?int $weakness_damage_type_id = null,
+
         public array $element_types = [],
+
         public ?string $created_at = null,
         public ?string $updated_at = null
     ) {}
@@ -40,6 +47,8 @@ class Monster
             'base_con' => $this->base_con,
             'base_wis' => $this->base_wis,
             'base_int' => $this->base_int,
+
+            'weakness_damage_type_id' => $this->weakness_damage_type_id,
 
             'element_types' => $this->element_types,
 

@@ -43,24 +43,35 @@ class MonsterRepository extends BaseRepository
     }
 
     private function mapToModel(array $row): Monster
-    {
-        return new Monster(
-            id: (int) $row['id'],
-            name: $row['name'],
-            description: $row['description'] ?? null,
-            base_hp: (int) $row['base_hp'],
-            base_ac: (int) $row['base_ac'],
-            base_speed: (int) $row['base_speed'],
-            actions_per_turn: (int) $row['actions_per_turn'],
-            base_str: (int) $row['base_str'],
-            base_dex: (int) $row['base_dex'],
-            base_con: (int) $row['base_con'],
-            base_wis: (int) $row['base_wis'],
-            base_int: (int) $row['base_int'],
-            created_at: $row['created_at'] ?? null,
-            updated_at: $row['updated_at'] ?? null
-        );
-    }
+{
+    return new Monster(
+        id: (int) $row['id'],
+        name: $row['name'],
+        description: $row['description'] ?? null,
+
+        base_hp: (int) $row['base_hp'],
+        base_ac: (int) $row['base_ac'],
+        base_speed: (int) $row['base_speed'],
+
+        actions_per_turn: (int) $row['actions_per_turn'],
+
+        base_str: (int) $row['base_str'],
+        base_dex: (int) $row['base_dex'],
+        base_con: (int) $row['base_con'],
+        base_wis: (int) $row['base_wis'],
+        base_int: (int) $row['base_int'],
+
+        weakness_damage_type_id: isset($row['weakness_damage_type_id'])
+            ? (int) $row['weakness_damage_type_id']
+            : null,
+
+        element_types: [],
+
+        created_at: $row['created_at'] ?? null,
+        updated_at: $row['updated_at'] ?? null
+    );
+}
+
 
     public function existsById(int $id): bool
     {
