@@ -11,6 +11,7 @@ use App\Domain\Services\Campaigns\CreateCampaignService;
 use App\Domain\Services\Campaigns\GetAllCampaignsService;
 use App\Domain\Services\Campaigns\GetCampaignByIdService;
 use App\Domain\Services\Campaigns\GetCampaignCharacterSheetService;
+use App\Domain\Services\Campaigns\GetCampaignCharacterInfosService;
 
 class CampaignController
 {
@@ -82,4 +83,28 @@ class CampaignController
         ]);
     }
 
+    public function getCharacterInfos(Request $request)
+    {
+        $params = $request->params();
+
+        $campaignId = (int) ($params['campaign_id'] ?? 0);
+        $campaignCharacterId = (int) ($params['character_id'] ?? 0);
+
+        if ($campaignId <= 0 || $campaignCharacterId <= 0) {
+            throw new ValidationException(
+                'Dados inválidos.',
+                [
+                    'campaign_id' => ['ID da campanha inválido.'],
+                    'character_id' => ['ID do personagem inválido.'],
+                ]
+            );
+        }
+
+        $service = new GetCampaignCharacterInfosService();
+        $infos = $service->execute($campaignId, $campaignCharacterId);
+
+        return Response::json([
+            'infos' => $infos,
+        ]);
+    }
 }

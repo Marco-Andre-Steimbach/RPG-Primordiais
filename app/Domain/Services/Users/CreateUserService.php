@@ -32,8 +32,6 @@ class CreateUserService
             throw new ConflictException("Nick já está em uso.");
         }
 
-
-
         $hashedPassword = password_hash($dto->password, PASSWORD_BCRYPT);
 
         $userId = $this->users->create([

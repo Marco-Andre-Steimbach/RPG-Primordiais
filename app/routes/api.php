@@ -88,6 +88,7 @@ $router->middleware('auth')->add('POST', '/campaign/:id/armor', [CampaignCharact
 $router->middleware('auth')->add('GET', '/campaign', [CampaignController::class, 'index']);
 $router->middleware('auth')->add('GET', '/campaign/:id', [CampaignController::class, 'show']);
 $router->middleware('auth')->add('GET', '/campaign/:campaign_id/character/:character_id/sheet', [CampaignController::class, 'getCharacterSheet']);
+$router->middleware('auth')->add('GET', '/campaign/:campaign_id/character/:character_id/info', [CampaignController::class, 'getCharacterInfos']);
 
 $router->middleware('auth')->add('GET', '/elements', [ElementTypeController::class, 'index']);
 $router->middleware('auth')->add('GET', '/elements/:id', [ElementTypeController::class, 'show']);
