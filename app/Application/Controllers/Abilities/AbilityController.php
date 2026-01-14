@@ -7,6 +7,8 @@ use App\Core\Http\Response;
 use App\Application\Middlewares\ValidateSchemaMiddleware;
 use App\Application\DTOs\Abilities\CreateAbilityDTO;
 use App\Domain\Services\Abilities\CreateAbilityService;
+use App\Domain\Services\Abilities\GetAllAbilitiesByCharacterService;
+use App\Domain\Services\Abilities\GetAbilityByCharacterService;
 use App\Core\Exceptions\ValidationException;
 
 class AbilityController
@@ -70,24 +72,47 @@ class AbilityController
             ], 400);
         }
     }
-    public function index()
+
+    public function index(Request $request)
     {
-        $service = new GetAllAbilitiesService();
+        $characterId = (int) ($request->params()['id'] ?? 0);
+
+        if ($characterId <= 0) {
+            throw new ValidationException(
+                'Dados inválidos.',
+                ['character_id' => ['character_id inválido ou ausente na rota.']]
+            );
+        }
+
+        $service = new GetAllAbilitiesByCharacterService();
 
         return Response::json([
-            'abilities' => $service->execute(),
+            'abilities' => $service->execute($characterId),
         ]);
     }
 
     public function show(Request $request)
     {
-        $characterId = (int) ($request->params()['id'] ?? 0);
+        $params = $request->params();
 
-        $service = new GetAbilitiesByIdService();
-        $character = $service->execute($characterId);
+        $characterId = (int) ($params['character_id'] ?? 0);
+        $abilityId   = (int) ($params['ability_id'] ?? 0);
+
+        if ($characterId <= 0 || $abilityId <= 0) {
+            throw new ValidationException(
+                'Dados inválidos.',
+                [
+                    'character_id' => ['character_id inválido.'],
+                    'ability_id' => ['ability_id inválido.'],
+                ]
+            );
+        }
+
+        $service = new GetAbilityByCharacterService();
+        $ability = $service->execute($characterId, $abilityId);
 
         return Response::json([
-            'abilitie' => $character,
+            'ability' => $ability,
         ]);
     }
 }

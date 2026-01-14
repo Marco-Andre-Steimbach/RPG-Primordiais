@@ -74,6 +74,8 @@ $router->middleware('auth')->add('GET', '/armors/:id', [ArmorController::class, 
 
 $router->middleware('auth')->add('POST', '/character', [CharacterController::class, 'store']);
 $router->middleware('auth')->add('POST', '/character/:id/abilities', [AbilityController::class, 'store']);
+$router->middleware('auth')->add('GET', '/character/:id/abilities', [AbilityController::class, 'index']);
+$router->middleware('auth')->add('GET', '/character/:character_id/abilities/:ability_id', [AbilityController::class, 'show']);
 $router->middleware('auth')->add('GET', '/character', [CharacterController::class, 'index']);
 $router->middleware('auth')->add('GET', '/character/me', [CharacterController::class, 'myCharacters']);
 $router->middleware('auth')->add('GET', '/character/:id', [CharacterController::class, 'show']);

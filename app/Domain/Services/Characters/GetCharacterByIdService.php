@@ -23,11 +23,11 @@ class GetCharacterByIdService
             throw new NotFoundException('Personagem não encontrado.');
         }
 
-$ownerNickname = null;
+        $ownerNickname = null;
 
-if ($character->created_by) {
-    $ownerNickname = $userRepo->findNicknameById($character->created_by);
-}
+        if ($character->created_by) {
+            $ownerNickname = $userRepo->findNicknameById($character->created_by);
+        }
 
 
         $abilityIds = $charAbilityRepo->getAbilitiesByCharacter($characterId);
