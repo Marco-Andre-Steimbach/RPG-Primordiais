@@ -70,4 +70,24 @@ class AbilityController
             ], 400);
         }
     }
+    public function index()
+    {
+        $service = new GetAllAbilitiesService();
+
+        return Response::json([
+            'abilities' => $service->execute(),
+        ]);
+    }
+
+    public function show(Request $request)
+    {
+        $characterId = (int) ($request->params()['id'] ?? 0);
+
+        $service = new GetAbilitiesByIdService();
+        $character = $service->execute($characterId);
+
+        return Response::json([
+            'abilitie' => $character,
+        ]);
+    }
 }
