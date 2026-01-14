@@ -33,6 +33,7 @@ class GetCampaignCharacterInfosService
         $campaignCharacterId = (int) $campaignCharacter['id'];
 
         return [
+            'level' => (int) $campaignCharacter['level'],
             'perks' => count(
                 $perkRepo->findByCampaignCharacter($campaignCharacterId)
             ),
