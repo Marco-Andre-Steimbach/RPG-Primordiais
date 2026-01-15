@@ -7,6 +7,7 @@ class CampaignCharacterSheet
     private array $baseAttributes;
     private array $raceAttributes;
     private array $orderAttributes;
+    private array $perkAttributes;
     private array $finalAttributes;
 
     public function __construct(
@@ -16,12 +17,14 @@ class CampaignCharacterSheet
         array $baseAttributes,
         array $raceAttributes = [],
         array $orderAttributes = [],
+        array $perkAttributes = [],
         public int $sanity_max,
         public int $sanity_current
     ) {
         $this->baseAttributes  = $this->normalizeAttributes($baseAttributes);
         $this->raceAttributes  = $this->normalizeAttributes($raceAttributes);
         $this->orderAttributes = $this->normalizeAttributes($orderAttributes);
+        $this->perkAttributes  = $this->normalizeAttributes($perkAttributes);
         $this->finalAttributes = $this->calculateFinalAttributes();
     }
 
@@ -45,7 +48,8 @@ class CampaignCharacterSheet
             $final[$key]
                 = $value
                 + $this->raceAttributes[$key]
-                + $this->orderAttributes[$key];
+                + $this->orderAttributes[$key]
+                + $this->perkAttributes[$key];
         }
 
         return $final;
@@ -64,6 +68,11 @@ class CampaignCharacterSheet
     public function getOrderAttributes(): array
     {
         return $this->orderAttributes;
+    }
+
+    public function getPerkAttributes(): array
+    {
+        return $this->perkAttributes;
     }
 
     public function getFinalAttributes(): array
@@ -143,6 +152,7 @@ class CampaignCharacterSheet
                 'base'  => $this->getBaseAttributes(),
                 'race'  => $this->getRaceAttributes(),
                 'order' => $this->getOrderAttributes(),
+                'perk'  => $this->getPerkAttributes(),
                 'final' => $this->getFinalAttributes(),
             ],
 

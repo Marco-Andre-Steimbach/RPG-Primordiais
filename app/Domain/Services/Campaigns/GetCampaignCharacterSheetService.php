@@ -154,6 +154,35 @@ class GetCampaignCharacterSheetService
             }
         }
 
+        $perkAttributes = [
+            'str'  => 0,
+            'dex'  => 0,
+            'con'  => 0,
+            'intt' => 0,
+            'wis'  => 0,
+            'cha'  => 0,
+        ];
+
+        $perks = [];
+
+        foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perkRow) {
+            $perk = $perkBaseRepo->findById($perkRow['perk_id']);
+
+            if (!$perk) {
+                continue;
+            }
+
+            foreach ($perk->attributes as $attr) {
+                $name = $attr['name'] === 'int' ? 'intt' : $attr['name'];
+
+                if (array_key_exists($name, $perkAttributes)) {
+                    $perkAttributes[$name] += (int) $attr['value'];
+                }
+            }
+
+            $perks[] = $perk->toArray();
+        }
+
         $sheet = new CampaignCharacterSheet(
             campaign_character_id: $campaignCharacterId,
             level: (int) $campaignCharacter['level'],
@@ -161,17 +190,10 @@ class GetCampaignCharacterSheetService
             baseAttributes: $baseAttributes,
             raceAttributes: $raceAttributes,
             orderAttributes: $orderAttributes,
+            perkAttributes: $perkAttributes,
             sanity_max: (int) $attributes['sanity_max'],
             sanity_current: (int) $attributes['sanity']
         );
-
-        $perks = [];
-        foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perk) {
-            $base = $perkBaseRepo->findById($perk['perk_id']);
-            if ($base) {
-                $perks[] = $base->toArray();
-            }
-        }
 
         $speed = 4;
         $armorClass = $sheet->getBaseArmorClass();
