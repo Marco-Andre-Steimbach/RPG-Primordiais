@@ -163,6 +163,12 @@ class GetCampaignCharacterSheetService
             'cha'  => 0,
         ];
 
+        $perkHpMax = 0;
+        $perkManaMax = 0;
+        $perkSanityMax = 0;
+        $perkArmorClass = 0;
+        $perkSpeed = 0;
+
         $perks = [];
 
         foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perkRow) {
@@ -172,11 +178,56 @@ class GetCampaignCharacterSheetService
                 continue;
             }
 
-            foreach ($perk->attributes as $attr) {
+            $bonusPairs = [];
+
+            if (isset($perk->attributes) && is_array($perk->attributes)) {
+                $bonusPairs = array_merge($bonusPairs, $perk->attributes);
+            }
+
+            if (isset($perk->flags) && is_array($perk->flags)) {
+                foreach ($perk->flags as $flag) {
+                    if (is_array($flag) && isset($flag['name'], $flag['value'])) {
+                        $bonusPairs[] = $flag;
+                    }
+                }
+            }
+
+            foreach ($bonusPairs as $attr) {
+                if (!is_array($attr) || !isset($attr['name'], $attr['value'])) {
+                    continue;
+                }
+
                 $name = $attr['name'] === 'int' ? 'intt' : $attr['name'];
+                $value = (int) $attr['value'];
 
                 if (array_key_exists($name, $perkAttributes)) {
-                    $perkAttributes[$name] += (int) $attr['value'];
+                    $perkAttributes[$name] += $value;
+                    continue;
+                }
+
+                if ($name === 'hp_max') {
+                    $perkHpMax += $value;
+                    continue;
+                }
+
+                if ($name === 'mana_max') {
+                    $perkManaMax += $value;
+                    continue;
+                }
+
+                if ($name === 'sanity') {
+                    $perkSanityMax += $value;
+                    continue;
+                }
+
+                if ($name === 'armor_class') {
+                    $perkArmorClass += $value;
+                    continue;
+                }
+
+                if ($name === 'speed') {
+                    $perkSpeed += $value;
+                    continue;
                 }
             }
 
@@ -191,12 +242,13 @@ class GetCampaignCharacterSheetService
             raceAttributes: $raceAttributes,
             orderAttributes: $orderAttributes,
             perkAttributes: $perkAttributes,
-            sanity_max: (int) $attributes['sanity_max'],
+            sanity_max: (int) $attributes['sanity_max'] + $perkSanityMax,
             sanity_current: (int) $attributes['sanity']
         );
 
-        $speed = 4;
-        $armorClass = $sheet->getBaseArmorClass();
+        $speed = 4 + $perkSpeed;
+        $armorClass = $sheet->getBaseArmorClass() + $perkArmorClass;
+
         $armors = [];
 
         foreach ($armorRepo->findActiveByCampaignCharacter($campaignCharacterId) as $armorRow) {
@@ -206,13 +258,6 @@ class GetCampaignCharacterSheetService
             }
 
             $slot = $armorSlotRepo->findById($armor->armor_slot_id);
-
-            $finalAttributes = $sheet->getFinalAttributes();
-            if ($finalAttributes['str'] < $armor->min_strength_required) {
-                $speed -= 1;
-            }
-
-            $armorClass += $armor->armor_class_bonus;
 
             $abilityIds = $armorArmorAbilityRepo->getByArmorId($armor->id);
             $abilities = [];
@@ -224,12 +269,19 @@ class GetCampaignCharacterSheetService
                 }
             }
 
+            $isEquipped = (bool) $armorRow['is_equipped'];
+
+            if ($isEquipped) {
+                $armorClass += (int) $armor->armor_class_bonus;
+                $speed -= (int) ($armor->speed_penalty ?? 0);
+            }
+
             $armors[] = [
                 'armor' => $armor->toArray(),
                 'slot' => $slot,
                 'elements' => $armorElementRepo->getByArmorId($armor->id),
                 'abilities' => $abilities,
-                'is_equipped' => (bool) $armorRow['is_equipped'],
+                'is_equipped' => $isEquipped,
             ];
         }
 
@@ -283,12 +335,16 @@ class GetCampaignCharacterSheetService
             ];
         }
 
+        $baseArr = $sheet->toArray();
+        $baseArr['hp_max'] = max(1, (int) $baseArr['hp_max'] + $perkHpMax);
+        $baseArr['mana_max'] = max(0, (int) $baseArr['mana_max'] + $perkManaMax);
+
         return [
-            'base' => $sheet->toArray(),
+            'base' => $baseArr,
             'race' => $race ? $race->toArray() : null,
             'order' => $order ? $order->toArray() : null,
             'derived' => [
-                'armor_class' => $armorClass,
+                'armor_class' => max(0, $armorClass),
                 'speed' => max(0, $speed),
             ],
             'perks' => $perks,

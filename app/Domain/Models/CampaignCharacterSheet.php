@@ -117,7 +117,10 @@ class CampaignCharacterSheet
 
     public function getMaxHp(): int
     {
-        return max(1, ($this->getModifier($this->finalAttributes['con']) * $this->level) + 10);
+        return max(
+            1,
+            ($this->getModifier($this->finalAttributes['con']) * $this->level) + 10
+        );
     }
 
     public function getMaxMana(): int
