@@ -97,5 +97,18 @@ class CampaignCharacterRepository extends BaseRepository
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 
+    public function updateLevel(int $campaignCharacterId, int $level): void
+    {
+        $sql = "
+        UPDATE {$this->table}
+        SET level = :level
+        WHERE id = :id
+    ";
 
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'level' => $level,
+            'id' => $campaignCharacterId
+        ]);
+    }
 }

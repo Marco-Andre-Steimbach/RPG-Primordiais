@@ -6,7 +6,9 @@ use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Application\Middlewares\ValidateSchemaMiddleware;
 use App\Application\DTOs\Campaigns\AddCharacterToCampaignDTO;
+use App\Application\DTOs\Campaigns\LevelUpCampaignCharacterDTO;
 use App\Domain\Services\Campaigns\AddCharacterToCampaignService;
+use App\Domain\Services\Campaigns\LevelUpCampaignCharacterService;
 use App\Core\Exceptions\ValidationException;
 
 class CampaignCharacterController
@@ -45,5 +47,32 @@ class CampaignCharacterController
             'message' => 'Personagem adicionado à campanha com sucesso.',
             'campaign_character' => $campaignCharacter,
         ], 201);
+    }
+    public function levelUp(Request $request)
+    {
+        $authUser = $request->user();
+
+        $schema = new ValidateSchemaMiddleware([
+            'campaign_character_id' => 'int|required',
+            'attribute' => 'string|required',
+        ]);
+
+        $schema->handle($request->body());
+
+        $dto = new LevelUpCampaignCharacterDTO(
+            $request->body()
+        );
+
+        $service = new LevelUpCampaignCharacterService();
+
+        $service->execute(
+            dto: $dto,
+            userId: $authUser->id
+        );
+
+        return Response::json([
+            'success' => true,
+            'message' => 'Level-up realizado com sucesso.'
+        ]);
     }
 }
