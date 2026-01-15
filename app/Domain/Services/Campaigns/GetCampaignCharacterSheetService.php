@@ -286,6 +286,8 @@ class GetCampaignCharacterSheetService
         }
 
         $weapons = [];
+        $weaponAbilityIds = [];
+
         foreach ($weaponRepo->findActiveByCampaignCharacter($campaignCharacterId) as $weaponRow) {
             $weapon = $weaponBaseRepo->findByIdWithItemAndDamageType($weaponRow['weapon_id']);
             if (!$weapon) {
@@ -296,8 +298,8 @@ class GetCampaignCharacterSheetService
 
             $abilities = $weaponAbilityRepo->findByWeaponId($weaponRow['weapon_id']);
             foreach ($abilities as &$ability) {
-                $ability->element_types
-                    = $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
+                $weaponAbilityIds[] = (int) $ability->id;
+                $ability->element_types = $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
                 $ability = $ability->toArray();
             }
 
@@ -306,6 +308,8 @@ class GetCampaignCharacterSheetService
 
             $weapons[] = $weapon;
         }
+
+        $weaponAbilityIds = array_values(array_unique($weaponAbilityIds));
 
         $items = [];
         foreach ($itemRepo->findByCampaignCharacter($campaignCharacterId) as $itemRow) {
@@ -326,6 +330,10 @@ class GetCampaignCharacterSheetService
         foreach ($abilityRepo->findByCampaignCharacter($campaignCharacterId) as $abilityRow) {
             $ability = $abilityBaseRepo->findById($abilityRow['ability_id']);
             if (!$ability) {
+                continue;
+            }
+
+            if (in_array((int) $ability->id, $weaponAbilityIds, true)) {
                 continue;
             }
 
