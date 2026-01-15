@@ -71,7 +71,7 @@ class AddCharacterToCampaignService
             throw new ValidationException('Falha ao adicionar personagem à campanha.');
         }
 
-        $sanityMax = max(15, (int) ($dto->attributes['san'] ?? 15));
+        $sanityMax = max(15, (int) ($dto->attributes['sanity'] ?? 15));
 
         $this->attributes->create([
             'campaign_character_id' => $campaignCharacterId,
@@ -85,41 +85,22 @@ class AddCharacterToCampaignService
             'sanity_max' => $sanityMax,
         ]);
 
-return new CampaignCharacterSheet(
-    campaign_character_id: $campaignCharacterId,
-    level: 1,
-    mana_modifier: $character->mana_modifier,
-    baseAttributes: [
-        'str'  => (int) $dto->attributes['str'],
-        'dex'  => (int) $dto->attributes['dex'],
-        'con'  => (int) $dto->attributes['con'],
-        'intt' => (int) $dto->attributes['intt'],
-        'wis'  => (int) $dto->attributes['wis'],
-        'cha'  => (int) $dto->attributes['cha'],
-    ],
-    raceAttributes: [],
-    orderAttributes: [],
-    sanity_max: $sanityMax,
-    sanity_current: $sanityMax
-);
-return new CampaignCharacterSheet(
-    campaign_character_id: $campaignCharacterId,
-    level: 1,
-    mana_modifier: $character->mana_modifier,
-    baseAttributes: [
-        'str'  => (int) $dto->attributes['str'],
-        'dex'  => (int) $dto->attributes['dex'],
-        'con'  => (int) $dto->attributes['con'],
-        'intt' => (int) $dto->attributes['intt'],
-        'wis'  => (int) $dto->attributes['wis'],
-        'cha'  => (int) $dto->attributes['cha'],
-    ],
-    raceAttributes: [],
-    orderAttributes: [],
-    sanity_max: $sanityMax,
-    sanity_current: $sanityMax
-);
-
-
+        return new CampaignCharacterSheet(
+            campaign_character_id: $campaignCharacterId,
+            level: 1,
+            mana_modifier: $character->mana_modifier,
+            baseAttributes: [
+                'str'  => (int) $dto->attributes['str'],
+                'dex'  => (int) $dto->attributes['dex'],
+                'con'  => (int) $dto->attributes['con'],
+                'intt' => (int) $dto->attributes['intt'],
+                'wis'  => (int) $dto->attributes['wis'],
+                'cha'  => (int) $dto->attributes['cha'],
+            ],
+            raceAttributes: [],
+            orderAttributes: [],
+            sanity_max: $sanityMax,
+            sanity_current: $sanityMax
+        );
     }
 }
