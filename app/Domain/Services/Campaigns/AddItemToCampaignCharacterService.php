@@ -80,8 +80,8 @@ class AddItemToCampaignCharacterService
             'campaign_character_id' => $campaignCharacterId,
             'item_id'               => $dto->item_id,
             'quantity'              => $dto->quantity,
-            'is_active'             => true,
-            'is_equipped'           => false,
+            'is_active'   => 1,
+            'is_equipped' => 0,
         ]);
     }
 }
