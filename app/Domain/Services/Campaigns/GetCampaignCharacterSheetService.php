@@ -297,11 +297,12 @@ class GetCampaignCharacterSheetService
             $weapon['element_types'] = $weaponElementRepo->getByWeaponId($weaponRow['weapon_id']);
 
             $abilities = $weaponAbilityRepo->findByWeaponId($weaponRow['weapon_id']);
-            foreach ($abilities as &$ability) {
+            foreach ($abilities as $index => $ability) {
                 $weaponAbilityIds[] = (int) $ability->id;
-                $ability->element_types = $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
-                $ability = $ability->toArray();
-            }
+                $ability->element_types =
+                    $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
+                $abilities[$index] = $ability->toArray();
+            }            
 
             $weapon['abilities'] = $abilities;
             $weapon['is_equipped'] = (bool) $weaponRow['is_equipped'];
