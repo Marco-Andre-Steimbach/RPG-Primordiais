@@ -99,6 +99,7 @@ class AddCharacterToCampaignService
             ],
             raceAttributes: [],
             orderAttributes: [],
+            perkAttributes: [],
             sanity_max: $sanityMax,
             sanity_current: $sanityMax
         );

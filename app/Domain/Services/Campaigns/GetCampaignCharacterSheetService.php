@@ -13,6 +13,7 @@ use App\Infrastructure\Repositories\RaceAttributeRepository;
 use App\Infrastructure\Repositories\OrderAttributeRepository;
 use App\Infrastructure\Repositories\CampaignCharacterPerkRepository;
 use App\Infrastructure\Repositories\PerkRepository;
+use App\Infrastructure\Repositories\PerkAttributeRepository;
 use App\Infrastructure\Repositories\CampaignCharacterWeaponRepository;
 use App\Infrastructure\Repositories\WeaponRepository;
 use App\Infrastructure\Repositories\WeaponElementTypeRepository;
@@ -47,6 +48,7 @@ class GetCampaignCharacterSheetService
 
         $perkRepo = new CampaignCharacterPerkRepository();
         $perkBaseRepo = new PerkRepository();
+        $perkAttributesRepo = new PerkAttributeRepository();
 
         $weaponRepo = new CampaignCharacterWeaponRepository();
         $weaponBaseRepo = new WeaponRepository();
@@ -173,32 +175,22 @@ class GetCampaignCharacterSheetService
 
         foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perkRow) {
             $perk = $perkBaseRepo->findById($perkRow['perk_id']);
-
             if (!$perk) {
                 continue;
             }
 
-            $bonusPairs = [];
+            $rawPerkAttributes = $perkAttributesRepo->getByPerk($perk->id);
 
-            if (isset($perk->attributes) && is_array($perk->attributes)) {
-                $bonusPairs = array_merge($bonusPairs, $perk->attributes);
-            }
-
-            if (isset($perk->flags) && is_array($perk->flags)) {
-                foreach ($perk->flags as $flag) {
-                    if (is_array($flag) && isset($flag['name'], $flag['value'])) {
-                        $bonusPairs[] = $flag;
-                    }
-                }
-            }
-
-            foreach ($bonusPairs as $attr) {
-                if (!is_array($attr) || !isset($attr['name'], $attr['value'])) {
+            foreach ($rawPerkAttributes as $attr) {
+                if (!isset($attr['attribute_name'], $attr['attribute_value'])) {
                     continue;
                 }
 
-                $name = $attr['name'] === 'int' ? 'intt' : $attr['name'];
-                $value = (int) $attr['value'];
+                $name = $attr['attribute_name'] === 'int'
+                    ? 'intt'
+                    : $attr['attribute_name'];
+
+                $value = (int) $attr['attribute_value'];
 
                 if (array_key_exists($name, $perkAttributes)) {
                     $perkAttributes[$name] += $value;
@@ -302,7 +294,7 @@ class GetCampaignCharacterSheetService
                 $ability->element_types =
                     $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
                 $abilities[$index] = $ability->toArray();
-            }            
+            }
 
             $weapon['abilities'] = $abilities;
             $weapon['is_equipped'] = (bool) $weaponRow['is_equipped'];
