@@ -70,26 +70,26 @@ class ArmorRepository extends BaseRepository
     public function findAllWithItemAndSlot(): array
     {
         $sql = "
-        SELECT
-            a.id AS armor_id,
-            a.item_id,
-            i.name AS item_name,
-            a.armor_slot_id,
-            s.name AS slot_name,
-            a.armor_class_bonus,
-            a.min_strength_required,
-            a.speed_penalty,
-            a.created_at
-        FROM armors a
-        INNER JOIN items i ON i.id = a.item_id
-        INNER JOIN armor_slots s ON s.id = a.armor_slot_id
-        ORDER BY i.name
-    ";
+            SELECT
+                a.id AS armor_id,
+                a.item_id,
+                i.name AS item_name,
+                i.description AS item_description,
+                a.armor_slot_id,
+                s.name AS slot_name,
+                a.armor_class_bonus,
+                a.min_strength_required,
+                a.speed_penalty,
+                a.created_at
+            FROM armors a
+            INNER JOIN items i ON i.id = a.item_id
+            INNER JOIN armor_slots s ON s.id = a.armor_slot_id
+            ORDER BY i.name
+        ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-
 }

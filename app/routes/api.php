@@ -90,6 +90,7 @@ $router->middleware('auth')->add('POST', '/campaign/:id/weapon', [CampaignCharac
 $router->middleware('auth')->add('POST', '/campaign/:id/armor', [CampaignCharacterArmorController::class, 'store']);
 $router->middleware('auth')->add('GET', '/campaign', [CampaignController::class, 'index']);
 $router->middleware('auth')->add('GET', '/campaign/:id', [CampaignController::class, 'show']);
+$router->middleware('auth')->add('GET', '/campaign/:id/lupida', [CampaignController::class, 'getLupida']);
 $router->middleware('auth')->add('GET', '/campaign/:campaign_id/character/:character_id/sheet', [CampaignController::class, 'getCharacterSheet']);
 $router->middleware('auth')->add('GET', '/campaign/:campaign_id/character/:character_id/info', [CampaignController::class, 'getCharacterInfos']);
 

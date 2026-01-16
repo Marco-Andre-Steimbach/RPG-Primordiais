@@ -91,4 +91,20 @@ class CampaignCharacterItemRepository extends BaseRepository
 
         return (bool) $stmt->fetchColumn();
     }
+
+    public function findActiveByCampaignCharacter(int $campaignCharacterId): array
+    {
+        $sql = "
+        SELECT *
+        FROM {$this->table}
+        WHERE campaign_character_id = :id
+          AND is_active = 1
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $campaignCharacterId]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    
 }

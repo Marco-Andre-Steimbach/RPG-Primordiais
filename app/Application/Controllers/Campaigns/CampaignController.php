@@ -12,6 +12,7 @@ use App\Domain\Services\Campaigns\GetAllCampaignsService;
 use App\Domain\Services\Campaigns\GetCampaignByIdService;
 use App\Domain\Services\Campaigns\GetCampaignCharacterSheetService;
 use App\Domain\Services\Campaigns\GetCampaignCharacterInfosService;
+use App\Domain\Services\Campaigns\GetLupidaService;
 
 class CampaignController
 {
@@ -105,6 +106,29 @@ class CampaignController
 
         return Response::json([
             'infos' => $infos,
+        ]);
+    }
+
+    public function getLupida(Request $request)
+    {
+        $params = $request->params();
+
+        $campaignId = (int) ($params['id'] ?? 0);
+
+        if ($campaignId <= 0) {
+            throw new ValidationException(
+                'Dados inválidos.',
+                [
+                    'campaign_id' => ['ID da campanha inválido.'],
+                ]
+            );
+        }
+
+        $service = new GetLupidaService();
+        $lupida = $service->execute($campaignId);
+
+        return Response::json([
+            'lupida' => $lupida,
         ]);
     }
 }

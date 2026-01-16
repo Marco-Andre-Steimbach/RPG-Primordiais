@@ -78,4 +78,25 @@ class ItemRepository extends BaseRepository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function findAllNonEquipable(): array
+    {
+        $sql = "
+        SELECT
+            i.id,
+            i.name,
+            i.description,
+            i.created_at
+        FROM items i
+        LEFT JOIN weapons w ON w.item_id = i.id
+        LEFT JOIN armors a ON a.item_id = i.id
+        WHERE w.id IS NULL
+          AND a.id IS NULL
+        ORDER BY i.name
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

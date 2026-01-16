@@ -102,6 +102,7 @@ class WeaponRepository extends BaseRepository
                 w.id,
                 w.item_id,
                 i.name AS item_name,
+                i.description AS item_description,
                 w.weapon_damage_type_id,
                 wdt.name AS damage_type,
                 w.dice_formula,
@@ -124,6 +125,7 @@ class WeaponRepository extends BaseRepository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     private function mapToModel(array $row): Weapon
     {
