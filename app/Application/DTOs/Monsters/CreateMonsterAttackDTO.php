@@ -13,6 +13,9 @@ class CreateMonsterAttackDTO
     public int $base_damage;
     public int $bonus_accuracy;
 
+    public int $attack_range;
+    public ?int $weapon_damage_type_id;
+
     public array $element_types;
 
     public function __construct(array $data)
@@ -25,6 +28,11 @@ class CreateMonsterAttackDTO
         $this->dice_formula = trim((string) ($data['dice_formula'] ?? ''));
         $this->base_damage = (int) ($data['base_damage'] ?? 0);
         $this->bonus_accuracy = (int) ($data['bonus_accuracy'] ?? 0);
+
+        $this->attack_range = (int) ($data['attack_range'] ?? 1);
+        $this->weapon_damage_type_id = isset($data['weapon_damage_type_id'])
+            ? (int) $data['weapon_damage_type_id']
+            : null;
 
         $this->element_types = $this->normalizeElementTypes($data['element_types'] ?? []);
 
@@ -65,6 +73,10 @@ class CreateMonsterAttackDTO
             $errors['bonus_accuracy'][] = 'bonus_accuracy não pode ser negativo.';
         }
 
+        if ($this->attack_range <= 0) {
+            $errors['attack_range'][] = 'attack_range deve ser maior que zero.';
+        }
+
         if (
             !empty($this->element_types)
             && count($this->element_types) !== count(array_unique($this->element_types))
@@ -73,7 +85,10 @@ class CreateMonsterAttackDTO
         }
 
         if ($errors) {
-            throw new ValidationException('Dados inválidos para criação de ataque de monstro.', $errors);
+            throw new ValidationException(
+                'Dados inválidos para criação de ataque de monstro.',
+                $errors
+            );
         }
     }
 }

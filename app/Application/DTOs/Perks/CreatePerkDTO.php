@@ -110,6 +110,10 @@ class CreatePerkDTO
                 $errors['ability.base_damage'][] = 'ability.base_damage não pode ser negativo.';
             }
 
+            if (isset($this->ability['range']) && $this->ability['range'] < 0) {
+                $errors['ability.range'][] = 'ability.range não pode ser negativo.';
+            }
+
             foreach (['bonus_accuracy', 'bonus_damage', 'bonus_speed'] as $k) {
                 if (isset($this->ability[$k]) && $this->ability[$k] < 0) {
                     $errors["ability.$k"][] = "ability.$k não pode ser negativo.";
@@ -209,6 +213,7 @@ class CreatePerkDTO
         $bonus_accuracy = isset($value['bonus_accuracy']) ? (int) $value['bonus_accuracy'] : 0;
         $bonus_damage = isset($value['bonus_damage']) ? (int) $value['bonus_damage'] : 0;
         $bonus_speed = isset($value['bonus_speed']) ? (int) $value['bonus_speed'] : 0;
+        $range = isset($value['range']) ? (int) $value['range'] : 0;
 
         return [
             'name' => $name,
@@ -218,6 +223,7 @@ class CreatePerkDTO
             'bonus_accuracy' => $bonus_accuracy,
             'bonus_damage' => $bonus_damage,
             'bonus_speed' => $bonus_speed,
+            'range' => $range,
         ];
     }
 

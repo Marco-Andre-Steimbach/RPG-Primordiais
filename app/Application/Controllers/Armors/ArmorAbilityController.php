@@ -17,6 +17,7 @@ class ArmorAbilityController
             'description' => 'string|required',
 
             'dice_formula' => 'string',
+            'range' => 'int',
 
             'base_damage' => 'int',
             'armor_class_bonus' => 'int',

@@ -14,6 +14,8 @@ class CreateMonsterAbilityDTO
     public int $bonus_damage;
     public int $bonus_speed;
 
+    public int $ability_range;
+
     public array $element_types;
 
     public function __construct(array $data)
@@ -21,12 +23,15 @@ class CreateMonsterAbilityDTO
         $this->title = trim((string) ($data['title'] ?? ''));
         $this->description = trim((string) ($data['description'] ?? ''));
 
-$this->dice_formula = trim((string) ($data['dice_formula'] ?? ''));
-
+        $this->dice_formula = isset($data['dice_formula'])
+            ? trim((string) $data['dice_formula'])
+            : null;
 
         $this->base_damage = (int) ($data['base_damage'] ?? 0);
         $this->bonus_damage = (int) ($data['bonus_damage'] ?? 0);
         $this->bonus_speed = (int) ($data['bonus_speed'] ?? 0);
+
+        $this->ability_range = (int) ($data['ability_range'] ?? 1);
 
         $this->element_types = $this->normalizeElementTypes($data['element_types'] ?? []);
 
@@ -53,6 +58,10 @@ $this->dice_formula = trim((string) ($data['dice_formula'] ?? ''));
             if ($value < 0) {
                 $errors[$field][] = "$field não pode ser negativo.";
             }
+        }
+
+        if ($this->ability_range <= 0) {
+            $errors['ability_range'][] = 'ability_range deve ser maior que zero.';
         }
 
         if (!empty($this->element_types)) {

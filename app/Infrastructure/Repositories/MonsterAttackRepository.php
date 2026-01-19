@@ -14,8 +14,25 @@ class MonsterAttackRepository extends BaseRepository
     {
         $sql = "
             INSERT INTO {$this->table}
-            (name, description, dice_formula, base_damage, bonus_accuracy)
-            VALUES (:name, :description, :dice_formula, :base_damage, :bonus_accuracy)
+            (
+                name,
+                description,
+                dice_formula,
+                base_damage,
+                bonus_accuracy,
+                attack_range,
+                weapon_damage_type_id
+            )
+            VALUES
+            (
+                :name,
+                :description,
+                :dice_formula,
+                :base_damage,
+                :bonus_accuracy,
+                :attack_range,
+                :weapon_damage_type_id
+            )
         ";
 
         $stmt = $this->db->prepare($sql);
@@ -25,6 +42,8 @@ class MonsterAttackRepository extends BaseRepository
             'dice_formula' => $data['dice_formula'],
             'base_damage' => $data['base_damage'],
             'bonus_accuracy' => $data['bonus_accuracy'],
+            'attack_range' => $data['attack_range'],
+            'weapon_damage_type_id' => $data['weapon_damage_type_id'],
         ]);
 
         return (int) $this->db->lastInsertId();
@@ -82,6 +101,10 @@ class MonsterAttackRepository extends BaseRepository
             dice_formula: $row['dice_formula'],
             base_damage: (int) $row['base_damage'],
             bonus_accuracy: (int) $row['bonus_accuracy'],
+            attack_range: (int) $row['attack_range'],
+            weapon_damage_type_id: isset($row['weapon_damage_type_id'])
+                ? (int) $row['weapon_damage_type_id']
+                : null,
             element_types: [],
             created_at: $row['created_at'] ?? null
         );

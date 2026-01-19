@@ -15,6 +15,7 @@ class Ability
         public ?string $dice_formula = null,
         public int $base_damage = 0,
         public int $bonus_speed = 0,
+        public int $range = 0,
         public array $element_types = [],
         public ?int $required_race_id = null,
         public ?int $required_order_id = null,
@@ -39,6 +40,7 @@ class Ability
             'dice_formula' => $this->dice_formula,
             'base_damage' => $this->base_damage,
             'bonus_speed' => $this->bonus_speed,
+            'range' => $this->range,
 
             'element_types' => $this->element_types,
 

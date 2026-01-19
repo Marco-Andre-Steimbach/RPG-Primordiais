@@ -12,6 +12,7 @@ class Weapon
         public int $base_damage = 0,
         public int $bonus_accuracy = 0,
         public int $bonus_speed = 0,
+        public int $range,
         public ?int $ammo_item_id = null,
         public int $ammo_per_use = 1,
         public array $element_types = [],
@@ -29,6 +30,7 @@ class Weapon
             'base_damage' => $this->base_damage,
             'bonus_accuracy' => $this->bonus_accuracy,
             'bonus_speed' => $this->bonus_speed,
+            'range' => $this->range,
 
             'ammo_item_id' => $this->ammo_item_id,
             'ammo_per_use' => $this->ammo_per_use,

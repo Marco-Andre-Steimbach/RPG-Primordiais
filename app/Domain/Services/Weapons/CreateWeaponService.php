@@ -40,9 +40,10 @@ class CreateWeaponService
             'base_damage' => $dto->base_damage,
             'bonus_accuracy' => $dto->bonus_accuracy,
             'bonus_speed' => $dto->bonus_speed,
+            'range' => $dto->range,
             'ammo_item_id' => $dto->ammo_item_id,
             'ammo_per_use' => $dto->ammo_per_use,
-        ]);
+        ]);        
 
         if (!$weaponId) {
             throw new ValidationException('Falha ao criar arma.');

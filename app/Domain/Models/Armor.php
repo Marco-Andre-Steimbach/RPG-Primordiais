@@ -11,6 +11,9 @@ class Armor
         public int $armor_class_bonus,
         public int $min_strength_required,
         public int $speed_penalty,
+
+        public ?int $weak_damage_type_id = null,
+
         public array $element_types = [],
         public array $armor_abilities = [],
         public ?string $created_at = null
@@ -26,6 +29,8 @@ class Armor
             'armor_class_bonus' => $this->armor_class_bonus,
             'min_strength_required' => $this->min_strength_required,
             'speed_penalty' => $this->speed_penalty,
+
+            'weak_damage_type_id' => $this->weak_damage_type_id,
 
             'element_types' => $this->element_types,
             'armor_abilities' => $this->armor_abilities,

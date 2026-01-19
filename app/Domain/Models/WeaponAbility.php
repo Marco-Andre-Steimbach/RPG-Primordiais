@@ -14,6 +14,7 @@ class WeaponAbility
         public int $bonus_damage = 0,
         public int $bonus_accuracy = 0,
         public int $bonus_speed = 0,
+        public int $range = 1,
         public array $element_types = [],
         public ?string $created_at = null
     ) {}
@@ -33,9 +34,9 @@ class WeaponAbility
             'bonus_damage' => $this->bonus_damage,
             'bonus_accuracy' => $this->bonus_accuracy,
             'bonus_speed' => $this->bonus_speed,
+            'range' => $this->range,
 
             'element_types' => $this->element_types,
-
             'created_at' => $this->created_at,
         ];
     }

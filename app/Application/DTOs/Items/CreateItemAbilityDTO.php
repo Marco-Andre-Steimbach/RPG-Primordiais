@@ -10,6 +10,7 @@ class CreateItemAbilityDTO
     public string $description;
 
     public ?string $dice_formula;
+    public int $range;
 
     public int $base_damage;
     public int $bonus_damage;
@@ -34,6 +35,7 @@ class CreateItemAbilityDTO
         $this->bonus_damage = (int) ($data['bonus_damage'] ?? 0);
         $this->bonus_accuracy = (int) ($data['bonus_accuracy'] ?? 0);
         $this->bonus_speed = (int) ($data['bonus_speed'] ?? 0);
+        $this->range = (int) ($data['range'] ?? 1);
 
         $this->is_consumable = (bool) ($data['is_consumable'] ?? false);
         $this->max_uses = isset($data['max_uses']) ? (int) $data['max_uses'] : null;
@@ -68,10 +70,13 @@ class CreateItemAbilityDTO
         if (!$this->is_consumable && $this->max_uses !== null) {
             $errors['max_uses'][] = 'max_uses só pode ser usado se is_consumable for true.';
         }
+        
+        if ($this->range <= 0) {
+            $errors['range'][] = 'range deve ser maior que zero.';
+        }
 
         if ($errors) {
             throw new ValidationException('Dados inválidos.', $errors);
         }
     }
-
 }

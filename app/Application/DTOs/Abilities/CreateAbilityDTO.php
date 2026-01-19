@@ -14,6 +14,7 @@ class CreateAbilityDTO
 
     public int $mana_cost;
     public ?int $arcane_mana_cost;
+    public int $range;
 
     public ?string $dice_formula;
     public int $base_damage;
@@ -48,6 +49,7 @@ class CreateAbilityDTO
 
         $this->base_damage = (int) ($data['base_damage'] ?? 0);
         $this->bonus_speed = (int) ($data['bonus_speed'] ?? 0);
+        $this->range = (int) ($data['range'] ?? 0);
 
         $this->element_types = $this->normalizeElementTypes(
             $data['element_types'] ?? []
@@ -99,6 +101,11 @@ class CreateAbilityDTO
         if ($this->bonus_speed < 0) {
             $errors['bonus_speed'][] = 'bonus_speed não pode ser negativo.';
         }
+        
+        if ($this->range < 0) {
+            $errors['range'][] = 'range não pode ser negativo.';
+        }
+
 
         if (empty($this->element_types)) {
             $errors['element_types'][]

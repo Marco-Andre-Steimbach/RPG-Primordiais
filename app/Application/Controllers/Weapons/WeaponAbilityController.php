@@ -28,6 +28,8 @@ class WeaponAbilityController
             'description' => 'string|required',
 
             'dice_formula' => 'string',
+            
+            'range' => 'int',
 
             'base_damage' => 'int',
             'bonus_damage' => 'int',

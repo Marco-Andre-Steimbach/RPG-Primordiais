@@ -43,35 +43,35 @@ class MonsterRepository extends BaseRepository
     }
 
     private function mapToModel(array $row): Monster
-{
-    return new Monster(
-        id: (int) $row['id'],
-        name: $row['name'],
-        description: $row['description'] ?? null,
+    {
+        return new Monster(
+            id: (int) $row['id'],
+            name: $row['name'],
+            description: $row['description'] ?? null,
 
-        base_hp: (int) $row['base_hp'],
-        base_ac: (int) $row['base_ac'],
-        base_speed: (int) $row['base_speed'],
+            base_hp: (int) $row['base_hp'],
+            base_ac: (int) $row['base_ac'],
+            base_speed: (int) $row['base_speed'],
 
-        actions_per_turn: (int) $row['actions_per_turn'],
+            actions_per_turn: (int) $row['actions_per_turn'],
+            xp_reward: (int) $row['xp_reward'],
 
-        base_str: (int) $row['base_str'],
-        base_dex: (int) $row['base_dex'],
-        base_con: (int) $row['base_con'],
-        base_wis: (int) $row['base_wis'],
-        base_int: (int) $row['base_int'],
+            base_str: (int) $row['base_str'],
+            base_dex: (int) $row['base_dex'],
+            base_con: (int) $row['base_con'],
+            base_wis: (int) $row['base_wis'],
+            base_int: (int) $row['base_int'],
 
-        weakness_damage_type_id: isset($row['weakness_damage_type_id'])
-            ? (int) $row['weakness_damage_type_id']
-            : null,
+            weakness_damage_type_id: isset($row['weakness_damage_type_id'])
+                ? (int) $row['weakness_damage_type_id']
+                : null,
 
-        element_types: [],
+            element_types: [],
 
-        created_at: $row['created_at'] ?? null,
-        updated_at: $row['updated_at'] ?? null
-    );
-}
-
+            created_at: $row['created_at'] ?? null,
+            updated_at: $row['updated_at'] ?? null
+        );
+    }
 
     public function existsById(int $id): bool
     {
@@ -85,15 +85,15 @@ class MonsterRepository extends BaseRepository
     public function findAllBasic(): array
     {
         $sql = "
-        SELECT id, name, description
-        FROM {$this->table}
-        ORDER BY name
-    ";
+            SELECT id, name, description
+            FROM {$this->table}
+            ORDER BY name
+        ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function findAllByElementTypes(array $elementTypes): array
@@ -101,17 +101,17 @@ class MonsterRepository extends BaseRepository
         $placeholders = implode(',', array_fill(0, count($elementTypes), '?'));
 
         $sql = "
-        SELECT DISTINCT m.id, m.name, m.description
-        FROM monsters m
-        INNER JOIN monster_element_types met
-            ON met.monster_id = m.id
-        WHERE met.element_type_id IN ($placeholders)
-        ORDER BY m.name
-    ";
+            SELECT DISTINCT m.id, m.name, m.description
+            FROM monsters m
+            INNER JOIN monster_element_types met
+                ON met.monster_id = m.id
+            WHERE met.element_type_id IN ($placeholders)
+            ORDER BY m.name
+        ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($elementTypes);
 
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

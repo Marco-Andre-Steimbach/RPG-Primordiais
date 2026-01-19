@@ -12,8 +12,12 @@ class WeaponAbilityRepository extends BaseRepository
 
     public function create(array $data): int
     {
-        $columns = implode(', ', array_keys($data));
-        $params  = ':' . implode(', :', array_keys($data));
+        $columns = implode(', ', array_map(
+            fn($col) => "`$col`",
+            array_keys($data)
+        ));
+
+        $params = ':' . implode(', :', array_keys($data));
 
         $sql = "INSERT INTO {$this->table} ($columns) VALUES ($params)";
         $stmt = $this->db->prepare($sql);
@@ -65,6 +69,7 @@ class WeaponAbilityRepository extends BaseRepository
             title: $row['title'],
             description: $row['description'],
             dice_formula: $row['dice_formula'] ?? null,
+            range: $row['range'] ?? 1,
             base_damage: (int) $row['base_damage'],
             bonus_damage: (int) $row['bonus_damage'],
             bonus_accuracy: (int) $row['bonus_accuracy'],

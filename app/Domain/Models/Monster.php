@@ -14,6 +14,7 @@ class Monster
         public int $base_speed = 6,
 
         public int $actions_per_turn = 3,
+        public int $xp_reward = 0,
 
         public int $base_str = 1,
         public int $base_dex = 1,
@@ -41,6 +42,7 @@ class Monster
             'base_speed' => $this->base_speed,
 
             'actions_per_turn' => $this->actions_per_turn,
+            'xp_reward' => $this->xp_reward,
 
             'base_str' => $this->base_str,
             'base_dex' => $this->base_dex,

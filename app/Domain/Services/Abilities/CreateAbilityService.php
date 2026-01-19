@@ -56,6 +56,7 @@ class CreateAbilityService
             'dice_formula' => $dto->dice_formula,
             'base_damage' => $dto->base_damage,
             'bonus_speed' => $dto->bonus_speed,
+            'range' => $dto->range,
             'required_race_id' => $dto->required_race_id,
             'required_order_id' => $dto->required_order_id,
         ]);

@@ -12,7 +12,10 @@ class WeaponRepository extends BaseRepository
 
     public function create(array $data): int
     {
-        $columns = implode(', ', array_keys($data));
+        $columns = implode(', ', array_map(
+            fn($col) => "`$col`",
+            array_keys($data)
+        ));
         $params  = ':' . implode(', :', array_keys($data));
 
         $sql = "INSERT INTO {$this->table} ($columns) VALUES ($params)";
@@ -75,6 +78,7 @@ class WeaponRepository extends BaseRepository
                 wdt.name AS damage_type,
                 w.dice_formula,
                 w.base_damage,
+                w.range,
                 w.bonus_accuracy,
                 w.bonus_speed,
                 w.ammo_item_id,
@@ -108,6 +112,7 @@ class WeaponRepository extends BaseRepository
                 w.dice_formula,
                 w.base_damage,
                 w.bonus_accuracy,
+                w.range,
                 w.bonus_speed,
                 w.ammo_item_id,
                 w.ammo_per_use,
@@ -137,6 +142,7 @@ class WeaponRepository extends BaseRepository
             base_damage: (int) $row['base_damage'],
             bonus_accuracy: (int) $row['bonus_accuracy'],
             bonus_speed: (int) $row['bonus_speed'],
+            range: (int) $row['range'],
             ammo_item_id: $row['ammo_item_id'] !== null ? (int) $row['ammo_item_id'] : null,
             ammo_per_use: (int) $row['ammo_per_use'],
             element_types: [],

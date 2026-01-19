@@ -23,6 +23,7 @@ class MonsterController
             'base_speed' => 'int',
 
             'actions_per_turn' => 'int',
+            'xp_reward' => 'int',
 
             'base_str' => 'int',
             'base_dex' => 'int',
@@ -31,6 +32,7 @@ class MonsterController
             'base_int' => 'int',
 
             'element_types' => 'array',
+            'weakness_damage_type_id' => 'int',
         ]);
 
         $schema->handle($request->body());
@@ -45,6 +47,7 @@ class MonsterController
             'monster' => $monster,
         ], 201);
     }
+
     public function index(Request $request)
     {
         $filters = $request->query();
@@ -56,6 +59,7 @@ class MonsterController
             'monsters' => $monsters,
         ]);
     }
+
     public function show(Request $request)
     {
         $params = $request->params();

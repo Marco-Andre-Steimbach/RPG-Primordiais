@@ -12,6 +12,9 @@ class MonsterAbility
         public int $base_damage = 0,
         public int $bonus_damage = 0,
         public int $bonus_speed = 0,
+
+        public int $ability_range = 1,
+
         public array $element_types = [],
         public ?string $created_at = null
     ) {}
@@ -27,6 +30,8 @@ class MonsterAbility
             'base_damage' => $this->base_damage,
             'bonus_damage' => $this->bonus_damage,
             'bonus_speed' => $this->bonus_speed,
+
+            'ability_range' => $this->ability_range,
 
             'element_types' => $this->element_types,
 

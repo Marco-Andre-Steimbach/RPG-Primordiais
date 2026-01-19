@@ -69,6 +69,9 @@ class GetMonsterByIdService
             'id' => $monster->id,
             'name' => $monster->name,
             'description' => $monster->description,
+
+            'xp_reward' => $monster->xp_reward,
+
             'stats' => [
                 'hp' => $monster->base_hp,
                 'ac' => $monster->base_ac,

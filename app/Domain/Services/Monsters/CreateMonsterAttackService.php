@@ -32,6 +32,8 @@ class CreateMonsterAttackService
             'dice_formula' => $dto->dice_formula,
             'base_damage' => $dto->base_damage,
             'bonus_accuracy' => $dto->bonus_accuracy,
+            'attack_range' => $dto->attack_range,
+            'weapon_damage_type_id' => $dto->weapon_damage_type_id,
         ]);
 
         if (!$attackId) {
@@ -39,10 +41,7 @@ class CreateMonsterAttackService
         }
 
         foreach ($dto->element_types as $elementTypeId) {
-            $this->elements->attach(
-                $attackId,
-                $elementTypeId
-            );
+            $this->elements->attach($attackId, $elementTypeId);
         }
 
         $attack = $this->attacks->findById($attackId);

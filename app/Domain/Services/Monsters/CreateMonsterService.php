@@ -25,25 +25,26 @@ class CreateMonsterService
         if ($this->monsters->existsByName($dto->name)) {
             throw new ConflictException('Já existe um monstro com esse nome.');
         }
-$monsterId = $this->monsters->create([
-    'name' => $dto->name,
-    'description' => $dto->description,
 
-    'base_hp' => $dto->base_hp,
-    'base_ac' => $dto->base_ac,
-    'base_speed' => $dto->base_speed,
+        $monsterId = $this->monsters->create([
+            'name' => $dto->name,
+            'description' => $dto->description,
 
-    'actions_per_turn' => $dto->actions_per_turn,
+            'base_hp' => $dto->base_hp,
+            'base_ac' => $dto->base_ac,
+            'base_speed' => $dto->base_speed,
 
-    'base_str' => $dto->base_str,
-    'base_dex' => $dto->base_dex,
-    'base_con' => $dto->base_con,
-    'base_wis' => $dto->base_wis,
-    'base_int' => $dto->base_int,
+            'actions_per_turn' => $dto->actions_per_turn,
+            'xp_reward' => $dto->xp_reward,
 
-    'weakness_damage_type_id' => $dto->weakness_damage_type_id,
-]);
+            'base_str' => $dto->base_str,
+            'base_dex' => $dto->base_dex,
+            'base_con' => $dto->base_con,
+            'base_wis' => $dto->base_wis,
+            'base_int' => $dto->base_int,
 
+            'weakness_damage_type_id' => $dto->weakness_damage_type_id,
+        ]);
 
         if (!$monsterId) {
             throw new ValidationException('Falha ao criar monstro.');

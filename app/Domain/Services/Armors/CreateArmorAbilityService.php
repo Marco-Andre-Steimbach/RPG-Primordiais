@@ -25,7 +25,8 @@ class CreateArmorAbilityService
             'base_damage' => $dto->base_damage,
             'armor_class_bonus' => $dto->armor_class_bonus,
             'bonus_speed' => $dto->bonus_speed,
-        ]);
+            'range' => $dto->range,
+        ]);        
 
         if (!$abilityId) {
             throw new ValidationException('Falha ao criar habilidade de armadura.');

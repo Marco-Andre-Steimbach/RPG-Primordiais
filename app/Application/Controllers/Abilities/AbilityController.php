@@ -39,6 +39,7 @@ class AbilityController
                 'arcane_mana_cost' => 'int',
 
                 'dice_formula' => 'string',
+                'range' => 'int',
 
                 'base_damage' => 'int',
                 'bonus_speed' => 'int',

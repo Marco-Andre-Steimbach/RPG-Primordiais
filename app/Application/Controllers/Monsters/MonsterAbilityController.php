@@ -23,6 +23,8 @@ class MonsterAbilityController
             'bonus_damage' => 'int',
             'bonus_speed' => 'int',
 
+            'ability_range' => 'int',
+
             'element_types' => 'array',
         ]);
 

@@ -13,10 +13,27 @@ class MonsterAbilityRepository extends BaseRepository
     public function create(array $data): int
     {
         $sql = "
-            INSERT INTO {$this->table}
-            (title, description, dice_formula, base_damage, bonus_damage, bonus_speed)
-            VALUES (:title, :description, :dice_formula, :base_damage, :bonus_damage, :bonus_speed)
-        ";
+        INSERT INTO {$this->table}
+        (
+            title,
+            description,
+            dice_formula,
+            base_damage,
+            bonus_damage,
+            bonus_speed,
+            ability_range
+        )
+        VALUES
+        (
+            :title,
+            :description,
+            :dice_formula,
+            :base_damage,
+            :bonus_damage,
+            :bonus_speed,
+            :ability_range
+        )
+    ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
@@ -26,6 +43,7 @@ class MonsterAbilityRepository extends BaseRepository
             'base_damage' => $data['base_damage'],
             'bonus_damage' => $data['bonus_damage'],
             'bonus_speed' => $data['bonus_speed'],
+            'ability_range' => $data['ability_range'],
         ]);
 
         return (int) $this->db->lastInsertId();
@@ -51,6 +69,8 @@ class MonsterAbilityRepository extends BaseRepository
             base_damage: (int) $row['base_damage'],
             bonus_damage: (int) $row['bonus_damage'],
             bonus_speed: (int) $row['bonus_speed'],
+            ability_range: (int) $row['ability_range'],
+            element_types: [],
             created_at: $row['created_at'] ?? null
         );
     }

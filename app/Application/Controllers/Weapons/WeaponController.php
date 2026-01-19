@@ -17,18 +17,19 @@ class WeaponController
         $schema = new ValidateSchemaMiddleware([
             'item_id' => 'int|required',
             'weapon_damage_type_id' => 'int|required',
-
+        
             'dice_formula' => 'string|required',
-
+        
             'base_damage' => 'int',
             'bonus_accuracy' => 'int',
             'bonus_speed' => 'int',
-
+            'range' => 'int',
+        
             'ammo_item_id' => 'int',
             'ammo_per_use' => 'int',
-
+        
             'element_types' => 'array|required',
-        ]);
+        ]);        
 
         $schema->handle($request->body());
 

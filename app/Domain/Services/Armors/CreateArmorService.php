@@ -54,12 +54,27 @@ class CreateArmorService
             );
         }
 
+        if ($dto->armor_slot_id === 2 && $dto->weak_damage_type_id === null) {
+            throw new ValidationException(
+                'Fraqueza obrigatória.',
+                ['weak_damage_type_id' => ['Armaduras de peitoral devem possuir uma fraqueza.']]
+            );
+        }
+
+        if ($dto->armor_slot_id !== 2 && $dto->weak_damage_type_id !== null) {
+            throw new ValidationException(
+                'Fraqueza inválida.',
+                ['weak_damage_type_id' => ['Apenas armaduras de peitoral podem possuir fraqueza.']]
+            );
+        }
+
         $armorId = $this->armors->create([
             'item_id' => $dto->item_id,
             'armor_slot_id' => $dto->armor_slot_id,
             'armor_class_bonus' => $dto->armor_class_bonus,
             'min_strength_required' => $dto->min_strength_required,
             'speed_penalty' => $dto->speed_penalty,
+            'weak_damage_type_id' => $dto->weak_damage_type_id,
         ]);
 
         if (!$armorId) {

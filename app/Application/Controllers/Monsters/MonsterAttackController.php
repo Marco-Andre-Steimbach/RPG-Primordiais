@@ -22,6 +22,9 @@ class MonsterAttackController
             'base_damage' => 'int',
             'bonus_accuracy' => 'int',
 
+            'attack_range' => 'int',
+            'weapon_damage_type_id' => 'int',
+
             'element_types' => 'array',
         ]);
 

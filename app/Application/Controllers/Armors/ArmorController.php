@@ -22,6 +22,8 @@ class ArmorController
             'min_strength_required' => 'int',
             'speed_penalty' => 'int',
 
+            'weak_damage_type_id' => 'int',
+
             'element_types' => 'array',
             'armor_abilities' => 'array',
         ]);
@@ -38,6 +40,7 @@ class ArmorController
             'armor' => $armor,
         ], 201);
     }
+
     public function index()
     {
         $service = new GetAllArmorsService();

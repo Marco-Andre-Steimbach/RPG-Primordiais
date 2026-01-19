@@ -62,11 +62,15 @@ class ArmorRepository extends BaseRepository
             armor_class_bonus: (int) $row['armor_class_bonus'],
             min_strength_required: (int) $row['min_strength_required'],
             speed_penalty: (int) $row['speed_penalty'],
+            weak_damage_type_id: isset($row['weak_damage_type_id'])
+                ? (int) $row['weak_damage_type_id']
+                : null,
             element_types: [],
             armor_abilities: [],
             created_at: $row['created_at'] ?? null
         );
     }
+
     public function findAllWithItemAndSlot(): array
     {
         $sql = "

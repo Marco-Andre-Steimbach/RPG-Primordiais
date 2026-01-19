@@ -14,6 +14,7 @@ class CreateMonsterDTO
     public int $base_speed;
 
     public int $actions_per_turn;
+    public int $xp_reward;
 
     public int $base_str;
     public int $base_dex;
@@ -40,6 +41,7 @@ class CreateMonsterDTO
         $this->base_speed = (int) ($data['base_speed'] ?? 6);
 
         $this->actions_per_turn = (int) ($data['actions_per_turn'] ?? 3);
+        $this->xp_reward = (int) ($data['xp_reward'] ?? 0);
 
         $this->base_str = (int) ($data['base_str'] ?? 1);
         $this->base_dex = (int) ($data['base_dex'] ?? 1);

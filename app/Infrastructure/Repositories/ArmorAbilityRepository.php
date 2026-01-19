@@ -12,10 +12,16 @@ class ArmorAbilityRepository extends BaseRepository
 
     public function create(array $data): int
     {
-        $columns = implode(', ', array_keys($data));
-        $params  = ':' . implode(', :', array_keys($data));
+        $columns = array_map(
+            fn($col) => $col === 'range' ? '`range`' : $col,
+            array_keys($data)
+        );
 
-        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($params)";
+        $sql = "
+            INSERT INTO {$this->table}
+            (" . implode(', ', $columns) . ")
+            VALUES (:" . implode(', :', array_keys($data)) . ")
+        ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
 
@@ -66,6 +72,7 @@ class ArmorAbilityRepository extends BaseRepository
             description: $row['description'],
             dice_formula: $row['dice_formula'] ?? null,
             base_damage: (int) $row['base_damage'],
+            range: (int) $row['range'],
             armor_class_bonus: (int) $row['armor_class_bonus'],
             bonus_speed: (int) $row['bonus_speed'],
             created_at: $row['created_at'] ?? null

@@ -600,6 +600,8 @@ CREATE TABLE abilities (
     base_damage INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
 
+    `range` INT NOT NULL DEFAULT 0,
+
     required_race_id INT NULL,
     required_order_id INT NULL,
 
@@ -711,10 +713,10 @@ CREATE TABLE item_abilities (
     bonus_accuracy INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
 
+    `range` INT NOT NULL DEFAULT 1,
+
     is_consumable BOOLEAN NOT NULL DEFAULT 0,
     max_uses INT NULL,
-
-    override_element_type_id INT NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -781,6 +783,9 @@ CREATE TABLE weapons (
 
     weapon_damage_type_id INT NOT NULL,
 
+    `range` INT NOT NULL DEFAULT 0,
+
+
     dice_formula VARCHAR(50) NOT NULL,
     base_damage INT NOT NULL DEFAULT 0,
     bonus_accuracy INT NOT NULL DEFAULT 0,
@@ -835,6 +840,8 @@ CREATE TABLE weapon_abilities (
     description TEXT NOT NULL,
 
     dice_formula VARCHAR(50) NULL,
+
+    `range` INT NOT NULL DEFAULT 0,
 
     base_damage INT NOT NULL DEFAULT 0,
     bonus_damage INT NOT NULL DEFAULT 0,
@@ -900,15 +907,25 @@ CREATE TABLE armors (
     min_strength_required INT NOT NULL DEFAULT 0,
     speed_penalty INT NOT NULL DEFAULT 0,
 
+    weak_damage_type_id INT NULL,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_armors_item
-        FOREIGN KEY (item_id) REFERENCES items(id)
+        FOREIGN KEY (item_id)
+        REFERENCES items(id)
         ON DELETE CASCADE,
 
     CONSTRAINT fk_armors_slot
-        FOREIGN KEY (armor_slot_id) REFERENCES armor_slots(id)
-        ON DELETE RESTRICT
+        FOREIGN KEY (armor_slot_id)
+        REFERENCES armor_slots(id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_armors_weak_damage_type
+        FOREIGN KEY (weak_damage_type_id)
+        REFERENCES weapon_damage_types(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* ================================================================
@@ -945,6 +962,8 @@ CREATE TABLE armor_abilities (
 
     armor_class_bonus INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
+
+    `range` INT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -984,6 +1003,7 @@ CREATE TABLE monsters (
     base_speed INT NOT NULL DEFAULT 6,
 
     actions_per_turn INT NOT NULL DEFAULT 3,
+    xp_reward INT NOT NULL DEFAULT 0,
 
     base_str INT NOT NULL DEFAULT 1,
     base_dex INT NOT NULL DEFAULT 1,
@@ -1038,7 +1058,16 @@ CREATE TABLE monster_attacks (
     base_damage INT NOT NULL DEFAULT 0,
     bonus_accuracy INT NOT NULL DEFAULT 0,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    attack_range INT NOT NULL DEFAULT 1,
+    weapon_damage_type_id INT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_monster_attack_weapon_damage_type
+        FOREIGN KEY (weapon_damage_type_id)
+        REFERENCES weapon_damage_types(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -1094,6 +1123,8 @@ CREATE TABLE monster_abilities (
     base_damage INT NOT NULL DEFAULT 0,
     bonus_damage INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
+
+    ability_range INT NOT NULL DEFAULT 1,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -1508,6 +1539,8 @@ CREATE TABLE perk_abilities (
     bonus_accuracy INT NOT NULL DEFAULT 0,
     bonus_damage INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
+
+    `range` INT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

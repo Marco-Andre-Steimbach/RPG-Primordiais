@@ -36,6 +36,7 @@ class CreateWeaponAbilityService
             'title' => $dto->title,
             'description' => $dto->description,
             'dice_formula' => $dto->dice_formula,
+            'range' => $dto->range,
             'base_damage' => $dto->base_damage,
             'bonus_damage' => $dto->bonus_damage,
             'bonus_accuracy' => $dto->bonus_accuracy,

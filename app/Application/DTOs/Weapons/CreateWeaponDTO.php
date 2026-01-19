@@ -13,6 +13,7 @@ class CreateWeaponDTO
     public int $base_damage;
     public int $bonus_accuracy;
     public int $bonus_speed;
+    public int $range;
 
     public ?int $ammo_item_id;
     public int $ammo_per_use;
@@ -29,6 +30,7 @@ class CreateWeaponDTO
         $this->base_damage = (int) ($data['base_damage'] ?? 0);
         $this->bonus_accuracy = (int) ($data['bonus_accuracy'] ?? 0);
         $this->bonus_speed = (int) ($data['bonus_speed'] ?? 0);
+        $this->range = (int) ($data['range'] ?? 1);
 
         $this->ammo_item_id = isset($data['ammo_item_id'])
             ? (int) $data['ammo_item_id']
@@ -57,11 +59,17 @@ class CreateWeaponDTO
             $errors['dice_formula'][] = 'dice_formula é obrigatória.';
         }
 
-        foreach ([
-            'base_damage' => $this->base_damage,
-            'bonus_accuracy' => $this->bonus_accuracy,
-            'bonus_speed' => $this->bonus_speed,
-        ] as $field => $value) {
+        if ($this->range <= 0) {
+            $errors['range'][] = 'range deve ser maior que zero.';
+        }
+
+        foreach (
+            [
+                'base_damage' => $this->base_damage,
+                'bonus_accuracy' => $this->bonus_accuracy,
+                'bonus_speed' => $this->bonus_speed,
+            ] as $field => $value
+        ) {
             if ($value < 0) {
                 $errors[$field][] = "$field não pode ser negativo.";
             }

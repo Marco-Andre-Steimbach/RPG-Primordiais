@@ -19,7 +19,8 @@ class PerkAbilityRepository extends BaseRepository
                 base_damage,
                 bonus_accuracy,
                 bonus_damage,
-                bonus_speed
+                bonus_speed,
+                `range`
             ) VALUES (
                 :perk_id,
                 :name,
@@ -28,7 +29,8 @@ class PerkAbilityRepository extends BaseRepository
                 :base_damage,
                 :bonus_accuracy,
                 :bonus_damage,
-                :bonus_speed
+                :bonus_speed,
+                :range
             )
         ";
 
@@ -42,6 +44,7 @@ class PerkAbilityRepository extends BaseRepository
             'bonus_accuracy' => $data['bonus_accuracy'] ?? 0,
             'bonus_damage'   => $data['bonus_damage'] ?? 0,
             'bonus_speed'    => $data['bonus_speed'] ?? 0,
+            'range'          => $data['range'] ?? 0,
         ]);
 
         return (int) $this->db->lastInsertId();

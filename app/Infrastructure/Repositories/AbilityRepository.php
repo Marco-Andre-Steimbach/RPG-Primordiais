@@ -12,10 +12,16 @@ class AbilityRepository extends BaseRepository
 
     public function create(array $data): int
     {
-        $columns = implode(', ', array_keys($data));
-        $params  = ':' . implode(', :', array_keys($data));
+        $columns = array_map(
+            fn($col) => $col === 'range' ? '`range`' : $col,
+            array_keys($data)
+        );
 
-        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($params)";
+        $sql = "
+            INSERT INTO {$this->table}
+            (" . implode(', ', $columns) . ")
+            VALUES (:" . implode(', :', array_keys($data)) . ")
+        ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
 
@@ -58,6 +64,7 @@ class AbilityRepository extends BaseRepository
             'dice_formula' => $ability->dice_formula,
             'base_damage' => $ability->base_damage,
             'bonus_speed' => $ability->bonus_speed,
+            'range' => $ability->range,
 
             'required_race_id' => $ability->required_race_id,
             'required_order_id' => $ability->required_order_id,
@@ -81,6 +88,7 @@ class AbilityRepository extends BaseRepository
             dice_formula: $row['dice_formula'] ?? null,
             base_damage: (int) $row['base_damage'],
             bonus_speed: (int) $row['bonus_speed'],
+            range: (int) $row['range'],
             element_types: [],
             required_race_id: $row['required_race_id'] !== null
                 ? (int) $row['required_race_id']

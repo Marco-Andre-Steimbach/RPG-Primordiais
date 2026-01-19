@@ -13,6 +13,8 @@ class CreateArmorDTO
     public int $min_strength_required;
     public int $speed_penalty;
 
+    public ?int $weak_damage_type_id;
+
     public array $element_types;
     public array $armor_abilities;
 
@@ -24,6 +26,10 @@ class CreateArmorDTO
         $this->armor_class_bonus = (int) ($data['armor_class_bonus'] ?? 0);
         $this->min_strength_required = (int) ($data['min_strength_required'] ?? 0);
         $this->speed_penalty = (int) ($data['speed_penalty'] ?? 0);
+
+        $this->weak_damage_type_id = isset($data['weak_damage_type_id'])
+            ? (int) $data['weak_damage_type_id']
+            : null;
 
         $this->element_types = $this->normalizeIds($data['element_types'] ?? []);
         $this->armor_abilities = $this->normalizeIds($data['armor_abilities'] ?? []);
@@ -53,6 +59,13 @@ class CreateArmorDTO
 
         if ($this->speed_penalty < 0) {
             $errors['speed_penalty'][] = 'speed_penalty não pode ser negativo.';
+        }
+
+        if (
+            $this->weak_damage_type_id !== null
+            && $this->weak_damage_type_id <= 0
+        ) {
+            $errors['weak_damage_type_id'][] = 'weak_damage_type_id inválido.';
         }
 
         if (count($this->element_types) !== count(array_unique($this->element_types))) {

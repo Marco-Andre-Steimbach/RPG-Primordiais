@@ -33,6 +33,7 @@ class CreateMonsterAbilityService
             'base_damage' => $dto->base_damage,
             'bonus_damage' => $dto->bonus_damage,
             'bonus_speed' => $dto->bonus_speed,
+            'ability_range' => $dto->ability_range,
         ]);
 
         if (!$abilityId) {
@@ -40,10 +41,7 @@ class CreateMonsterAbilityService
         }
 
         foreach ($dto->element_types as $elementTypeId) {
-            $this->elements->attach(
-                $abilityId,
-                $elementTypeId
-            );
+            $this->elements->attach($abilityId, $elementTypeId);
         }
 
         $ability = $this->abilities->findById($abilityId);

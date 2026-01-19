@@ -23,6 +23,7 @@ class ItemAbilityController
             'bonus_damage' => 'int',
             'bonus_accuracy' => 'int',
             'bonus_speed' => 'int',
+            'range' => 'int',
 
             'is_consumable' => 'bool',
             'max_uses' => 'int',

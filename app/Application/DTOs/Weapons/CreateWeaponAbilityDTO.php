@@ -10,6 +10,7 @@ class CreateWeaponAbilityDTO
     public string $description;
 
     public ?string $dice_formula;
+    public int $range;
 
     public int $base_damage;
     public int $bonus_damage;
@@ -22,11 +23,12 @@ class CreateWeaponAbilityDTO
     {
         $this->title = trim((string) ($data['title'] ?? ''));
         $this->description = trim((string) ($data['description'] ?? ''));
+        $this->range = (int) ($data['range'] ?? 1);
 
         $this->dice_formula = isset($data['dice_formula'])
             ? trim((string) $data['dice_formula'])
             : null;
-
+        
         $this->base_damage = (int) ($data['base_damage'] ?? 0);
         $this->bonus_damage = (int) ($data['bonus_damage'] ?? 0);
         $this->bonus_accuracy = (int) ($data['bonus_accuracy'] ?? 0);
@@ -60,6 +62,10 @@ class CreateWeaponAbilityDTO
         if (count($this->element_types) !== count(array_unique($this->element_types))) {
             $errors['element_types'][] = 'element_types contém IDs duplicados.';
         }
+        
+        if ($this->range <= 0) {
+            $errors['range'][] = 'range deve ser maior que zero.';
+        }        
 
         if ($errors) {
             throw new ValidationException('Dados inválidos.', $errors);

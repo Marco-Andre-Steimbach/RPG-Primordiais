@@ -11,6 +11,8 @@ class CreateArmorAbilityDTO
 
     public ?string $dice_formula;
 
+    public int $range;
+
     public int $base_damage;
     public int $armor_class_bonus;
     public int $bonus_speed;
@@ -25,6 +27,7 @@ class CreateArmorAbilityDTO
             : null;
 
         $this->base_damage = (int) ($data['base_damage'] ?? 0);
+        $this->range = (int) ($data['range'] ?? 1);
         $this->armor_class_bonus = (int) ($data['armor_class_bonus'] ?? 0);
         $this->bonus_speed = (int) ($data['bonus_speed'] ?? 0);
 
@@ -46,6 +49,10 @@ class CreateArmorAbilityDTO
         if ($this->base_damage < 0) {
             $errors['base_damage'][] = 'base_damage não pode ser negativo.';
         }
+
+        if ($this->range <= 0) {
+            $errors['range'][] = 'range deve ser maior que zero.';
+        }        
 
         if ($this->armor_class_bonus < 0) {
             $errors['armor_class_bonus'][] = 'armor_class_bonus não pode ser negativo.';

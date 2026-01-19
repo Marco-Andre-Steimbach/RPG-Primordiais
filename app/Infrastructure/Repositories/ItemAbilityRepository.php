@@ -12,15 +12,22 @@ class ItemAbilityRepository extends BaseRepository
 
     public function create(array $data): int
     {
-        $columns = implode(', ', array_keys($data));
-        $params  = ':' . implode(', :', array_keys($data));
-
-        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($params)";
+        $columns = array_map(
+            fn($col) => $col === 'range' ? '`range`' : $col,
+            array_keys($data)
+        );
+    
+        $sql = "
+            INSERT INTO {$this->table}
+            (" . implode(', ', $columns) . ")
+            VALUES (:" . implode(', :', array_keys($data)) . ")
+        ";
+    
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
-
+    
         return (int) $this->db->lastInsertId();
-    }
+    }    
 
     public function findById(int $id): ?ItemAbility
     {
@@ -44,6 +51,7 @@ class ItemAbilityRepository extends BaseRepository
             bonus_damage: (int) $row['bonus_damage'],
             bonus_accuracy: (int) $row['bonus_accuracy'],
             bonus_speed: (int) $row['bonus_speed'],
+            range: (int) $row['range'],
             is_consumable: (bool) $row['is_consumable'],
             max_uses: $row['max_uses'] !== null ? (int) $row['max_uses'] : null,
             override_element_type_id: $row['override_element_type_id'] !== null
