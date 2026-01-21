@@ -12,12 +12,13 @@ class CampaignCharacterArmorRepository extends BaseRepository
     public function exists(int $campaignCharacterId, int $armorId): bool
     {
         $sql = "
-            SELECT 1
-            FROM {$this->table}
-            WHERE campaign_character_id = :cid
-              AND armor_id = :aid
-            LIMIT 1
-        ";
+        SELECT 1
+        FROM {$this->table}
+        WHERE campaign_character_id = :cid
+          AND armor_id = :aid
+          AND is_active = 1
+        LIMIT 1
+    ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
