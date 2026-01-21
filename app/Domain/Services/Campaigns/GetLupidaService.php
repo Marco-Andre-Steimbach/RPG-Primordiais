@@ -104,8 +104,16 @@ class GetLupidaService
 
         foreach ($armors as &$armor) {
             $armorId = (int) $armor['armor_id'];
+            $itemId = (int) $armor['item_id'];
 
+            $armor['value'] = $itemRepo->getValueById($itemId);
             $armor['elements'] = $armorElementRepo->getByArmorId($armorId);
+
+            if ((int) $armor['armor_slot_id'] === 2) {
+                $armor['weak_damage_type_id'] = $armor['weak_damage_type_id']
+                    ? (int) $armor['weak_damage_type_id']
+                    : null;
+            }
 
             $abilityIds = $armorArmorAbilityRepo->getByArmorId($armorId);
             $armor['abilities'] = array_map(
@@ -116,7 +124,9 @@ class GetLupidaService
 
         foreach ($weapons as &$weapon) {
             $weaponId = (int) $weapon['id'];
+            $itemId = (int) $weapon['item_id'];
 
+            $weapon['value'] = $itemRepo->getValueById($itemId);
             $weapon['elements'] = $weaponElementRepo->getByWeaponId($weaponId);
 
             $abilities = $weaponAbilityRepo->findByWeaponId($weaponId);
@@ -129,12 +139,13 @@ class GetLupidaService
             $weapon['abilities'] = $abilities;
         }
 
-        $items = array_map(function ($item) use ($itemElementRepo, $itemAbilityRepo) {
+        $items = array_map(function ($item) use ($itemRepo, $itemElementRepo, $itemAbilityRepo) {
             return [
                 'item_id' => (int) $item['id'],
                 'item_name' => $item['name'],
                 'item_description' => $item['description'],
                 'quantity' => 1,
+                'value' => $itemRepo->getValueById((int) $item['id']),
                 'elements' => $itemElementRepo->getByItemId((int) $item['id']),
                 'abilities' => $itemAbilityRepo->getByItemId((int) $item['id']),
             ];

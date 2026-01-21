@@ -84,6 +84,7 @@ class ArmorRepository extends BaseRepository
                 a.armor_class_bonus,
                 a.min_strength_required,
                 a.speed_penalty,
+                a.weak_damage_type_id,
                 a.created_at
             FROM armors a
             INNER JOIN items i ON i.id = a.item_id

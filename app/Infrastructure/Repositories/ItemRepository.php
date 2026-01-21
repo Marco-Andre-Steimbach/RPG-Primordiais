@@ -99,4 +99,12 @@ class ItemRepository extends BaseRepository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getValueById(int $itemId): int
+    {
+        $sql = "SELECT value FROM items WHERE id = :id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $itemId]);
+
+        return (int) ($stmt->fetchColumn() ?? 0);
+    }
 }
