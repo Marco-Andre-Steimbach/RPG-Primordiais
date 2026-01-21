@@ -32,6 +32,8 @@ use App\Infrastructure\Repositories\ItemAbilityRepository;
 use App\Infrastructure\Repositories\CampaignCharacterAbilityRepository;
 use App\Infrastructure\Repositories\AbilityRepository;
 use App\Infrastructure\Repositories\AbilityElementTypeRepository;
+use App\Infrastructure\Repositories\CampaignCharacterXPRepository;
+use App\Infrastructure\Repositories\CampaignCharacterGoldRepository;
 
 class GetCampaignCharacterSheetService
 {
@@ -71,6 +73,8 @@ class GetCampaignCharacterSheetService
         $abilityRepo = new CampaignCharacterAbilityRepository();
         $abilityBaseRepo = new AbilityRepository();
         $abilityElementRepo = new AbilityElementTypeRepository();
+        $xpRepo = new CampaignCharacterXPRepository();
+        $goldRepo = new CampaignCharacterGoldRepository();
 
         $campaignCharacter = $campaignCharacterRepo
             ->findByCampaignAndCharacter($campaignId, $characterId);
@@ -83,6 +87,21 @@ class GetCampaignCharacterSheetService
         }
 
         $campaignCharacterId = (int) $campaignCharacter['id'];
+
+        $xpData = $xpRepo->findByCampaignCharacterId($campaignCharacterId);
+        $goldData = $goldRepo->findByCampaignCharacterId($campaignCharacterId);
+
+        $currentXP = $xpData ? (int) $xpData['current_xp'] : 0;
+        $totalXP   = $xpData ? (int) $xpData['total_xp'] : 0;
+
+        $gold = $goldData ? (int) $goldData['gold'] : 0;
+
+        $level = (int) $campaignCharacter['level'];
+
+        $xpToNextLevel = $level * 1000;
+        $xpRemaining = max(0, $xpToNextLevel - $currentXP);
+
+
 
         $attributes = $attributesRepo->findByCampaignCharacterId($campaignCharacterId);
 
@@ -353,6 +372,16 @@ class GetCampaignCharacterSheetService
             'armors' => $armors,
             'items' => $items,
             'abilities' => $abilities,
+            'progression' => [
+                'level' => $level,
+                'xp' => [
+                    'current' => $currentXP,
+                    'total' => $totalXP,
+                    'to_next_level' => $xpRemaining,
+                    'required_for_next_level' => $xpToNextLevel,
+                ],
+                'gold' => $gold,
+            ],
         ];
     }
 }
