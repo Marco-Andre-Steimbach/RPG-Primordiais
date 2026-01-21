@@ -269,7 +269,7 @@ class GetCampaignCharacterSheetService
 
             $slot = $armorSlotRepo->findById($armor->armor_slot_id);
 
-            $abilityIds = $armorArmorAbilityRepo->getByArmorId($armor->item_id);
+            $abilityIds = $armorArmorAbilityRepo->getByArmorId($armor->id);
             $abilities = [];
 
             foreach ($abilityIds as $abilityId) {
