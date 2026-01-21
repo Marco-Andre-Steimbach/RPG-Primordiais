@@ -8,6 +8,7 @@ use App\Infrastructure\Repositories\CampaignCharacterPerkRepository;
 use App\Infrastructure\Repositories\CampaignCharacterAbilityRepository;
 use App\Infrastructure\Repositories\CampaignCharacterWeaponRepository;
 use App\Infrastructure\Repositories\CampaignCharacterArmorRepository;
+use App\Infrastructure\Repositories\CampaignCharacterGoldRepository;
 
 class GetCampaignCharacterInfosService
 {
@@ -19,6 +20,7 @@ class GetCampaignCharacterInfosService
         $abilityRepo = new CampaignCharacterAbilityRepository();
         $weaponRepo = new CampaignCharacterWeaponRepository();
         $armorRepo = new CampaignCharacterArmorRepository();
+        $goldRepo = new CampaignCharacterGoldRepository();
 
         $campaignCharacter = $campaignCharacterRepo
             ->findByCampaignAndCharacter($campaignId, $characterId);
@@ -31,10 +33,17 @@ class GetCampaignCharacterInfosService
         }
 
         $campaignCharacterId = (int) $campaignCharacter['id'];
+        $goldData = $goldRepo->findByCampaignCharacterId($campaignCharacterId);
+
+        $currentGold = $goldData
+            ? (int) $goldData['current_gold']
+            : 0;
+
 
         return [
             'campaign_character_id' => (int) $campaignCharacter['id'],
             'level' => (int) $campaignCharacter['level'],
+            'gold' => $currentGold,
             'perks' => count(
                 $perkRepo->findByCampaignCharacter($campaignCharacterId)
             ),
