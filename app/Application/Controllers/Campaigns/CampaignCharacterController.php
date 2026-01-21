@@ -9,6 +9,10 @@ use App\Application\DTOs\Campaigns\AddCharacterToCampaignDTO;
 use App\Application\DTOs\Campaigns\LevelUpCampaignCharacterDTO;
 use App\Domain\Services\Campaigns\AddCharacterToCampaignService;
 use App\Domain\Services\Campaigns\LevelUpCampaignCharacterService;
+use App\Application\DTOs\Campaigns\ChangeCharacterXPAmountDTO;
+use App\Domain\Services\Campaigns\ChangeCampaignCharacterXPService;
+use App\Application\DTOs\Campaigns\ChangeCharacterGoldAmountDTO;
+use App\Domain\Services\Campaigns\ChangeCampaignCharacterGoldService;
 use App\Core\Exceptions\ValidationException;
 
 class CampaignCharacterController
@@ -73,6 +77,64 @@ class CampaignCharacterController
         return Response::json([
             'success' => true,
             'message' => 'Level-up realizado com sucesso.'
+        ]);
+    }
+    public function changeXP(Request $request)
+    {
+        $authUser = $request->user();
+
+        $schema = new ValidateSchemaMiddleware([
+            'campaign_character_id' => 'int|required',
+            'amount' => 'int|required',
+            'operation' => 'string|required',
+        ]);
+
+        $schema->handle($request->body());
+
+        $dto = new ChangeCharacterXPAmountDTO(
+            $request->body()
+        );
+
+        $service = new ChangeCampaignCharacterXPService();
+
+        $xp = $service->execute(
+            campaignCharacterId: (int) $request->body()['campaign_character_id'],
+            dto: $dto,
+            userId: $authUser->id
+        );
+
+        return Response::json([
+            'success' => true,
+            'xp' => $xp,
+        ]);
+    }
+    public function changeGold(Request $request)
+    {
+        $authUser = $request->user();
+
+        $schema = new ValidateSchemaMiddleware([
+            'campaign_character_id' => 'int|required',
+            'amount' => 'int|required',
+            'operation' => 'string|required',
+        ]);
+
+        $schema->handle($request->body());
+
+        $dto = new ChangeCharacterGoldAmountDTO(
+            $request->body()
+        );
+
+        $service = new ChangeCampaignCharacterGoldService();
+
+        $gold = $service->execute(
+            campaignCharacterId: $dto->campaign_character_id,
+            dto: $dto,
+            userId: $authUser->id
+        );
+
+        return Response::json([
+            'success' => true,
+            'gold' => $gold,
         ]);
     }
 }

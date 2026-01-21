@@ -1338,6 +1338,43 @@ CREATE TABLE campaign_character_attributes (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE campaign_character_xp (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    campaign_character_id INT NOT NULL,
+
+    current_xp INT NOT NULL DEFAULT 0,
+    total_xp INT NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE (campaign_character_id),
+
+    CONSTRAINT fk_cc_xp_cc
+        FOREIGN KEY (campaign_character_id)
+        REFERENCES campaign_characters(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE campaign_character_gold (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    campaign_character_id INT NOT NULL,
+
+    gold INT NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE (campaign_character_id),
+
+    CONSTRAINT fk_cc_gold_cc
+        FOREIGN KEY (campaign_character_id)
+        REFERENCES campaign_characters(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 /* ================================================================
    39. ENCOUNTERS
 ================================================================ */
