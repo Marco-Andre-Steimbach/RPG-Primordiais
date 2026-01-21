@@ -107,4 +107,19 @@ class ItemRepository extends BaseRepository
 
         return (int) ($stmt->fetchColumn() ?? 0);
     }
+    public function findNameDescriptionByItemId(int $itemId): ?array
+    {
+        $sql = "
+        SELECT name, description
+        FROM items
+        WHERE id = :id
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $itemId]);
+
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $row ?: null;
+    }
 }

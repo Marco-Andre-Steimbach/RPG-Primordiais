@@ -79,7 +79,10 @@ class CampaignCharacterArmorRepository extends BaseRepository
         $sql = "
             SELECT
                 cca.id,
+                cca.campaign_character_id,
                 cca.armor_id,
+                cca.is_equipped,
+                cca.is_active,
                 a.item_id,
                 a.armor_slot_id
             FROM {$this->table} cca

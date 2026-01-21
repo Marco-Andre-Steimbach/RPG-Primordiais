@@ -260,26 +260,26 @@ class GetCampaignCharacterSheetService
         $armors = [];
 
         foreach ($armorRepo->findActiveByCampaignCharacter($campaignCharacterId) as $armorRow) {
-            $armor = $armorBaseRepo->findById($armorRow['armor_id']);
+            $armor = $armorBaseRepo->findById((int) $armorRow['armor_id']);
             if (!$armor) {
                 continue;
             }
 
+            $itemInfo = $itemBaseRepo->findNameDescriptionByItemId((int) $armorRow['item_id']);
+
             $slot = $armorSlotRepo->findById($armor->armor_slot_id);
 
-            $abilityIds = $armorArmorAbilityRepo->getByArmorId($armor->id);
+            $abilityIds = $armorArmorAbilityRepo->getByArmorId($armor->item_id);
             $abilities = [];
 
             foreach ($abilityIds as $abilityId) {
-                $ability = $armorAbilityRepo->findById($abilityId);
+                $ability = $armorAbilityRepo->findById((int) $abilityId);
                 if ($ability) {
                     $abilities[] = $ability->toArray();
                 }
             }
 
-            $isEquipped = isset($armorRow['is_equipped'])
-                ? (bool) $armorRow['is_equipped']
-                : false;
+            $isEquipped = (int) ($armorRow['is_equipped'] ?? 0) === 1;
 
             if ($isEquipped) {
                 $armorClass += (int) $armor->armor_class_bonus;
@@ -287,13 +287,20 @@ class GetCampaignCharacterSheetService
             }
 
             $armors[] = [
-                'armor' => $armor->toArray(),
+                'armor' => array_merge(
+                    $armor->toArray(),
+                    [
+                        'item_name' => $itemInfo['name'] ?? null,
+                        'item_description' => $itemInfo['description'] ?? null,
+                    ]
+                ),
                 'slot' => $slot,
                 'elements' => $armorElementRepo->getByArmorId($armor->id),
                 'abilities' => $abilities,
                 'is_equipped' => $isEquipped,
             ];
         }
+
 
         $weapons = [];
         $weaponAbilityIds = [];
