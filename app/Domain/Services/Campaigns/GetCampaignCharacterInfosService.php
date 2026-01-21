@@ -36,9 +36,8 @@ class GetCampaignCharacterInfosService
         $goldData = $goldRepo->findByCampaignCharacterId($campaignCharacterId);
 
         $currentGold = $goldData
-            ? (int) $goldData['current_gold']
+            ? (int) ($goldData['gold'] ?? 0)
             : 0;
-
 
         return [
             'campaign_character_id' => (int) $campaignCharacter['id'],
