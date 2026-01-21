@@ -54,20 +54,22 @@ class CampaignCharacterWeaponRepository extends BaseRepository
     public function findActiveByCampaignCharacter(int $campaignCharacterId): array
     {
         $sql = "
-            SELECT *
-            FROM {$this->table}
-            WHERE campaign_character_id = :campaign_character_id
-              AND is_active = 1
-            ORDER BY id DESC
+            SELECT
+                ccw.id,
+                ccw.weapon_id,
+                w.item_id
+            FROM {$this->table} ccw
+            INNER JOIN weapons w ON w.id = ccw.weapon_id
+            WHERE ccw.campaign_character_id = :id
+              AND ccw.is_active = 1
         ";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'campaign_character_id' => $campaignCharacterId,
-        ]);
+        $stmt->execute(['id' => $campaignCharacterId]);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
 
     public function countActiveByCampaignCharacter(int $campaignCharacterId): int
     {

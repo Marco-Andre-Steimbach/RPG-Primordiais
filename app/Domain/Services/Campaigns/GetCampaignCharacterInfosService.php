@@ -39,6 +39,9 @@ class GetCampaignCharacterInfosService
             ? (int) ($goldData['gold'] ?? 0)
             : 0;
 
+        $weapons = $weaponRepo->findActiveByCampaignCharacter($campaignCharacterId);
+        $armors = $armorRepo->findActiveByCampaignCharacter($campaignCharacterId);
+
         return [
             'campaign_character_id' => (int) $campaignCharacter['id'],
             'level' => (int) $campaignCharacter['level'],
@@ -49,12 +52,8 @@ class GetCampaignCharacterInfosService
             'abilities' => count(
                 $abilityRepo->findByCampaignCharacter($campaignCharacterId)
             ),
-            'weapons' => count(
-                $weaponRepo->findActiveByCampaignCharacter($campaignCharacterId)
-            ),
-            'armors' => count(
-                $armorRepo->findActiveByCampaignCharacter($campaignCharacterId)
-            ),
+            'weapons' => $weapons,
+            'armors' => $armors,
         ];
     }
 }

@@ -76,11 +76,16 @@ class CampaignCharacterArmorRepository extends BaseRepository
     public function findActiveByCampaignCharacter(int $campaignCharacterId): array
     {
         $sql = "
-        SELECT *
-        FROM {$this->table}
-        WHERE campaign_character_id = :id
-          AND is_active = 1
-    ";
+            SELECT
+                cca.id,
+                cca.armor_id,
+                a.item_id,
+                a.armor_slot_id
+            FROM {$this->table} cca
+            INNER JOIN armors a ON a.id = cca.armor_id
+            WHERE cca.campaign_character_id = :id
+              AND cca.is_active = 1
+        ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $campaignCharacterId]);
