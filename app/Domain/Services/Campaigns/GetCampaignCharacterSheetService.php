@@ -93,15 +93,12 @@ class GetCampaignCharacterSheetService
 
         $currentXP = $xpData ? (int) $xpData['current_xp'] : 0;
         $totalXP   = $xpData ? (int) $xpData['total_xp'] : 0;
-
-        $gold = $goldData ? (int) $goldData['gold'] : 0;
+        $gold      = $goldData ? (int) $goldData['gold'] : 0;
 
         $level = (int) $campaignCharacter['level'];
 
         $xpToNextLevel = $level * 1000;
         $xpRemaining = max(0, $xpToNextLevel - $currentXP);
-
-
 
         $attributes = $attributesRepo->findByCampaignCharacterId($campaignCharacterId);
 
@@ -280,7 +277,9 @@ class GetCampaignCharacterSheetService
                 }
             }
 
-            $isEquipped = (bool) $armorRow['is_equipped'];
+            $isEquipped = isset($armorRow['is_equipped'])
+                ? (bool) $armorRow['is_equipped']
+                : false;
 
             if ($isEquipped) {
                 $armorClass += (int) $armor->armor_class_bonus;
@@ -316,7 +315,9 @@ class GetCampaignCharacterSheetService
             }
 
             $weapon['abilities'] = $abilities;
-            $weapon['is_equipped'] = (bool) $weaponRow['is_equipped'];
+            $weapon['is_equipped'] = isset($weaponRow['is_equipped'])
+                ? (bool) $weaponRow['is_equipped']
+                : false;
 
             $weapons[] = $weapon;
         }
