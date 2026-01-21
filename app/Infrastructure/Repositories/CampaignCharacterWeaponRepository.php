@@ -35,12 +35,13 @@ class CampaignCharacterWeaponRepository extends BaseRepository
     public function exists(int $campaignCharacterId, int $weaponId): bool
     {
         $sql = "
-            SELECT 1
-            FROM {$this->table}
-            WHERE campaign_character_id = :campaign_character_id
-              AND weapon_id = :weapon_id
-            LIMIT 1
-        ";
+        SELECT 1
+        FROM {$this->table}
+        WHERE campaign_character_id = :campaign_character_id
+          AND weapon_id = :weapon_id
+          AND is_active = 1
+        LIMIT 1
+    ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
@@ -50,6 +51,7 @@ class CampaignCharacterWeaponRepository extends BaseRepository
 
         return (bool) $stmt->fetchColumn();
     }
+
 
     public function findActiveByCampaignCharacter(int $campaignCharacterId): array
     {
