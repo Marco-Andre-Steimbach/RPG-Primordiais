@@ -106,5 +106,64 @@ class CampaignCharacterItemRepository extends BaseRepository
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-    
+
+    public function findByCharacterAndItem(
+        int $campaignCharacterId,
+        int $itemId
+    ): ?array {
+        $sql = "
+            SELECT *
+            FROM {$this->table}
+            WHERE campaign_character_id = :character_id
+              AND item_id = :item_id
+              AND is_active = 1
+            LIMIT 1
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'character_id' => $campaignCharacterId,
+            'item_id' => $itemId,
+        ]);
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+    }
+
+    public function updateQuantityByCharacterAndItem(
+        int $campaignCharacterId,
+        int $itemId,
+        int $quantity
+    ): void {
+        $sql = "
+            UPDATE {$this->table}
+            SET quantity = :quantity
+            WHERE campaign_character_id = :character_id
+              AND item_id = :item_id
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'quantity' => $quantity,
+            'character_id' => $campaignCharacterId,
+            'item_id' => $itemId,
+        ]);
+    }
+
+    public function deactivateByCharacterAndItem(
+        int $campaignCharacterId,
+        int $itemId
+    ): void {
+        $sql = "
+            UPDATE {$this->table}
+            SET is_active = 0
+            WHERE campaign_character_id = :character_id
+              AND item_id = :item_id
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'character_id' => $campaignCharacterId,
+            'item_id' => $itemId,
+        ]);
+    }
 }

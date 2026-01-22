@@ -88,6 +88,7 @@ $router->middleware('auth')->add('POST', '/campaign/characters/gold', [CampaignC
 $router->middleware('auth')->add('POST', '/campaign/:id/ability', [CampaignCharacterAbilityController::class, 'store']);
 $router->middleware('auth')->add('POST', '/campaign/:id/perk', [CampaignCharacterPerkController::class, 'store']);
 $router->middleware('auth')->add('POST', '/campaign/:id/item', [CampaignCharacterItemController::class, 'store']);
+$router->middleware('auth')->add('PUT', '/campaign/item/use', [CampaignCharacterItemController::class, 'use']);
 $router->middleware('auth')->add('POST', '/campaign/:id/weapon', [CampaignCharacterWeaponController::class, 'store']);
 $router->middleware('auth')->add('POST', '/campaign/:id/armor', [CampaignCharacterArmorController::class, 'store']);
 $router->middleware('auth')->add('GET', '/campaign', [CampaignController::class, 'index']);
