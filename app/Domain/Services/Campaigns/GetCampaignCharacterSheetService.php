@@ -338,13 +338,24 @@ class GetCampaignCharacterSheetService
                 continue;
             }
 
+            $abilityIds = $itemAbilityRepo->getByItemId($item->id);
+
+            $abilities = [];
+            foreach ($abilityIds as $abilityId) {
+                $ability = $itemAbilityRepo->findById($abilityId);
+                if ($ability) {
+                    $abilities[] = $ability->toArray();
+                }
+            }
+
             $items[] = [
                 'item' => $item->toArray(),
                 'quantity' => (int) $itemRow['quantity'],
                 'elements' => $itemElementRepo->getByItemId($item->id),
-                'abilities' => $itemAbilityRepo->getByItemId($item->id),
+                'abilities' => $abilities,
             ];
         }
+
 
         $abilities = [];
         foreach ($abilityRepo->findByCampaignCharacter($campaignCharacterId) as $abilityRow) {
