@@ -46,13 +46,6 @@ class ChangeCampaignCharacterGoldService
             );
         }
 
-        if ((int) $campaign->created_by !== $userId) {
-            throw new ValidationException(
-                'Ação não permitida.',
-                ['user' => ['Apenas o mestre pode alterar o ouro.']]
-            );
-        }
-
         $goldData = $this->gold->findByCampaignCharacterId($campaignCharacterId);
 
         if (!$goldData) {
