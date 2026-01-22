@@ -57,6 +57,22 @@ class CampaignCharacterItemRepository extends BaseRepository
             'id' => $id,
         ]);
     }
+    
+    public function activateIfInactive(int $id): void
+    {
+        $sql = "
+        UPDATE {$this->table}
+        SET is_active = 1
+        WHERE id = :id
+          AND is_active = 0
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'id' => $id
+        ]);
+    }
+
 
     public function findByCampaignCharacter(int $campaignCharacterId): array
     {

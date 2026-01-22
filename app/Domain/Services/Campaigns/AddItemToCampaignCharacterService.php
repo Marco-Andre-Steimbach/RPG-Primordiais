@@ -73,6 +73,11 @@ class AddItemToCampaignCharacterService
                 $existingItem['id'],
                 $dto->quantity
             );
+
+            $this->campaignItems->activateIfInactive(
+                $existingItem['id']
+            );
+
             return;
         }
 
