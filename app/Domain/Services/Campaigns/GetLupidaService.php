@@ -81,17 +81,17 @@ class GetLupidaService
 
         $armors = array_values(array_filter(
             $armorRepo->findAllWithItemAndSlot(),
-            fn ($a) => !isset($ownedArmorIds[(int) $a['armor_id']])
+            fn($a) => !isset($ownedArmorIds[(int) $a['armor_id']])
         ));
 
         $weapons = array_values(array_filter(
             $weaponRepo->findAllWithItemAndDamageType(),
-            fn ($w) => !isset($ownedWeaponIds[(int) $w['id']])
+            fn($w) => !isset($ownedWeaponIds[(int) $w['id']])
         ));
 
         $items = array_values(array_filter(
             $itemRepo->findAllNonEquipable(),
-            fn ($i) => !isset($ownedItemIds[(int) $i['id']])
+            fn($i) => !isset($ownedItemIds[(int) $i['id']])
         ));
 
         shuffle($armors);
@@ -117,7 +117,7 @@ class GetLupidaService
 
             $abilityIds = $armorArmorAbilityRepo->getByArmorId($armorId);
             $armor['abilities'] = array_map(
-                fn ($id) => $armorAbilityRepo->findById($id)->toArray(),
+                fn($id) => $armorAbilityRepo->findById($id)->toArray(),
                 $abilityIds
             );
         }
@@ -139,15 +139,24 @@ class GetLupidaService
             $weapon['abilities'] = $abilities;
         }
 
-        $items = array_map(function ($item) use ($itemRepo, $itemElementRepo, $itemAbilityRepo) {
+        $items = array_map(function ($item) use (
+            $itemRepo,
+            $itemElementRepo,
+            $itemAbilityRepo,
+            $weaponRepo
+        ) {
+            $itemId = (int) $item['id'];
+
+            $isAmmo = $weaponRepo->existsByAmmoItemId($itemId);
+
             return [
-                'item_id' => (int) $item['id'],
+                'item_id' => $itemId,
                 'item_name' => $item['name'],
                 'item_description' => $item['description'],
-                'quantity' => 1,
-                'value' => $itemRepo->getValueById((int) $item['id']),
-                'elements' => $itemElementRepo->getByItemId((int) $item['id']),
-                'abilities' => $itemAbilityRepo->getByItemId((int) $item['id']),
+                'quantity' => $isAmmo ? 30 : random_int(1, 10),
+                'value' => $itemRepo->getValueById($itemId),
+                'elements' => $itemElementRepo->getByItemId($itemId),
+                'abilities' => $itemAbilityRepo->getByItemId($itemId),
             ];
         }, $items);
 

@@ -131,6 +131,20 @@ class WeaponRepository extends BaseRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function existsByAmmoItemId(int $itemId): bool
+    {
+        $sql = "
+        SELECT 1
+        FROM {$this->table}
+        WHERE ammo_item_id = :item_id
+        LIMIT 1
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['item_id' => $itemId]);
+
+        return (bool) $stmt->fetchColumn();
+    }
 
     private function mapToModel(array $row): Weapon
     {
