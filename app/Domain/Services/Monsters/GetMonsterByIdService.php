@@ -72,6 +72,8 @@ class GetMonsterByIdService
 
             'xp_reward' => $monster->xp_reward,
 
+            'weakness_damage_type_id' => $monster->weakness_damage_type_id,
+
             'stats' => [
                 'hp' => $monster->base_hp,
                 'ac' => $monster->base_ac,
