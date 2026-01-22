@@ -87,6 +87,26 @@ class CampaignRepository extends BaseRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function findByUserParticipation(int $userId): array
+    {
+        $sql = "
+        SELECT DISTINCT c.*
+        FROM campaigns c
+        LEFT JOIN campaign_characters cc
+            ON cc.campaign_id = c.id
+        WHERE c.created_by = :user_id
+           OR cc.user_id = :user_id
+        ORDER BY c.created_at DESC
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'user_id' => $userId,
+        ]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     private function mapToModel(array $row): Campaign
     {
         return new Campaign(

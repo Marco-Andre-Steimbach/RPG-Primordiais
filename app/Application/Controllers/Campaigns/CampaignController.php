@@ -13,6 +13,7 @@ use App\Domain\Services\Campaigns\GetCampaignByIdService;
 use App\Domain\Services\Campaigns\GetCampaignCharacterSheetService;
 use App\Domain\Services\Campaigns\GetCampaignCharacterInfosService;
 use App\Domain\Services\Campaigns\GetLupidaService;
+use App\Domain\Services\Campaigns\GetMyCampaignsService;
 
 class CampaignController
 {
@@ -108,6 +109,18 @@ class CampaignController
             'infos' => $infos,
         ]);
     }
+
+    public function myCampaigns(Request $request)
+    {
+        $authUser = $request->user();
+
+        $service = new GetMyCampaignsService();
+
+        return Response::json([
+            'campaigns' => $service->execute($authUser->id),
+        ]);
+    }
+
 
     public function getLupida(Request $request)
     {
