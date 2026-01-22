@@ -10,12 +10,12 @@ class GetMyCampaignsService
 {
     public function execute(int $userId): array
     {
+
         $campaignRepo = new CampaignRepository();
         $userRepo = new UserRepository();
         $campaignCharacterRepo = new CampaignCharacterRepository();
 
         $campaigns = $campaignRepo->findByUserParticipation($userId);
-
         return array_map(function ($campaign) use ($userRepo, $campaignCharacterRepo) {
             $master = $userRepo->findById($campaign['created_by']);
 

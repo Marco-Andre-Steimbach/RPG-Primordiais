@@ -94,14 +94,15 @@ class CampaignRepository extends BaseRepository
         FROM campaigns c
         LEFT JOIN campaign_characters cc
             ON cc.campaign_id = c.id
-        WHERE c.created_by = :user_id
-           OR cc.user_id = :user_id
+        WHERE c.created_by = :master_id
+           OR cc.user_id = :player_id
         ORDER BY c.created_at DESC
     ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'user_id' => $userId,
+            'master_id' => $userId,
+            'player_id' => $userId,
         ]);
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
