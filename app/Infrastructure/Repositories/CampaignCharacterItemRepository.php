@@ -64,9 +64,6 @@ class CampaignCharacterItemRepository extends BaseRepository
         SELECT *
         FROM {$this->table}
         WHERE campaign_character_id = :id
-          AND is_active = 1
-          AND quantity > 0
-        ORDER BY created_at
     ";
 
         $stmt = $this->db->prepare($sql);

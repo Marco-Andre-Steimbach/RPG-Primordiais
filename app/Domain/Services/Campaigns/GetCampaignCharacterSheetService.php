@@ -332,7 +332,7 @@ class GetCampaignCharacterSheetService
         $weaponAbilityIds = array_values(array_unique($weaponAbilityIds));
 
         $items = [];
-        foreach ($itemRepo->findByCampaignCharacter($campaignCharacterId) as $itemRow) {
+        foreach ($itemRepo->findActiveByCampaignCharacter($campaignCharacterId) as $itemRow) {
             $item = $itemBaseRepo->findById($itemRow['item_id']);
             if (!$item) {
                 continue;
