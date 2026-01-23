@@ -101,4 +101,5 @@ $router->middleware('auth')->add('GET', '/campaign/:campaign_id/character/:chara
 $router->middleware('auth')->add('GET', '/elements', [ElementTypeController::class, 'index']);
 $router->middleware('auth')->add('GET', '/elements/:id', [ElementTypeController::class, 'show']);
 $router->middleware('auth')->add('POST', '/elements/damage', [ElementTypeController::class, 'calculateDamage']);
+$router->middleware('auth')->add('POST', '/elements/relations', [ElementTypeController::class, 'getRelations']);
 return $router;

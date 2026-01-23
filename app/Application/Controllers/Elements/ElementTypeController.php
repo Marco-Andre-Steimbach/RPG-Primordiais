@@ -8,6 +8,8 @@ use App\Domain\Services\Elements\GetAllElementTypesService;
 use App\Domain\Services\Elements\GetElementTypeByIdService;
 use App\Application\DTOs\Elements\CalculateDamageDTO;
 use App\Domain\Services\Elements\CalculateElementDamageService;
+use App\Domain\Services\Elements\GetElementRelationsService;
+use App\Application\DTOs\Elements\GetElementRelationsDTO;
 
 class ElementTypeController
 {
@@ -41,6 +43,19 @@ class ElementTypeController
 
         return Response::json([
             'damage' => $result,
+        ]);
+    }
+    public function getRelations(Request $request)
+    {
+        $dto = new GetElementRelationsDTO(
+            $request->body()
+        );
+
+        $service = new GetElementRelationsService();
+        $result = $service->execute($dto->defense_elements);
+
+        return Response::json([
+            'relations' => $result,
         ]);
     }
 }
