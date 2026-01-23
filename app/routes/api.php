@@ -102,4 +102,5 @@ $router->middleware('auth')->add('GET', '/elements', [ElementTypeController::cla
 $router->middleware('auth')->add('GET', '/elements/:id', [ElementTypeController::class, 'show']);
 $router->middleware('auth')->add('POST', '/elements/damage', [ElementTypeController::class, 'calculateDamage']);
 $router->middleware('auth')->add('POST', '/elements/relations', [ElementTypeController::class, 'getRelations']);
+$router->middleware('auth')->add('POST', '/elements/relations/attack', [ElementTypeController::class, 'getAttackRelations']);
 return $router;
