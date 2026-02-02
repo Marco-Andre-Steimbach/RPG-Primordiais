@@ -51,17 +51,18 @@ class CalculateElementDamageService
             ];
         }
 
-        $multiplier = 1 + (0.25 * $advantages) - (0.25 * $disadvantages);
+        $multiplier =
+            1 +
+            (0.25 * $advantages) -
+            (0.25 * $disadvantages);
 
         if ($multiplier < 0) {
             $multiplier = 0;
         }
 
-        $finalDamage = (int) round($dto->base_damage * $multiplier);
-
         return [
             'base_damage' => $dto->base_damage,
-            'final_damage' => $finalDamage,
+            'final_damage' => (int) round($dto->base_damage * $multiplier),
             'multiplier' => $multiplier,
             'advantages' => $advantages,
             'disadvantages' => $disadvantages,

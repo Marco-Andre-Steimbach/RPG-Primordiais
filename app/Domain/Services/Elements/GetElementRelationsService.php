@@ -36,19 +36,19 @@ class GetElementRelationsService
         }
 
         foreach ($relations as $relation) {
-            $targetId = (int) $relation['target_element_id'];
+            $sourceId = (int) $relation['source_element_id'];
 
             if ($relation['relation_type'] === 'immunity') {
-                $map[$targetId]['immunity'] = true;
+                $map[$sourceId]['immunity'] = true;
                 continue;
             }
 
             if ($relation['relation_type'] === 'strength') {
-                $map[$targetId]['disadvantages']++;
+                $map[$sourceId]['advantages']++;
             }
 
             if ($relation['relation_type'] === 'weakness') {
-                $map[$targetId]['advantages']++;
+                $map[$sourceId]['disadvantages']++;
             }
         }
 

@@ -44,11 +44,11 @@ class GetElementAttackRelationsService
             }
 
             if ($relation['relation_type'] === 'strength') {
-                $map[$targetId]['disadvantages']++;
+                $map[$targetId]['advantages']++;
             }
 
             if ($relation['relation_type'] === 'weakness') {
-                $map[$targetId]['advantages']++;
+                $map[$targetId]['disadvantages']++;
             }
         }
 
