@@ -27,7 +27,7 @@ class CreateItemAbilityService
             'bonus_accuracy' => $dto->bonus_accuracy,
             'bonus_speed' => $dto->bonus_speed,
             'range' => $dto->range,
-            'is_consumable' => $dto->is_consumable,
+            'is_consumable' => (int) $dto->is_consumable,
             'max_uses' => $dto->max_uses,
             'override_element_type_id' => $dto->override_element_type_id,
         ]);
