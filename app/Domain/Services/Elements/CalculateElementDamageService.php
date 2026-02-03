@@ -23,7 +23,7 @@ class CalculateElementDamageService
         foreach ($dto->attack_elements as $attackId) {
             foreach ($dto->defense_elements as $defenseId) {
 
-                // ATAQUE → DEFESA
+                // ATAQUE → DEFESA (ÚNICO lugar onde imunidade existe)
                 $attackRelations = $this->elements->getRelationsByIds(
                     [$attackId],
                     [$defenseId]
@@ -44,18 +44,13 @@ class CalculateElementDamageService
                     }
                 }
 
-                // DEFESA → ATAQUE (fraqueza defensiva)
+                // DEFESA → ATAQUE (APENAS modificadores, NUNCA imunidade)
                 $defenseRelations = $this->elements->getRelationsByIds(
                     [$defenseId],
                     [$attackId]
                 );
 
                 foreach ($defenseRelations as $rel) {
-                    if ($rel['relation_type'] === 'immunity') {
-                        $hasImmunity = true;
-                        break 3;
-                    }
-
                     if ($rel['relation_type'] === 'weakness') {
                         $advantages++;
                     }
