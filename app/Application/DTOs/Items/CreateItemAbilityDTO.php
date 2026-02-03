@@ -70,10 +70,11 @@ class CreateItemAbilityDTO
         if (!$this->is_consumable && $this->max_uses !== null) {
             $errors['max_uses'][] = 'max_uses só pode ser usado se is_consumable for true.';
         }
-        
-        if ($this->range <= 0) {
-            $errors['range'][] = 'range deve ser maior que zero.';
+
+        if ($this->range < 0) {
+            $errors['range'][] = 'range não pode ser negativo.';
         }
+
 
         if ($errors) {
             throw new ValidationException('Dados inválidos.', $errors);
