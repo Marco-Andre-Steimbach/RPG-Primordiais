@@ -16,27 +16,49 @@ class CalculateElementDamageService
 
     public function execute(CalculateDamageDTO $dto): array
     {
-        $relations = $this->elements->getRelationsByIds(
-            $dto->attack_elements,
-            $dto->defense_elements
-        );
-
         $advantages = 0;
         $disadvantages = 0;
         $hasImmunity = false;
 
-        foreach ($relations as $relation) {
-            if ($relation['relation_type'] === 'immunity') {
-                $hasImmunity = true;
-                break;
-            }
+        foreach ($dto->attack_elements as $attackId) {
+            foreach ($dto->defense_elements as $defenseId) {
 
-            if ($relation['relation_type'] === 'strength') {
-                $advantages++;
-            }
+                // ATAQUE → DEFESA (ÚNICO lugar onde imunidade existe)
+                $attackRelations = $this->elements->getRelationsByIds(
+                    [$attackId],
+                    [$defenseId]
+                );
 
-            if ($relation['relation_type'] === 'weakness') {
-                $disadvantages++;
+                foreach ($attackRelations as $rel) {
+                    if ($rel['relation_type'] === 'immunity') {
+                        $hasImmunity = true;
+                        break 3;
+                    }
+
+                    if ($rel['relation_type'] === 'strength') {
+                        $advantages++;
+                    }
+
+                    if ($rel['relation_type'] === 'weakness') {
+                        $disadvantages++;
+                    }
+                }
+
+                // DEFESA → ATAQUE (APENAS modificadores, NUNCA imunidade)
+                $defenseRelations = $this->elements->getRelationsByIds(
+                    [$defenseId],
+                    [$attackId]
+                );
+
+                foreach ($defenseRelations as $rel) {
+                    if ($rel['relation_type'] === 'weakness') {
+                        $advantages++;
+                    }
+
+                    if ($rel['relation_type'] === 'strength') {
+                        $disadvantages++;
+                    }
+                }
             }
         }
 
