@@ -24,6 +24,7 @@ use App\Application\Controllers\Campaigns\CampaignCharacterItemController;
 use App\Application\Controllers\Campaigns\CampaignCharacterWeaponController;
 use App\Application\Controllers\Campaigns\CampaignCharacterArmorController;
 use App\Application\Controllers\Elements\ElementTypeController;
+use App\Application\Controllers\Encounters\EncounterController;
 
 $router = new Router();
 
@@ -103,4 +104,17 @@ $router->middleware('auth')->add('GET', '/elements/:id', [ElementTypeController:
 $router->middleware('auth')->add('POST', '/elements/damage', [ElementTypeController::class, 'calculateDamage']);
 $router->middleware('auth')->add('POST', '/elements/relations', [ElementTypeController::class, 'getRelations']);
 $router->middleware('auth')->add('POST', '/elements/relations/attack', [ElementTypeController::class, 'getAttackRelations']);
+
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/encounters', [EncounterController::class, 'store']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/encounters/add-monster', [EncounterController::class, 'addMonster']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/encounters/add-player', [EncounterController::class, 'addPlayer']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/encounters/set-initiative', [EncounterController::class, 'setInitiative']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT', '/encounters/update-initiative', [EncounterController::class, 'updateInitiative']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT', '/encounters/update-status', [EncounterController::class, 'updateStatus']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT', '/encounters/update-monster-hp', [EncounterController::class, 'updateMonsterHp']);
+$router->middleware('auth')->add('GET', '/encounters', [EncounterController::class, 'index']);
+$router->middleware('auth')->add('GET', '/encounters/:id', [EncounterController::class, 'show']);
+$router->middleware('auth')->add('GET', '/encounters/:id/participants', [EncounterController::class, 'participants']);
+
+
 return $router;

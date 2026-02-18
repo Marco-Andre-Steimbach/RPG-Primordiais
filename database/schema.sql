@@ -1608,3 +1608,29 @@ CREATE TABLE campaign_character_perks (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE encounters_initiative (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    encounter_id INT NOT NULL,
+
+    encounter_monster_id INT NULL,
+    encounter_player_id INT NULL,
+
+    initiative_value INT NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_initiative_encounter
+        FOREIGN KEY (encounter_id)
+        REFERENCES encounters(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_initiative_monster
+        FOREIGN KEY (encounter_monster_id)
+        REFERENCES encounter_monsters(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_initiative_player
+        FOREIGN KEY (encounter_player_id)
+        REFERENCES encounter_players(id)
+        ON DELETE CASCADE
+);
