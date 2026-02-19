@@ -98,7 +98,13 @@ class GetCampaignCharacterSheetService
         $level = (int) $campaignCharacter['level'];
 
         $xpToNextLevel = $level * 1000;
-        $xpRemaining = max(0, $xpToNextLevel - $currentXP);
+
+        if ($currentXP >= $xpToNextLevel) {
+            $xpRemaining = 0;
+            $currentXP = $xpToNextLevel;
+        } else {
+            $xpRemaining = $xpToNextLevel - $currentXP;
+        }
 
         $attributes = $attributesRepo->findByCampaignCharacterId($campaignCharacterId);
 

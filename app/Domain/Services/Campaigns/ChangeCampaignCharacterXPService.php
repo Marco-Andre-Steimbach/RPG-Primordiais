@@ -26,6 +26,7 @@ class ChangeCampaignCharacterXPService
         ChangeCharacterXPAmountDTO $dto,
         int $userId
     ): array {
+
         $campaignCharacter = $this->campaignCharacters->findById($campaignCharacterId);
 
         if (!$campaignCharacter) {
@@ -70,21 +71,45 @@ class ChangeCampaignCharacterXPService
         }
 
         $level = (int) $campaignCharacter['level'];
+        $levelsGained = 0;
 
         if ($dto->operation === 'add') {
+
             $currentXP += $dto->amount;
             $totalXP   += $dto->amount;
 
-            $xpToLevel = $level * 1000;
+            while (true) {
 
-            if ($currentXP >= $xpToLevel) {
-                $currentXP -= $xpToLevel;
+                $xpToLevel = $level * 1000;
+
+                if ($currentXP >= $xpToLevel) {
+                    $currentXP -= $xpToLevel;
+                    $level++;
+                    $levelsGained++;
+                } else {
+                    break;
+                }
             }
+
+            if ($levelsGained > 0) {
+                $this->campaignCharacters->updateLevel(
+                    $campaignCharacterId,
+                    $level
+                );
+            }
+
         } else {
+
             $currentXP -= $dto->amount;
 
             if ($currentXP < 0) {
                 $currentXP = 0;
+            }
+
+            if ($totalXP - $dto->amount >= 0) {
+                $totalXP -= $dto->amount;
+            } else {
+                $totalXP = 0;
             }
         }
 
@@ -95,9 +120,11 @@ class ChangeCampaignCharacterXPService
         );
 
         return [
-            'current_xp'     => $currentXP,
-            'total_xp'       => $totalXP,
-            'next_level_xp'  => $level * 1000
+            'level'           => $level,
+            'current_xp'      => $currentXP,
+            'total_xp'        => $totalXP,
+            'levels_gained'   => $levelsGained,
+            'next_level_xp'   => $level * 1000
         ];
     }
 }
