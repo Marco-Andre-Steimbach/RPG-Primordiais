@@ -44,6 +44,7 @@ class LevelUpCampaignCharacterService
             );
         }
 
+        // ↑ atributo
         $this->attributes->updateByCampaignCharacterId(
             $dto->campaign_character_id,
             [
@@ -51,6 +52,13 @@ class LevelUpCampaignCharacterService
             ]
         );
 
+        // ↑ nível
+        $this->campaignCharacters->updateLevel(
+            $dto->campaign_character_id,
+            (int) $campaignCharacter['level'] + 1
+        );
+
+        // ↓ pending
         $this->campaignCharacters->decrementPendingLevelUps(
             $dto->campaign_character_id,
             1
