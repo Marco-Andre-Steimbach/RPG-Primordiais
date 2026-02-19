@@ -85,6 +85,7 @@ class ChangeCampaignCharacterXPService
                 if ($currentXP >= $xpToLevel) {
                     $currentXP -= $xpToLevel;
                     $levelsGained++;
+                    $level++; // ← CORREÇÃO PRINCIPAL
                 } else {
                     break;
                 }
@@ -96,7 +97,6 @@ class ChangeCampaignCharacterXPService
                     $levelsGained
                 );
             }
-
         } else {
 
             $currentXP -= $dto->amount;
@@ -105,9 +105,9 @@ class ChangeCampaignCharacterXPService
                 $currentXP = 0;
             }
 
-            if ($totalXP - $dto->amount >= 0) {
-                $totalXP -= $dto->amount;
-            } else {
+            $totalXP -= $dto->amount;
+
+            if ($totalXP < 0) {
                 $totalXP = 0;
             }
         }
