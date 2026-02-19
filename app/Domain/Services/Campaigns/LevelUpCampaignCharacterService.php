@@ -40,6 +40,15 @@ class LevelUpCampaignCharacterService
             );
         }
 
+        $pending = (int) ($campaignCharacter['pending_level_ups'] ?? 0);
+
+        if ($pending <= 0) {
+            throw new ValidationException(
+                'Nada para evoluir.',
+                ['pending_level_ups' => ['Este personagem não possui pontos pendentes.']]
+            );
+        }
+
         $currentAttributes = $this->attributes->findByCampaignCharacterId(
             $dto->campaign_character_id
         );
@@ -58,9 +67,9 @@ class LevelUpCampaignCharacterService
             ]
         );
 
-        $this->campaignCharacters->updateLevel(
+        $this->campaignCharacters->decrementPendingLevelUps(
             $dto->campaign_character_id,
-            (int) $campaignCharacter['level'] + 1
+            1
         );
     }
 }
