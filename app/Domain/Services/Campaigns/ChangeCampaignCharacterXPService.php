@@ -84,7 +84,6 @@ class ChangeCampaignCharacterXPService
 
                 if ($currentXP >= $xpToLevel) {
                     $currentXP -= $xpToLevel;
-                    $level++;
                     $levelsGained++;
                 } else {
                     break;
@@ -92,9 +91,9 @@ class ChangeCampaignCharacterXPService
             }
 
             if ($levelsGained > 0) {
-                $this->campaignCharacters->updateLevel(
+                $this->campaignCharacters->incrementPendingLevelUps(
                     $campaignCharacterId,
-                    $level
+                    $levelsGained
                 );
             }
 
@@ -120,7 +119,6 @@ class ChangeCampaignCharacterXPService
         );
 
         return [
-            'level'           => $level,
             'current_xp'      => $currentXP,
             'total_xp'        => $totalXP,
             'levels_gained'   => $levelsGained,

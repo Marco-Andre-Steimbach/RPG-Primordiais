@@ -87,6 +87,7 @@ class GetCampaignCharacterSheetService
         }
 
         $campaignCharacterId = (int) $campaignCharacter['id'];
+        $pendingLevelUps = (int) ($campaignCharacter['pending_level_ups'] ?? 0);
 
         $xpData = $xpRepo->findByCampaignCharacterId($campaignCharacterId);
         $goldData = $goldRepo->findByCampaignCharacterId($campaignCharacterId);
@@ -399,6 +400,7 @@ class GetCampaignCharacterSheetService
             'abilities' => $abilities,
             'progression' => [
                 'level' => $level,
+                'pending_level_ups' => $pendingLevelUps,
                 'xp' => [
                     'current' => $currentXP,
                     'total' => $totalXP,

@@ -84,6 +84,7 @@ $router->middleware('auth')->add('GET', '/character/:id', [CharacterController::
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/campaign', [CampaignController::class, 'store']);
 $router->middleware('auth')->add('POST', '/campaign/:id/characters', [CampaignCharacterController::class, 'store']);
 $router->middleware('auth')->add('POST', '/campaign/characters/level-up', [CampaignCharacterController::class, 'levelUp']);
+$router->middleware('auth')->add('POST','/campaign/characters/confirm-level-up',[CampaignCharacterController::class, 'confirmLevelUp']);
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/campaign/characters/xp', [CampaignCharacterController::class,'changeXP']);
 $router->middleware('auth')->add('POST', '/campaign/characters/gold', [CampaignCharacterController::class,'changeGold']);
 $router->middleware('auth')->add('POST', '/campaign/:id/ability', [CampaignCharacterAbilityController::class, 'store']);

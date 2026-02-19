@@ -1201,6 +1201,7 @@ CREATE TABLE campaign_characters (
     user_id INT NOT NULL,
     character_id INT NOT NULL,
     level INT NOT NULL DEFAULT 1,
+    pending_level_ups INT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

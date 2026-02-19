@@ -13,6 +13,9 @@ use App\Application\DTOs\Campaigns\ChangeCharacterXPAmountDTO;
 use App\Domain\Services\Campaigns\ChangeCampaignCharacterXPService;
 use App\Application\DTOs\Campaigns\ChangeCharacterGoldAmountDTO;
 use App\Domain\Services\Campaigns\ChangeCampaignCharacterGoldService;
+use App\Domain\Services\Campaigns\ConfirmCampaignCharacterLevelUpService;
+use App\Application\DTOs\Campaigns\ConfirmCampaignCharacterLevelUpDTO;
+
 use App\Core\Exceptions\ValidationException;
 
 class CampaignCharacterController
@@ -135,6 +138,33 @@ class CampaignCharacterController
         return Response::json([
             'success' => true,
             'gold' => $gold,
+        ]);
+    }
+    public function confirmLevelUp(Request $request)
+    {
+        $authUser = $request->user();
+
+        $schema = new ValidateSchemaMiddleware([
+            'campaign_character_id' => 'int|required',
+            'attribute' => 'string|required',
+        ]);
+
+        $schema->handle($request->body());
+
+        $dto = new ConfirmCampaignCharacterLevelUpDTO(
+            $request->body()
+        );
+
+        $service = new ConfirmCampaignCharacterLevelUpService();
+
+        $service->execute(
+            dto: $dto,
+            userId: $authUser->id
+        );
+
+        return Response::json([
+            'success' => true,
+            'message' => 'Atributo aumentado com sucesso.'
         ]);
     }
 }

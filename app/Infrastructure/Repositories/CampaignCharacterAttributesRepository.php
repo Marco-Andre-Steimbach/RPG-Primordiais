@@ -62,4 +62,17 @@ class CampaignCharacterAttributesRepository extends BaseRepository
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
     }
+    public function incrementAttribute(int $campaignCharacterId, string $attribute): void
+    {
+        $sql = "
+        UPDATE campaign_character_attributes
+        SET {$attribute} = {$attribute} + 1
+        WHERE campaign_character_id = :id
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'id' => $campaignCharacterId
+        ]);
+    }
 }

@@ -97,6 +97,35 @@ class CampaignCharacterRepository extends BaseRepository
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 
+    public function incrementPendingLevelUps(int $campaignCharacterId, int $amount): void
+    {
+        $sql = "
+        UPDATE {$this->table}
+        SET pending_level_ups = pending_level_ups + :amount
+        WHERE id = :id
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'amount' => $amount,
+            'id' => $campaignCharacterId
+        ]);
+    }
+
+    public function decrementPendingLevelUps(int $campaignCharacterId): void
+    {
+        $sql = "
+        UPDATE {$this->table}
+        SET pending_level_ups = GREATEST(0, pending_level_ups - 1)
+        WHERE id = :id
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'id' => $campaignCharacterId
+        ]);
+    }
+
     public function updateLevel(int $campaignCharacterId, int $level): void
     {
         $sql = "
