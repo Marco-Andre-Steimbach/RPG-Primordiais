@@ -7,6 +7,8 @@ use App\Core\Http\Response;
 use App\Application\Middlewares\ValidateSchemaMiddleware;
 use App\Application\DTOs\Armors\CreateArmorAbilityDTO;
 use App\Domain\Services\Armors\CreateArmorAbilityService;
+use App\Domain\Services\Armors\GetAllArmorAbilitiesService;
+use App\Domain\Services\Armors\GetArmorAbilityByIdService;
 
 class ArmorAbilityController
 {
@@ -35,5 +37,26 @@ class ArmorAbilityController
             'message' => 'Habilidade de armadura criada com sucesso.',
             'ability' => $ability,
         ], 201);
+    }
+
+    public function index()
+    {
+        $service = new GetAllArmorAbilitiesService();
+
+        return Response::json([
+            'armor_abilities' => $service->execute(),
+        ]);
+    }
+
+    public function show(Request $request)
+    {
+        $id = (int) ($request->params()['id'] ?? 0);
+
+        $service = new GetArmorAbilityByIdService();
+        $ability = $service->execute($id);
+
+        return Response::json([
+            'armor_ability' => $ability,
+        ]);
     }
 }

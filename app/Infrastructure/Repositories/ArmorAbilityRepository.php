@@ -10,6 +10,20 @@ class ArmorAbilityRepository extends BaseRepository
 {
     protected string $table = 'armor_abilities';
 
+    public function findAll(): array
+    {
+        $sql = "
+        SELECT id, title
+        FROM {$this->table}
+        ORDER BY title
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function create(array $data): int
     {
         $columns = array_map(

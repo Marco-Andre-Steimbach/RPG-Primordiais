@@ -70,6 +70,8 @@ $router->middleware('auth')->add('GET', '/weapons/:id', [WeaponController::class
 
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/armors', [ArmorController::class, 'store']);
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/armors/ability', [ArmorAbilityController::class, 'store']);
+$router->middleware('auth')->add('GET', '/armors/ability', [ArmorAbilityController::class, 'index']);
+$router->middleware('auth')->add('GET', '/armors/ability/:id', [ArmorAbilityController::class, 'show']);
 $router->middleware('auth')->add('GET', '/armors', [ArmorController::class, 'index']);
 $router->middleware('auth')->add('GET', '/armors/:id', [ArmorController::class, 'show']);
 
