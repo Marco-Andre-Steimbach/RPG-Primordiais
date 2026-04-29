@@ -371,10 +371,6 @@ class GetCampaignCharacterSheetService
                 continue;
             }
 
-            if (in_array((int) $ability->id, $weaponAbilityIds, true)) {
-                continue;
-            }
-
             $abilities[] = [
                 'ability' => $ability->toArray(),
                 'elements' => $abilityElementRepo->getByAbilityId($ability->id),
