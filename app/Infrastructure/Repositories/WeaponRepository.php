@@ -146,6 +146,44 @@ class WeaponRepository extends BaseRepository
         return (bool) $stmt->fetchColumn();
     }
 
+    public function findRandomAmmoItemExcludingIds(array $excludedItemIds = []): ?array
+{
+    $params = [];
+
+    $whereNotIn = '';
+
+    if (!empty($excludedItemIds)) {
+        $placeholders = [];
+
+        foreach (array_values($excludedItemIds) as $index => $id) {
+            $param = "excluded_id_$index";
+            $placeholders[] = ":$param";
+            $params[$param] = (int) $id;
+        }
+
+        $whereNotIn = 'AND i.id NOT IN (' . implode(', ', $placeholders) . ')';
+    }
+
+    $sql = "
+        SELECT DISTINCT
+            i.id,
+            i.name,
+            i.description
+        FROM {$this->table} w
+        INNER JOIN items i
+            ON i.id = w.ammo_item_id
+        WHERE w.ammo_item_id IS NOT NULL
+        $whereNotIn
+        ORDER BY RAND()
+        LIMIT 1
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
     private function mapToModel(array $row): Weapon
     {
         return new Weapon(

@@ -101,6 +101,19 @@ class GetLupidaService
         $armors = array_slice($armors, 0, 5);
         $weapons = array_slice($weapons, 0, 5);
         $items = array_slice($items, 0, 5);
+        $listedItemIds = array_map(
+    fn($item) => (int) $item['id'],
+    $items
+);
+
+$ammoItem = $weaponRepo->findRandomAmmoItemExcludingIds([
+    ...array_keys($ownedItemIds),
+    ...$listedItemIds,
+]);
+
+if ($ammoItem) {
+    $items[] = $ammoItem;
+}
 
         foreach ($armors as &$armor) {
             $armorId = (int) $armor['armor_id'];
