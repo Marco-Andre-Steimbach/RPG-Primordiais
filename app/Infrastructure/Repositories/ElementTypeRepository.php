@@ -43,7 +43,8 @@ class ElementTypeRepository extends BaseRepository
         SELECT 
             source_element_id,
             target_element_id,
-            relation_type
+            relation_type,
+            modifier
         FROM element_type_relations
         WHERE source_element_id IN ($sourcePlaceholders)
           AND target_element_id IN ($targetPlaceholders)

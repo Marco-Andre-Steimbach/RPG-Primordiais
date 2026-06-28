@@ -16,67 +16,30 @@ class CalculateElementDamageService
 
     public function execute(CalculateDamageDTO $dto): array
     {
-        $advantages = 0;
-        $disadvantages = 0;
-        $hasImmunity = false;
+        $modifier = 0;
 
         foreach ($dto->attack_elements as $attackId) {
             foreach ($dto->defense_elements as $defenseId) {
-
-                // ATAQUE → DEFESA (ÚNICO lugar onde imunidade existe)
-                $attackRelations = $this->elements->getRelationsByIds(
+                $relations = $this->elements->getRelationsByIds(
                     [$attackId],
                     [$defenseId]
                 );
 
-                foreach ($attackRelations as $rel) {
-                    if ($rel['relation_type'] === 'immunity') {
-                        $hasImmunity = true;
-                        break 3;
+                foreach ($relations as $rel) {
+                    $relationModifier = (float) $rel['modifier'];
+
+                    if ($rel['relation_type'] === 'strong') {
+                        $modifier += $relationModifier;
                     }
 
-                    if ($rel['relation_type'] === 'strength') {
-                        $advantages++;
-                    }
-
-                    if ($rel['relation_type'] === 'weakness') {
-                        $disadvantages++;
-                    }
-                }
-
-                // DEFESA → ATAQUE (APENAS modificadores, NUNCA imunidade)
-                $defenseRelations = $this->elements->getRelationsByIds(
-                    [$defenseId],
-                    [$attackId]
-                );
-
-                foreach ($defenseRelations as $rel) {
-                    if ($rel['relation_type'] === 'weakness') {
-                        $advantages++;
-                    }
-
-                    if ($rel['relation_type'] === 'strength') {
-                        $disadvantages++;
+                    if ($rel['relation_type'] === 'weak') {
+                        $modifier -= $relationModifier;
                     }
                 }
             }
         }
 
-        if ($hasImmunity) {
-            return [
-                'base_damage' => $dto->base_damage,
-                'final_damage' => 0,
-                'multiplier' => 0,
-                'advantages' => $advantages,
-                'disadvantages' => $disadvantages,
-                'immunity' => true,
-            ];
-        }
-
-        $multiplier =
-            1 +
-            (0.25 * $advantages) -
-            (0.25 * $disadvantages);
+        $multiplier = 1 + $modifier;
 
         if ($multiplier < 0) {
             $multiplier = 0;
@@ -86,9 +49,7 @@ class CalculateElementDamageService
             'base_damage' => $dto->base_damage,
             'final_damage' => (int) round($dto->base_damage * $multiplier),
             'multiplier' => $multiplier,
-            'advantages' => $advantages,
-            'disadvantages' => $disadvantages,
-            'immunity' => false,
+            'modifier' => $modifier,
         ];
     }
 }
