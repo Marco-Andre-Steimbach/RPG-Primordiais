@@ -12,7 +12,8 @@ use App\Domain\Services\Elements\GetElementRelationsService;
 use App\Application\DTOs\Elements\GetElementRelationsDTO;
 use App\Application\DTOs\Elements\GetElementAttackRelationsDTO;
 use App\Domain\Services\Elements\GetElementAttackRelationsService;
-
+use App\Domain\Services\Elements\GetCharacterElementsService;
+use App\Domain\Services\Elements\GetMonsterElementsService;
 
 class ElementTypeController
 {
@@ -48,11 +49,10 @@ class ElementTypeController
             'damage' => $result,
         ]);
     }
+
     public function getRelations(Request $request)
     {
-        $dto = new GetElementRelationsDTO(
-            $request->body()
-        );
+        $dto = new GetElementRelationsDTO($request->body());
 
         $service = new GetElementRelationsService();
         $result = $service->execute($dto->defense_elements);
@@ -61,17 +61,40 @@ class ElementTypeController
             'relations' => $result,
         ]);
     }
+
     public function getAttackRelations(Request $request)
     {
-        $dto = new GetElementAttackRelationsDTO(
-            $request->body()
-        );
+        $dto = new GetElementAttackRelationsDTO($request->body());
 
         $service = new GetElementAttackRelationsService();
         $result = $service->execute($dto->attack_elements);
 
         return Response::json([
             'relations' => $result,
+        ]);
+    }
+
+    public function getCharacterElements(Request $request)
+    {
+        $characterId = (int) ($request->params()['id'] ?? 0);
+
+        $service = new GetCharacterElementsService();
+        $elements = $service->execute($characterId);
+
+        return Response::json([
+            'elements' => $elements,
+        ]);
+    }
+
+    public function getMonsterElements(Request $request)
+    {
+        $monsterId = (int) ($request->params()['id'] ?? 0);
+
+        $service = new GetMonsterElementsService();
+        $elements = $service->execute($monsterId);
+
+        return Response::json([
+            'elements' => $elements,
         ]);
     }
 }
