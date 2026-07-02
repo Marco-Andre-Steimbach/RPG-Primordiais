@@ -4,6 +4,7 @@ namespace App\Domain\Services\Elements;
 
 use App\Infrastructure\Repositories\CampaignCharacterArmorRepository;
 use App\Infrastructure\Repositories\ArmorElementTypeRepository;
+use App\Infrastructure\Repositories\ElementTypeRepository;
 
 class GetCharacterElementsService
 {
@@ -11,8 +12,9 @@ class GetCharacterElementsService
     {
         $armorRepo = new CampaignCharacterArmorRepository();
         $armorElementRepo = new ArmorElementTypeRepository();
+        $elementTypeRepo = new ElementTypeRepository();
 
-        $elements = [];
+        $elementIds = [];
 
         foreach ($armorRepo->findActiveByCampaignCharacter($campaignCharacterId) as $armorRow) {
             $isEquipped = (int) ($armorRow['is_equipped'] ?? 0) === 1;
@@ -21,20 +23,30 @@ class GetCharacterElementsService
                 continue;
             }
 
-            foreach ($armorElementRepo->getByArmorId((int) $armorRow['armor_id']) as $element) {
-                $elements[(int) $element['id']] = $element;
+            foreach ($armorElementRepo->getByArmorId((int) $armorRow['armor_id']) as $elementId) {
+                $elementIds[(int) $elementId] = true;
             }
         }
 
-        if (empty($elements)) {
-            return [
-                [
-                    'id' => 1,
-                    'name' => 'Normal',
-                ],
+        if (empty($elementIds)) {
+            $elementIds[1] = true;
+        }
+
+        $elements = [];
+
+        foreach (array_keys($elementIds) as $elementId) {
+            $element = $elementTypeRepo->findById((int) $elementId);
+
+            if (!$element) {
+                continue;
+            }
+
+            $elements[] = [
+                'id' => $element->id,
+                'name' => $element->name,
             ];
         }
 
-        return array_values($elements);
+        return $elements;
     }
 }
