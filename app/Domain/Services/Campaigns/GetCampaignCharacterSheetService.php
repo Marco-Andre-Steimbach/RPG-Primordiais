@@ -34,6 +34,7 @@ use App\Infrastructure\Repositories\AbilityRepository;
 use App\Infrastructure\Repositories\AbilityElementTypeRepository;
 use App\Infrastructure\Repositories\CampaignCharacterXPRepository;
 use App\Infrastructure\Repositories\CampaignCharacterGoldRepository;
+use App\Infrastructure\Repositories\PerkAbilityRepository;
 
 class GetCampaignCharacterSheetService
 {
@@ -51,6 +52,7 @@ class GetCampaignCharacterSheetService
         $perkRepo = new CampaignCharacterPerkRepository();
         $perkBaseRepo = new PerkRepository();
         $perkAttributesRepo = new PerkAttributeRepository();
+        $perkAbilityRepo = new PerkAbilityRepository();
 
         $weaponRepo = new CampaignCharacterWeaponRepository();
         $weaponBaseRepo = new WeaponRepository();
@@ -194,60 +196,69 @@ class GetCampaignCharacterSheetService
         $perkArmorClass = 0;
         $perkSpeed = 0;
 
-        $perks = [];
+$perks = [];
 
-        foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perkRow) {
-            $perk = $perkBaseRepo->findById($perkRow['perk_id']);
-            if (!$perk) {
-                continue;
-            }
+foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perkRow) {
+    $perk = $perkBaseRepo->findById($perkRow['perk_id']);
 
-            $rawPerkAttributes = $perkAttributesRepo->getByPerk($perk->id);
+    if (!$perk) {
+        continue;
+    }
 
-            foreach ($rawPerkAttributes as $attr) {
-                if (!isset($attr['attribute_name'], $attr['attribute_value'])) {
-                    continue;
-                }
+    $rawPerkAttributes = $perkAttributesRepo->getByPerk($perk->id);
+    $perkAbilities = $perkAbilityRepo->findByPerk($perk->id);
 
-                $name = $attr['attribute_name'] === 'int'
-                    ? 'intt'
-                    : $attr['attribute_name'];
-
-                $value = (int) $attr['attribute_value'];
-
-                if (array_key_exists($name, $perkAttributes)) {
-                    $perkAttributes[$name] += $value;
-                    continue;
-                }
-
-                if ($name === 'hp_max') {
-                    $perkHpMax += $value;
-                    continue;
-                }
-
-                if ($name === 'mana_max') {
-                    $perkManaMax += $value;
-                    continue;
-                }
-
-                if ($name === 'sanity') {
-                    $perkSanityMax += $value;
-                    continue;
-                }
-
-                if ($name === 'armor_class') {
-                    $perkArmorClass += $value;
-                    continue;
-                }
-
-                if ($name === 'speed') {
-                    $perkSpeed += $value;
-                    continue;
-                }
-            }
-
-            $perks[] = $perk->toArray();
+    foreach ($rawPerkAttributes as $attr) {
+        if (!isset($attr['attribute_name'], $attr['attribute_value'])) {
+            continue;
         }
+
+        $name = $attr['attribute_name'] === 'int'
+            ? 'intt'
+            : $attr['attribute_name'];
+
+        $value = (int) $attr['attribute_value'];
+
+        if (array_key_exists($name, $perkAttributes)) {
+            $perkAttributes[$name] += $value;
+            continue;
+        }
+
+        if ($name === 'hp_max') {
+            $perkHpMax += $value;
+            continue;
+        }
+
+        if ($name === 'mana_max') {
+            $perkManaMax += $value;
+            continue;
+        }
+
+        if ($name === 'sanity') {
+            $perkSanityMax += $value;
+            continue;
+        }
+
+        if ($name === 'armor_class') {
+            $perkArmorClass += $value;
+            continue;
+        }
+
+        if ($name === 'speed') {
+            $perkSpeed += $value;
+        }
+    }
+
+    $perk->attributes = $rawPerkAttributes;
+    $perk->ability = $perkAbilities;
+
+    $perkData = $perk->toArray();
+
+    $perkData['has_attributes'] = !empty($rawPerkAttributes);
+    $perkData['has_ability'] = !empty($perkAbilities);
+
+    $perks[] = $perkData;
+}
 
         $sheet = new CampaignCharacterSheet(
             campaign_character_id: $campaignCharacterId,
