@@ -5,7 +5,6 @@ namespace App\Domain\Services\Encounters;
 use App\Application\DTOs\Encounters\AddMonsterToEncounterDTO;
 use App\Core\Exceptions\ValidationException;
 use App\Core\Exceptions\ForbiddenException;
-use App\Domain\Models\EncounterMonster;
 use App\Infrastructure\Repositories\EncounterRepository;
 use App\Infrastructure\Repositories\EncounterMonsterRepository;
 use App\Infrastructure\Repositories\CampaignRepository;
@@ -30,7 +29,6 @@ class AddMonsterToEncounterService
         AddMonsterToEncounterDTO $dto,
         int $userId
     ): array {
-
         $encounter = $this->encounters->findById($dto->encounter_id);
 
         if (!$encounter) {
@@ -65,20 +63,21 @@ class AddMonsterToEncounterService
         }
 
         $inserted = [];
+        $maxHp = max(1, (int) $monster->base_hp);
 
         for ($i = 0; $i < $dto->quantity; $i++) {
-
-            $currentHp = $monster->base_hp;
-
             $id = $this->encounterMonsters->create([
                 'encounter_id' => $dto->encounter_id,
-                'monster_id'   => $dto->monster_id,
-                'monster_level'=> $dto->monster_level,
-                'current_hp'   => $currentHp,
+                'monster_id' => $dto->monster_id,
+                'monster_level' => $dto->monster_level,
+                'current_hp' => $maxHp,
+                'max_hp' => $maxHp,
             ]);
 
             if (!$id) {
-                throw new ValidationException('Erro ao inserir monstro no encontro.');
+                throw new ValidationException(
+                    'Erro ao inserir monstro no encontro.'
+                );
             }
 
             $instance = $this->encounterMonsters->findById($id);

@@ -1694,3 +1694,7 @@ CREATE TABLE encounter_player_stats (
         REFERENCES encounter_players(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE encounter_monsters
+ADD COLUMN max_hp INT NOT NULL DEFAULT 0
+AFTER current_hp;

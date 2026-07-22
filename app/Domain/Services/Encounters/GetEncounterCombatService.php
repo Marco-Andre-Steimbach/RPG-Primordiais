@@ -152,6 +152,7 @@ class GetEncounterCombatService
             $initiative = $initiativeMonsters[$encounterMonsterId] ?? null;
 
             $currentHp = (int) $this->value($row, 'current_hp');
+$maxHp = (int) $this->value($row, 'max_hp');
 
             $turnOrder[] = [
                 'type' => 'monster',
@@ -169,7 +170,7 @@ class GetEncounterCombatService
                 ),
                 'name' => $this->value($monster, 'name'),
                 'current_hp' => $currentHp,
-                'max_hp' => $currentHp,
+                'max_hp' => $maxHp,
             ];
         }
 
