@@ -121,6 +121,7 @@ $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT',
 $router->middleware('auth')->add('GET', '/encounters', [EncounterController::class, 'index']);
 $router->middleware('auth')->add('GET', '/encounters/:id', [EncounterController::class, 'show']);
 $router->middleware('auth')->add('GET', '/encounters/:id/participants', [EncounterController::class, 'participants']);
+$router->middleware('auth')->add('GET','/encounters/:id/combat',[EncounterController::class, 'combat']);
 
 
 return $router;

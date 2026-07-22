@@ -22,6 +22,7 @@ use App\Domain\Services\Encounters\UpdateEncounterMonsterHpService;
 use App\Domain\Services\Encounters\GetAllEncountersService;
 use App\Domain\Services\Encounters\GetEncounterByIdService;
 use App\Domain\Services\Encounters\GetEncounterParticipantsService;
+use App\Domain\Services\Encounters\GetEncounterCombatService;
 use App\Core\Exceptions\ValidationException;
 
 class EncounterController
@@ -308,4 +309,22 @@ class EncounterController
             'participants' => $participants
         ]);
     }
+    public function combat(Request $request)
+{
+    $encounterId = (int) ($request->params()['id'] ?? 0);
+
+    if ($encounterId <= 0) {
+        throw new ValidationException(
+            'ID inválido.',
+            ['id' => ['ID do encontro inválido.']]
+        );
+    }
+
+    $service = new GetEncounterCombatService();
+    $combat = $service->execute($encounterId);
+
+    return Response::json([
+        'combat' => $combat
+    ]);
+}
 }

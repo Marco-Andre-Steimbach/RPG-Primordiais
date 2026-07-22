@@ -1635,3 +1635,62 @@ CREATE TABLE encounters_initiative (
         REFERENCES encounter_players(id)
         ON DELETE CASCADE
 );
+
+/* ================================================================
+   CAMPAIGN_CHARACTER_RESOURCES
+   Estado atual persistido do personagem entre encontros
+================================================================ */
+
+CREATE TABLE campaign_character_resources (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    campaign_character_id INT NOT NULL,
+
+    current_hp INT NOT NULL DEFAULT 0,
+    current_mana INT NOT NULL DEFAULT 0,
+    current_sanity INT NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE (campaign_character_id),
+
+    CONSTRAINT fk_cc_resources_campaign_character
+        FOREIGN KEY (campaign_character_id)
+        REFERENCES campaign_characters(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* ================================================================
+   ENCOUNTER_PLAYER_STATS
+   Estado do personagem dentro de um encontro
+================================================================ */
+
+CREATE TABLE encounter_player_stats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    encounter_player_id INT NOT NULL,
+
+    current_hp INT NOT NULL DEFAULT 0,
+    max_hp INT NOT NULL DEFAULT 1,
+
+    current_mana INT NOT NULL DEFAULT 0,
+    max_mana INT NOT NULL DEFAULT 0,
+
+    current_sanity INT NOT NULL DEFAULT 0,
+    max_sanity INT NOT NULL DEFAULT 0,
+
+    armor_class INT NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE (encounter_player_id),
+
+    CONSTRAINT fk_encounter_player_stats_player
+        FOREIGN KEY (encounter_player_id)
+        REFERENCES encounter_players(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

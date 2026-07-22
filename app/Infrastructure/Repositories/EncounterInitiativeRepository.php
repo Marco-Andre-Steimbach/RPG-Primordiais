@@ -29,11 +29,13 @@ class EncounterInitiativeRepository extends BaseRepository
             SELECT *
             FROM {$this->table}
             WHERE encounter_id = :encounter_id
-            ORDER BY initiative_value DESC, id DESC
+            ORDER BY initiative_value DESC, id ASC
         ";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['encounter_id' => $encounterId]);
+        $stmt->execute([
+            'encounter_id' => $encounterId
+        ]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -48,7 +50,6 @@ class EncounterInitiativeRepository extends BaseRepository
         ?int $monsterId,
         ?int $playerId
     ): bool {
-
         if ($monsterId !== null) {
             $sql = "
                 SELECT 1
@@ -61,7 +62,7 @@ class EncounterInitiativeRepository extends BaseRepository
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 'encounter_id' => $encounterId,
-                'monster_id'   => $monsterId,
+                'monster_id' => $monsterId,
             ]);
         } else {
             $sql = "
@@ -75,7 +76,7 @@ class EncounterInitiativeRepository extends BaseRepository
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 'encounter_id' => $encounterId,
-                'player_id'    => $playerId,
+                'player_id' => $playerId,
             ]);
         }
 
@@ -93,7 +94,7 @@ class EncounterInitiativeRepository extends BaseRepository
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             'value' => $value,
-            'id'    => $id,
+            'id' => $id,
         ]);
     }
 }
