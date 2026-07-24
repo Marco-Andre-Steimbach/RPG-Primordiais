@@ -50,19 +50,20 @@ class RacePerkRepository extends BaseRepository
         return (bool) $stmt->fetchColumn();
     }
 
-    public function getPerksByRace(int $raceId): array
-    {
-        $sql = "
-            SELECT perk_id, required_level
-            FROM {$this->table}
-            WHERE race_id = :race_id
-        ";
+public function getPerksByRace(int $raceId): array
+{
+    $sql = "
+        SELECT perk_id, required_level
+        FROM {$this->table}
+        WHERE race_id = :race_id
+        ORDER BY required_level ASC, perk_id ASC
+    ";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['race_id' => $raceId]);
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['race_id' => $raceId]);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     public function findByPerkId(int $perkId): ?array
     {
         $sql = "
