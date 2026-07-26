@@ -38,7 +38,9 @@ class CreatePerkService
     public function execute(CreatePerkDTO $dto): Perk
     {
         if ($this->perks->existsByName($dto->name)) {
-            throw new ConflictException('Já existe um perk com esse nome.');
+            throw new ConflictException(
+                'Já existe um perk com esse nome.'
+            );
         }
 
         $perkId = $this->perks->create([
@@ -49,7 +51,9 @@ class CreatePerkService
         ]);
 
         if (!$perkId) {
-            throw new ValidationException('Falha ao criar perk.');
+            throw new ValidationException(
+                'Falha ao criar perk.'
+            );
         }
 
         if ($dto->race_id !== null) {
@@ -95,7 +99,10 @@ class CreatePerkService
         }
 
         foreach ($dto->flags as $flag) {
-            $attached = $this->flags->attach($perkId, $flag);
+            $attached = $this->flags->attach(
+                $perkId,
+                $flag
+            );
 
             if (!$attached) {
                 throw new ValidationException(
@@ -105,7 +112,10 @@ class CreatePerkService
         }
 
         foreach ($dto->element_types as $elementId) {
-            $attached = $this->elements->attach($perkId, $elementId);
+            $attached = $this->elements->attach(
+                $perkId,
+                $elementId
+            );
 
             if (!$attached) {
                 throw new ValidationException(
@@ -135,7 +145,9 @@ class CreatePerkService
             );
         }
 
-        $savedAbilities = $this->abilities->findByPerk($perkId);
+        $savedAbilities = $this->abilities->findByPerk(
+            $perkId
+        );
 
         $perk->race_id = $dto->race_id;
         $perk->order_id = $dto->order_id;
@@ -143,7 +155,7 @@ class CreatePerkService
         $perk->attributes = $dto->attributes;
         $perk->flags = $dto->flags;
         $perk->element_types = $dto->element_types;
-        $perk->ability = $savedAbilities[0] ?? null;
+        $perk->ability = $savedAbilities[0] ?? [];
 
         return $perk;
     }
