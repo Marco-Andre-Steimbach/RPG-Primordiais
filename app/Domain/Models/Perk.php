@@ -16,7 +16,7 @@ class Perk
         public array $element_types = [],
         public array $flags = [],
         public array $attributes = [],
-        public array $ability = [],
+        public ?array $ability = null,
         public ?string $created_at = null,
         public ?string $updated_at = null
     ) {}
@@ -29,16 +29,13 @@ class Perk
             'description' => $this->description,
             'type' => $this->type,
             'mana_cost' => $this->mana_cost,
-
             'race_id' => $this->race_id,
             'order_id' => $this->order_id,
             'required_level' => $this->required_level,
-
             'element_types' => $this->element_types,
             'flags' => $this->flags,
             'attributes' => $this->attributes,
             'ability' => $this->ability,
-
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

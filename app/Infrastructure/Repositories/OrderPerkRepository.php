@@ -50,19 +50,20 @@ class OrderPerkRepository extends BaseRepository
         return (bool) $stmt->fetchColumn();
     }
 
-    public function getPerksByOrder(int $orderId): array
-    {
-        $sql = "
-            SELECT perk_id, required_level
-            FROM {$this->table}
-            WHERE order_id = :order_id
-        ";
+public function getPerksByOrder(int $orderId): array
+{
+    $sql = "
+        SELECT perk_id, required_level
+        FROM {$this->table}
+        WHERE order_id = :order_id
+        ORDER BY required_level ASC, perk_id ASC
+    ";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['order_id' => $orderId]);
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['order_id' => $orderId]);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     public function findByPerkId(int $perkId): ?array
     {
         $sql = "

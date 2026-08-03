@@ -27,14 +27,31 @@ class CreatePerkDTO
         $this->type = (string) ($data['type'] ?? '');
         $this->mana_cost = (int) ($data['mana_cost'] ?? 0);
 
-        $this->race_id = isset($data['race_id']) ? (int) $data['race_id'] : null;
-        $this->order_id = isset($data['order_id']) ? (int) $data['order_id'] : null;
+        $this->race_id = isset($data['race_id'])
+            ? (int) $data['race_id']
+            : null;
+
+        $this->order_id = isset($data['order_id'])
+            ? (int) $data['order_id']
+            : null;
+
         $this->required_level = (int) ($data['required_level'] ?? 1);
 
-        $this->element_types = $this->normalizeElementTypes($data['element_types'] ?? []);
-        $this->flags = $this->normalizeFlags($data['flags'] ?? []);
-        $this->attributes = $this->normalizeAttributes($data['attributes'] ?? []);
-        $this->ability = $this->normalizeAbility($data['ability'] ?? null);
+        $this->element_types = $this->normalizeElementTypes(
+            $data['element_types'] ?? []
+        );
+
+        $this->flags = $this->normalizeFlags(
+            $data['flags'] ?? []
+        );
+
+        $this->attributes = $this->normalizeAttributes(
+            $data['attributes'] ?? []
+        );
+
+        $this->ability = $this->normalizeAbility(
+            $data['ability'] ?? []
+        );
 
         $this->validate();
     }
@@ -63,12 +80,14 @@ class CreatePerkDTO
             $errors['required_level'][] = 'required_level deve ser >= 1.';
         }
 
-        if ($this->race_id && $this->order_id) {
-            $errors['relation'][] = 'Envie apenas race_id ou order_id, nunca ambos.';
+        if ($this->race_id !== null && $this->order_id !== null) {
+            $errors['relation'][] =
+                'Envie apenas race_id ou order_id, nunca ambos.';
         }
 
-        if (!$this->race_id && !$this->order_id) {
-            $errors['relation'][] = 'É obrigatório enviar race_id ou order_id.';
+        if ($this->race_id === null && $this->order_id === null) {
+            $errors['relation'][] =
+                'É obrigatório enviar race_id ou order_id.';
         }
 
         if ($this->race_id !== null && $this->race_id <= 0) {
@@ -79,50 +98,94 @@ class CreatePerkDTO
             $errors['order_id'][] = 'order_id inválido.';
         }
 
-        if (!empty($this->element_types) && count(array_unique($this->element_types)) !== count($this->element_types)) {
-            $errors['element_types'][] = 'element_types contém IDs duplicados.';
+        if (
+            !empty($this->element_types)
+            && count(array_unique($this->element_types))
+                !== count($this->element_types)
+        ) {
+            $errors['element_types'][] =
+                'element_types contém IDs duplicados.';
         }
 
-        if (!empty($this->flags) && count(array_unique($this->flags)) !== count($this->flags)) {
-            $errors['flags'][] = 'flags contém valores duplicados.';
+        if (
+            !empty($this->flags)
+            && count(array_unique($this->flags))
+                !== count($this->flags)
+        ) {
+            $errors['flags'][] =
+                'flags contém valores duplicados.';
         }
 
         foreach ($this->attributes as $i => $attr) {
-            if (!isset($attr['name']) || trim((string) $attr['name']) === '') {
-                $errors["attributes.$i.name"][] = 'attribute name é obrigatório.';
+            if (
+                !isset($attr['name'])
+                || trim((string) $attr['name']) === ''
+            ) {
+                $errors["attributes.$i.name"][] =
+                    'attribute name é obrigatório.';
             }
 
-            if (!isset($attr['value']) || !is_int($attr['value'])) {
-                $errors["attributes.$i.value"][] = 'attribute value deve ser inteiro.';
+            if (
+                !array_key_exists('value', $attr)
+                || !is_int($attr['value'])
+            ) {
+                $errors["attributes.$i.value"][] =
+                    'attribute value deve ser inteiro.';
             }
         }
 
-        if ($this->ability !== []) {
-            if (trim((string) ($this->ability['name'] ?? '')) === '') {
-                $errors['ability.name'][] = 'ability.name é obrigatório quando ability for enviado.';
+        if ($this->hasAbility()) {
+            if (
+                trim((string) ($this->ability['name'] ?? '')) === ''
+            ) {
+                $errors['ability.name'][] =
+                    'ability.name é obrigatório quando ability for enviado.';
             }
 
-            if (trim((string) ($this->ability['description'] ?? '')) === '') {
-                $errors['ability.description'][] = 'ability.description é obrigatório quando ability for enviado.';
+            if (
+                trim(
+                    (string) ($this->ability['description'] ?? '')
+                ) === ''
+            ) {
+                $errors['ability.description'][] =
+                    'ability.description é obrigatório quando ability for enviado.';
             }
 
-            if (isset($this->ability['base_damage']) && $this->ability['base_damage'] < 0) {
-                $errors['ability.base_damage'][] = 'ability.base_damage não pode ser negativo.';
+            if (
+                isset($this->ability['base_damage'])
+                && $this->ability['base_damage'] < 0
+            ) {
+                $errors['ability.base_damage'][] =
+                    'ability.base_damage não pode ser negativo.';
             }
 
-            if (isset($this->ability['range']) && $this->ability['range'] < 0) {
-                $errors['ability.range'][] = 'ability.range não pode ser negativo.';
+            if (
+                isset($this->ability['range'])
+                && $this->ability['range'] < 0
+            ) {
+                $errors['ability.range'][] =
+                    'ability.range não pode ser negativo.';
             }
 
-            foreach (['bonus_accuracy', 'bonus_damage', 'bonus_speed'] as $k) {
-                if (isset($this->ability[$k]) && $this->ability[$k] < 0) {
-                    $errors["ability.$k"][] = "ability.$k não pode ser negativo.";
+            foreach (
+                ['bonus_accuracy', 'bonus_damage', 'bonus_speed']
+                as $key
+            ) {
+                if (
+                    isset($this->ability[$key])
+                    && $this->ability[$key] < 0
+                ) {
+                    $errors["ability.$key"][] =
+                        "ability.$key não pode ser negativo.";
                 }
             }
         }
 
         if ($errors) {
-            throw new ValidationException('Dados inválidos.', $errors);
+            throw new ValidationException(
+                'Dados inválidos.',
+                $errors
+            );
         }
     }
 
@@ -136,6 +199,7 @@ class CreatePerkDTO
 
         foreach ($value as $id) {
             $intId = (int) $id;
+
             if ($intId > 0) {
                 $ids[] = $intId;
             }
@@ -153,9 +217,10 @@ class CreatePerkDTO
         $flags = [];
 
         foreach ($value as $flag) {
-            $f = trim((string) $flag);
-            if ($f !== '') {
-                $flags[] = $f;
+            $normalizedFlag = trim((string) $flag);
+
+            if ($normalizedFlag !== '') {
+                $flags[] = $normalizedFlag;
             }
         }
 
@@ -168,7 +233,7 @@ class CreatePerkDTO
             return [];
         }
 
-        $attrs = [];
+        $attributes = [];
 
         foreach ($value as $item) {
             if (!is_array($item)) {
@@ -176,54 +241,66 @@ class CreatePerkDTO
             }
 
             $name = trim((string) ($item['name'] ?? ''));
-            $val = $item['value'] ?? null;
+            $attributeValue = $item['value'] ?? null;
 
             if ($name === '') {
                 continue;
             }
 
-            if (!is_int($val)) {
-                if (is_numeric($val)) {
-                    $val = (int) $val;
+            if (!is_int($attributeValue)) {
+                if (is_numeric($attributeValue)) {
+                    $attributeValue = (int) $attributeValue;
                 } else {
                     continue;
                 }
             }
 
-            $attrs[] = [
+            $attributes[] = [
                 'name' => $name,
-                'value' => (int) $val,
+                'value' => $attributeValue,
             ];
         }
 
-        return $attrs;
+        return $attributes;
     }
 
     private function normalizeAbility(mixed $value): array
     {
-        if (!is_array($value)) {
+        if (!is_array($value) || $value === []) {
             return [];
         }
 
         $name = trim((string) ($value['name'] ?? ''));
-        $description = trim((string) ($value['description'] ?? ''));
-        $dice_formula = isset($value['dice_formula']) ? trim((string) $value['dice_formula']) : null;
 
-        $base_damage = isset($value['base_damage']) ? (int) $value['base_damage'] : 0;
-        $bonus_accuracy = isset($value['bonus_accuracy']) ? (int) $value['bonus_accuracy'] : 0;
-        $bonus_damage = isset($value['bonus_damage']) ? (int) $value['bonus_damage'] : 0;
-        $bonus_speed = isset($value['bonus_speed']) ? (int) $value['bonus_speed'] : 0;
-        $range = isset($value['range']) ? (int) $value['range'] : 0;
+        $description = trim(
+            (string) ($value['description'] ?? '')
+        );
+
+        $diceFormula = isset($value['dice_formula'])
+            ? trim((string) $value['dice_formula'])
+            : null;
 
         return [
             'name' => $name,
             'description' => $description,
-            'dice_formula' => $dice_formula !== '' ? $dice_formula : null,
-            'base_damage' => $base_damage,
-            'bonus_accuracy' => $bonus_accuracy,
-            'bonus_damage' => $bonus_damage,
-            'bonus_speed' => $bonus_speed,
-            'range' => $range,
+            'dice_formula' => $diceFormula !== ''
+                ? $diceFormula
+                : null,
+            'base_damage' => isset($value['base_damage'])
+                ? (int) $value['base_damage']
+                : 0,
+            'bonus_accuracy' => isset($value['bonus_accuracy'])
+                ? (int) $value['bonus_accuracy']
+                : 0,
+            'bonus_damage' => isset($value['bonus_damage'])
+                ? (int) $value['bonus_damage']
+                : 0,
+            'bonus_speed' => isset($value['bonus_speed'])
+                ? (int) $value['bonus_speed']
+                : 0,
+            'range' => isset($value['range'])
+                ? (int) $value['range']
+                : 0,
         ];
     }
 

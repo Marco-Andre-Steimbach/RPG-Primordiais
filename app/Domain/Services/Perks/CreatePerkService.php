@@ -38,7 +38,9 @@ class CreatePerkService
     public function execute(CreatePerkDTO $dto): Perk
     {
         if ($this->perks->existsByName($dto->name)) {
-            throw new ConflictException('Já existe um perk com esse nome.');
+            throw new ConflictException(
+                'Já existe um perk com esse nome.'
+            );
         }
 
         $perkId = $this->perks->create([
@@ -49,50 +51,103 @@ class CreatePerkService
         ]);
 
         if (!$perkId) {
-            throw new ValidationException('Falha ao criar perk.');
+            throw new ValidationException(
+                'Falha ao criar perk.'
+            );
         }
 
         if ($dto->race_id !== null) {
-            $this->racePerks->attachPerk(
+            $attached = $this->racePerks->attachPerk(
                 $dto->race_id,
                 $perkId,
                 $dto->required_level
             );
+
+            if (!$attached) {
+                throw new ValidationException(
+                    'Falha ao vincular o perk à raça.'
+                );
+            }
         }
 
         if ($dto->order_id !== null) {
-            $this->orderPerks->attachPerk(
+            $attached = $this->orderPerks->attachPerk(
                 $dto->order_id,
                 $perkId,
                 $dto->required_level
             );
+
+            if (!$attached) {
+                throw new ValidationException(
+                    'Falha ao vincular o perk à ordem.'
+                );
+            }
         }
 
         foreach ($dto->attributes as $attribute) {
-            $this->attributes->attach(
+            $attached = $this->attributes->attach(
                 $perkId,
                 $attribute['name'],
                 $attribute['value']
             );
+
+            if (!$attached) {
+                throw new ValidationException(
+                    'Falha ao vincular um atributo ao perk.'
+                );
+            }
         }
 
         foreach ($dto->flags as $flag) {
-            $this->flags->attach($perkId, $flag);
+            $attached = $this->flags->attach(
+                $perkId,
+                $flag
+            );
+
+            if (!$attached) {
+                throw new ValidationException(
+                    'Falha ao vincular uma flag ao perk.'
+                );
+            }
         }
 
         foreach ($dto->element_types as $elementId) {
-            $this->elements->attach($perkId, $elementId);
+            $attached = $this->elements->attach(
+                $perkId,
+                $elementId
+            );
+
+            if (!$attached) {
+                throw new ValidationException(
+                    'Falha ao vincular um tipo elemental ao perk.'
+                );
+            }
         }
 
-        if ($dto->type === 'active' && $dto->hasAbility()) {
-            $this->abilities->create($perkId, $dto->ability);
+        if ($dto->hasAbility()) {
+            $abilityId = $this->abilities->create(
+                $perkId,
+                $dto->ability
+            );
+
+            if (!$abilityId) {
+                throw new ValidationException(
+                    'Falha ao criar a habilidade do perk.'
+                );
+            }
         }
 
         $perk = $this->perks->findById($perkId);
 
         if (!$perk) {
-            throw new ValidationException('Erro ao carregar perk criado.');
+            throw new ValidationException(
+                'Erro ao carregar perk criado.'
+            );
         }
+
+        $savedAbilities = $this->abilities->findByPerk(
+            $perkId
+        );
 
         $perk->race_id = $dto->race_id;
         $perk->order_id = $dto->order_id;
@@ -100,7 +155,7 @@ class CreatePerkService
         $perk->attributes = $dto->attributes;
         $perk->flags = $dto->flags;
         $perk->element_types = $dto->element_types;
-        $perk->ability = $dto->ability;
+        $perk->ability = $savedAbilities[0] ?? [];
 
         return $perk;
     }
