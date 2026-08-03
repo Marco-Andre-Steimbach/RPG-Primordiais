@@ -10,6 +10,7 @@ class EncounterMonster
         public int $monster_id,
         public int $monster_level,
         public int $current_hp,
+        public int $max_hp,
         public ?string $created_at = null
     ) {}
 
@@ -21,6 +22,7 @@ class EncounterMonster
             'monster_id' => $this->monster_id,
             'monster_level' => $this->monster_level,
             'current_hp' => $this->current_hp,
+            'max_hp' => $this->max_hp,
             'created_at' => $this->created_at,
         ];
     }

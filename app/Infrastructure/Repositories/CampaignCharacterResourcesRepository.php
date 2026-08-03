@@ -3,11 +3,12 @@
 namespace App\Infrastructure\Repositories;
 
 use App\Core\Database\BaseRepository;
+use App\Domain\Models\EncounterMonster;
 use PDO;
 
-class CampaignCharacterResourcesRepository extends BaseRepository
+class EncounterMonsterRepository extends BaseRepository
 {
-    protected string $table = 'campaign_character_resources';
+    protected string $table = 'encounter_monsters';
 
     public function create(array $data): int
     {
@@ -23,47 +24,74 @@ class CampaignCharacterResourcesRepository extends BaseRepository
         return (int) $this->db->lastInsertId();
     }
 
-    public function findByCampaignCharacterId(
-        int $campaignCharacterId
-    ): ?array {
+    public function findById(int $id): ?EncounterMonster
+    {
         $sql = "
             SELECT *
             FROM {$this->table}
-            WHERE campaign_character_id = :campaign_character_id
+            WHERE id = :id
             LIMIT 1
         ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'campaign_character_id' => $campaignCharacterId
+            'id' => $id,
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $row ?: null;
+        return $row
+            ? $this->mapToModel($row)
+            : null;
     }
 
-    public function updateResources(
-        int $campaignCharacterId,
-        int $currentHp,
-        int $currentMana,
-        int $currentSanity
-    ): void {
+    public function findByEncounter(int $encounterId): array
+    {
         $sql = "
-            UPDATE {$this->table}
-            SET
-                current_hp = :current_hp,
-                current_mana = :current_mana,
-                current_sanity = :current_sanity
-            WHERE campaign_character_id = :campaign_character_id
+            SELECT *
+            FROM {$this->table}
+            WHERE encounter_id = :encounter_id
+            ORDER BY id ASC
         ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'current_hp' => $currentHp,
-            'current_mana' => $currentMana,
-            'current_sanity' => $currentSanity,
-            'campaign_character_id' => $campaignCharacterId,
+            'encounter_id' => $encounterId,
         ]);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(
+            fn(array $row) => $this->mapToModel($row),
+            $rows
+        );
+    }
+
+    public function updateHp(int $id, int $hp): void
+    {
+        $sql = "
+            UPDATE {$this->table}
+            SET current_hp = :hp
+            WHERE id = :id
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'hp' => $hp,
+            'id' => $id,
+        ]);
+    }
+
+    private function mapToModel(array $row): EncounterMonster
+    {
+        return new EncounterMonster(
+            id: (int) $row['id'],
+            encounter_id: (int) $row['encounter_id'],
+            monster_id: (int) $row['monster_id'],
+            monster_level: (int) $row['monster_level'],
+            current_hp: (int) $row['current_hp'],
+            max_hp: (int) $row['max_hp'],
+            created_at: $row['created_at'] ?? null
+        );
     }
 }
