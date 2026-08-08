@@ -44,12 +44,12 @@ class CampaignCharacterResourcesRepository extends BaseRepository
         return (int) $this->db->lastInsertId();
     }
 
-    public function update(
+    public function updateByCampaignCharacterId(
         int $campaignCharacterId,
         array $data
-    ): void {
+    ): bool {
         if (empty($data)) {
-            return;
+            return false;
         }
 
         $fields = [];
@@ -67,6 +67,7 @@ class CampaignCharacterResourcesRepository extends BaseRepository
         $data['campaign_character_id'] = $campaignCharacterId;
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($data);
+
+        return $stmt->execute($data);
     }
 }
