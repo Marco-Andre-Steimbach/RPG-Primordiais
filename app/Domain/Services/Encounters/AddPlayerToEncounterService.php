@@ -41,16 +41,26 @@ class AddPlayerToEncounterService
         if (!$encounter) {
             throw new ValidationException(
                 'Encontro inválido.',
-                ['encounter_id' => ['Encontro não encontrado.']]
+                [
+                    'encounter_id' => [
+                        'Encontro não encontrado.'
+                    ]
+                ]
             );
         }
 
-        $campaign = $this->campaigns->findById($encounter->campaign_id);
+        $campaign = $this->campaigns->findById(
+            $encounter->campaign_id
+        );
 
         if (!$campaign) {
             throw new ValidationException(
                 'Campanha inválida.',
-                ['campaign_id' => ['Campanha não encontrada.']]
+                [
+                    'campaign_id' => [
+                        'Campanha não encontrada.'
+                    ]
+                ]
             );
         }
 
@@ -92,67 +102,93 @@ class AddPlayerToEncounterService
 
         $maxHp = max(
             1,
-            (int) ($sheet['base']['hp_max'] ?? 1)
+            (int) ($sheet['hp_max'] ?? 1)
         );
 
         $maxMana = max(
             0,
-            (int) ($sheet['base']['mana_max'] ?? 0)
+            (int) ($sheet['mana_max'] ?? 0)
         );
 
         $maxSanity = max(
             0,
-            (int) ($sheet['base']['sanity_max'] ?? 0)
+            (int) ($sheet['sanity']['max'] ?? 0)
         );
 
         $sheetCurrentSanity = max(
             0,
-            (int) ($sheet['base']['sanity_current'] ?? $maxSanity)
+            (int) (
+                $sheet['sanity']['current']
+                ?? $maxSanity
+            )
         );
 
         $armorClass = max(
             0,
-            (int) ($sheet['derived']['armor_class'] ?? 0)
+            (int) ($sheet['base_ca'] ?? 0)
         );
 
         $resources = $this->characterResources
-            ->findByCampaignCharacterId($dto->campaign_character_id);
+            ->findByCampaignCharacterId(
+                $dto->campaign_character_id
+            );
 
         if (!$resources) {
             $currentHp = $maxHp;
             $currentMana = $maxMana;
+
             $currentSanity = min(
                 $sheetCurrentSanity,
                 $maxSanity
             );
 
             $this->characterResources->create([
-                'campaign_character_id' => $dto->campaign_character_id,
-                'current_hp' => $currentHp,
-                'current_mana' => $currentMana,
-                'current_sanity' => $currentSanity,
+                'campaign_character_id'
+                    => $dto->campaign_character_id,
+
+                'current_hp'
+                    => $currentHp,
+
+                'current_mana'
+                    => $currentMana,
+
+                'current_sanity'
+                    => $currentSanity,
             ]);
         } else {
             $currentHp = min(
-                max(0, (int) $resources['current_hp']),
+                max(
+                    0,
+                    (int) $resources['current_hp']
+                ),
                 $maxHp
             );
 
             $currentMana = min(
-                max(0, (int) $resources['current_mana']),
+                max(
+                    0,
+                    (int) $resources['current_mana']
+                ),
                 $maxMana
             );
 
             $currentSanity = min(
-                max(0, (int) $resources['current_sanity']),
+                max(
+                    0,
+                    (int) $resources['current_sanity']
+                ),
                 $maxSanity
             );
         }
 
-        $encounterPlayerId = $this->encounterPlayers->create([
-            'encounter_id' => $dto->encounter_id,
-            'campaign_character_id' => $dto->campaign_character_id,
-        ]);
+        $encounterPlayerId =
+            $this->encounterPlayers->create([
+                'encounter_id'
+                    => $dto->encounter_id,
+
+                'campaign_character_id'
+                    => $dto->campaign_character_id,
+            ]);
 
         if ($encounterPlayerId <= 0) {
             throw new ValidationException(
@@ -160,16 +196,32 @@ class AddPlayerToEncounterService
             );
         }
 
-        $statsId = $this->encounterPlayerStats->create([
-            'encounter_player_id' => $encounterPlayerId,
-            'current_hp' => $currentHp,
-            'max_hp' => $maxHp,
-            'current_mana' => $currentMana,
-            'max_mana' => $maxMana,
-            'current_sanity' => $currentSanity,
-            'max_sanity' => $maxSanity,
-            'armor_class' => $armorClass,
-        ]);
+        $statsId =
+            $this->encounterPlayerStats->create([
+                'encounter_player_id'
+                    => $encounterPlayerId,
+
+                'current_hp'
+                    => $currentHp,
+
+                'max_hp'
+                    => $maxHp,
+
+                'current_mana'
+                    => $currentMana,
+
+                'max_mana'
+                    => $maxMana,
+
+                'current_sanity'
+                    => $currentSanity,
+
+                'max_sanity'
+                    => $maxSanity,
+
+                'armor_class'
+                    => $armorClass,
+            ]);
 
         if ($statsId <= 0) {
             throw new ValidationException(
