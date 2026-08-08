@@ -36,7 +36,9 @@ class AddPlayerToEncounterService
         AddPlayerToEncounterDTO $dto,
         int $userId
     ): void {
-        $encounter = $this->encounters->findById($dto->encounter_id);
+        $encounter = $this->encounters->findById(
+            $dto->encounter_id
+        );
 
         if (!$encounter) {
             throw new ValidationException(
@@ -86,7 +88,7 @@ class AddPlayerToEncounterService
 
         if (
             (int) $campaignCharacter['campaign_id']
-            !== $encounter->campaign_id
+            !== (int) $encounter->campaign_id
         ) {
             throw new ValidationException(
                 'Personagem não pertence a esta campanha.'
@@ -102,30 +104,22 @@ class AddPlayerToEncounterService
 
         $maxHp = max(
             1,
-            (int) ($sheet['hp_max'] ?? 1)
+            (int) ($sheet['base']['hp_max'] ?? 1)
         );
 
         $maxMana = max(
             0,
-            (int) ($sheet['mana_max'] ?? 0)
+            (int) ($sheet['base']['mana_max'] ?? 0)
         );
 
         $maxSanity = max(
             0,
-            (int) ($sheet['sanity']['max'] ?? 0)
-        );
-
-        $sheetCurrentSanity = max(
-            0,
-            (int) (
-                $sheet['sanity']['current']
-                ?? $maxSanity
-            )
+            (int) ($sheet['base']['sanity']['max'] ?? 0)
         );
 
         $armorClass = max(
             0,
-            (int) ($sheet['base_ca'] ?? 0)
+            (int) ($sheet['derived']['armor_class'] ?? 0)
         );
 
         $resources = $this->characterResources
@@ -136,11 +130,7 @@ class AddPlayerToEncounterService
         if (!$resources) {
             $currentHp = $maxHp;
             $currentMana = $maxMana;
-
-            $currentSanity = min(
-                $sheetCurrentSanity,
-                $maxSanity
-            );
+            $currentSanity = $maxSanity;
 
             $this->characterResources->create([
                 'campaign_character_id'
