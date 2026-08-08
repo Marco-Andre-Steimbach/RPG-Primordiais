@@ -20,7 +20,6 @@ class EncounterMonsterRepository extends BaseRepository
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
-
         return (int) $this->db->lastInsertId();
     }
 
