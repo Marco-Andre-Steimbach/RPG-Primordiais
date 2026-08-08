@@ -72,13 +72,14 @@ class EncounterMonsterRepository extends BaseRepository
 
     private function mapToModel(array $row): EncounterMonster
     {
-        return new EncounterMonster(
-            id: (int) $row['id'],
-            encounter_id: (int) $row['encounter_id'],
-            monster_id: (int) $row['monster_id'],
-            monster_level: (int) $row['monster_level'],
-            current_hp: (int) $row['current_hp'],
-            created_at: $row['created_at'] ?? null
-        );
+return new EncounterMonster(
+    id: (int) $row['id'],
+    encounter_id: (int) $row['encounter_id'],
+    monster_id: (int) $row['monster_id'],
+    monster_level: (int) $row['monster_level'],
+    current_hp: (int) $row['current_hp'],
+    max_hp: (int) $row['max_hp'],
+    created_at: $row['created_at'] ?? null
+);
     }
 }
