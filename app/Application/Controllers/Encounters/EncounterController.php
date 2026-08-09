@@ -17,8 +17,8 @@ use App\Application\DTOs\Encounters\UpdateEncounterInitiativeDTO;
 use App\Domain\Services\Encounters\UpdateEncounterInitiativeService;
 use App\Application\DTOs\Encounters\UpdateEncounterStatusDTO;
 use App\Domain\Services\Encounters\UpdateEncounterStatusService;
-use App\Application\DTOs\Encounters\UpdateEncounterMonsterHpDTO;
-use App\Domain\Services\Encounters\UpdateEncounterMonsterHpService;
+use App\Application\DTOs\Encounters\UpdateEncounterResourcesDTO;
+use App\Domain\Services\Encounters\UpdateEncounterResourcesService;
 use App\Domain\Services\Encounters\GetAllEncountersService;
 use App\Domain\Services\Encounters\GetEncounterByIdService;
 use App\Domain\Services\Encounters\GetEncounterParticipantsService;
@@ -229,38 +229,33 @@ class EncounterController
         }
     }
 
-    public function updateMonsterHp(Request $request)
-    {
-        try {
-            $authUser = $request->user();
+public function updateResources(Request $request)
+{
+    try {
+        $authUser = $request->user();
 
-            $schema = new ValidateSchemaMiddleware([
-                'encounter_monster_id' => 'int|required',
-                'current_hp' => 'int|required|min:0',
-            ]);
+        $dto = new UpdateEncounterResourcesDTO(
+            $request->body()
+        );
 
-            $schema->handle($request->body());
+        $service = new UpdateEncounterResourcesService();
 
-            $dto = new UpdateEncounterMonsterHpDTO($request->body());
+        $service->execute(
+            dto: $dto,
+            userId: $authUser->id
+        );
 
-            $service = new UpdateEncounterMonsterHpService();
-
-            $service->execute(
-                dto: $dto,
-                userId: $authUser->id
-            );
-
-            return Response::json([
-                'message' => 'HP do monstro atualizado com sucesso.',
-            ], 200);
-        } catch (ValidationException $e) {
-            return Response::json([
-                'error'   => true,
-                'message' => $e->getMessage(),
-                'errors'  => $e->getErrors()
-            ], 400);
-        }
+        return Response::json([
+            'message' => 'Recursos atualizados com sucesso.',
+        ], 200);
+    } catch (ValidationException $e) {
+        return Response::json([
+            'error' => true,
+            'message' => $e->getMessage(),
+            'errors' => $e->getErrors()
+        ], 400);
     }
+}
     public function index(Request $request)
     {
         $status = $request->query()['status'] ?? null;

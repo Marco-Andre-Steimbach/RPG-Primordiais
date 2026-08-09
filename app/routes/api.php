@@ -117,7 +117,7 @@ $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST'
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('POST', '/encounters/set-initiative', [EncounterController::class, 'setInitiative']);
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT', '/encounters/update-initiative', [EncounterController::class, 'updateInitiative']);
 $router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT', '/encounters/update-status', [EncounterController::class, 'updateStatus']);
-$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT', '/encounters/update-monster-hp', [EncounterController::class, 'updateMonsterHp']);
+$router->middleware('auth')->middleware('role:admin,dungeon_master')->add('PUT', '/encounters/update-resources', [EncounterController::class, 'updateResources']);
 $router->middleware('auth')->add('GET', '/encounters', [EncounterController::class, 'index']);
 $router->middleware('auth')->add('GET', '/encounters/:id', [EncounterController::class, 'show']);
 $router->middleware('auth')->add('GET', '/encounters/:id/participants', [EncounterController::class, 'participants']);
