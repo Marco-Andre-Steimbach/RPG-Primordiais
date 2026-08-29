@@ -240,13 +240,14 @@ public function updateResources(Request $request)
 
         $service = new UpdateEncounterResourcesService();
 
-        $service->execute(
+        $resources = $service->execute(
             dto: $dto,
             userId: $authUser->id
         );
 
         return Response::json([
             'message' => 'Recursos atualizados com sucesso.',
+            'resources' => $resources,
         ], 200);
     } catch (ValidationException $e) {
         return Response::json([
@@ -256,6 +257,7 @@ public function updateResources(Request $request)
         ], 400);
     }
 }
+
     public function index(Request $request)
     {
         $status = $request->query()['status'] ?? null;
