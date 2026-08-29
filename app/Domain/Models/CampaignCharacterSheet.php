@@ -15,28 +15,28 @@ class CampaignCharacterSheet
         public int $level,
         public string $mana_modifier,
         array $baseAttributes,
-        array $raceAttributes = [],
-        array $orderAttributes = [],
-        array $perkAttributes = [],
+        array $raceAttributes,
+        array $orderAttributes,
+        array $perkAttributes,
         public int $sanity_max,
         public int $sanity_current
     ) {
-        $this->baseAttributes  = $this->normalizeAttributes($baseAttributes);
-        $this->raceAttributes  = $this->normalizeAttributes($raceAttributes);
+        $this->baseAttributes = $this->normalizeAttributes($baseAttributes);
+        $this->raceAttributes = $this->normalizeAttributes($raceAttributes);
         $this->orderAttributes = $this->normalizeAttributes($orderAttributes);
-        $this->perkAttributes  = $this->normalizeAttributes($perkAttributes);
+        $this->perkAttributes = $this->normalizeAttributes($perkAttributes);
         $this->finalAttributes = $this->calculateFinalAttributes();
     }
 
     private function normalizeAttributes(array $attributes): array
     {
         return [
-            'str'  => (int) ($attributes['str']  ?? 0),
-            'dex'  => (int) ($attributes['dex']  ?? 0),
-            'con'  => (int) ($attributes['con']  ?? 0),
+            'str' => (int) ($attributes['str'] ?? 0),
+            'dex' => (int) ($attributes['dex'] ?? 0),
+            'con' => (int) ($attributes['con'] ?? 0),
             'intt' => (int) ($attributes['intt'] ?? 0),
-            'wis'  => (int) ($attributes['wis']  ?? 0),
-            'cha'  => (int) ($attributes['cha']  ?? 0),
+            'wis' => (int) ($attributes['wis'] ?? 0),
+            'cha' => (int) ($attributes['cha'] ?? 0),
         ];
     }
 
@@ -105,12 +105,12 @@ class CampaignCharacterSheet
     public function getManaModifierValue(): int
     {
         return match ($this->mana_modifier) {
-            'str'  => $this->getModifier($this->finalAttributes['str']),
-            'dex'  => $this->getModifier($this->finalAttributes['dex']),
-            'con'  => $this->getModifier($this->finalAttributes['con']),
-            'int'  => $this->getModifier($this->finalAttributes['intt']),
-            'wis'  => $this->getModifier($this->finalAttributes['wis']),
-            'cha'  => $this->getModifier($this->finalAttributes['cha']),
+            'str' => $this->getModifier($this->finalAttributes['str']),
+            'dex' => $this->getModifier($this->finalAttributes['dex']),
+            'con' => $this->getModifier($this->finalAttributes['con']),
+            'int' => $this->getModifier($this->finalAttributes['intt']),
+            'wis' => $this->getModifier($this->finalAttributes['wis']),
+            'cha' => $this->getModifier($this->finalAttributes['cha']),
             default => 0,
         };
     }
@@ -128,42 +128,59 @@ class CampaignCharacterSheet
         $level = max(1, $this->level);
 
         $modifier = $this->getManaModifierValue();
+
         if ($modifier < 1) {
             $modifier = 1;
         }
 
-        return (int) floor((($level / 2) * $modifier) + 10);
+        return (int) floor(
+            (($level / 2) * $modifier) + 10
+        );
     }
 
     public function getBaseArmorClass(): int
     {
-        return $this->getModifier($this->finalAttributes['dex']) + 5;
+        return $this->getModifier(
+            $this->finalAttributes['dex']
+        ) + 5;
     }
 
     public function getSanityMax(): int
     {
-        return max(15, $this->sanity_max);
+        return max(
+            15,
+            $this->sanity_max
+        );
     }
 
     public function toArray(): array
     {
         return [
-            'campaign_character_id' => $this->campaign_character_id,
-            'level' => $this->level,
+            'campaign_character_id'
+                => $this->campaign_character_id,
+
+            'level'
+                => $this->level,
 
             'attributes' => [
-                'base'  => $this->getBaseAttributes(),
-                'race'  => $this->getRaceAttributes(),
+                'base' => $this->getBaseAttributes(),
+                'race' => $this->getRaceAttributes(),
                 'order' => $this->getOrderAttributes(),
-                'perk'  => $this->getPerkAttributes(),
+                'perk' => $this->getPerkAttributes(),
                 'final' => $this->getFinalAttributes(),
             ],
 
-            'modifiers' => $this->getModifiers(),
+            'modifiers'
+                => $this->getModifiers(),
 
-            'hp_max' => $this->getMaxHp(),
-            'mana_max' => $this->getMaxMana(),
-            'base_ca' => $this->getBaseArmorClass(),
+            'hp_max'
+                => $this->getMaxHp(),
+
+            'mana_max'
+                => $this->getMaxMana(),
+
+            'base_ca'
+                => $this->getBaseArmorClass(),
 
             'sanity' => [
                 'current' => $this->sanity_current,

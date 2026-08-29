@@ -7,9 +7,9 @@ class Character
     public function __construct(
         public int $id,
         public string $name,
-        public ?string $description = null,
-        public ?int $race_id = null,
-        public ?int $order_id = null,
+        public ?string $description,
+        public ?int $race_id,
+        public ?int $order_id,
         public string $mana_modifier,
         public ?int $created_by = null,
         public ?string $created_at = null,

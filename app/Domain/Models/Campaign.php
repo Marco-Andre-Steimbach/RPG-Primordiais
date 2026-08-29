@@ -7,7 +7,7 @@ class Campaign
     public function __construct(
         public int $id,
         public string $name,
-        public ?string $description = null,
+        public ?string $description,
         public int $created_by,
         public ?string $created_at = null,
         public ?string $updated_at = null
