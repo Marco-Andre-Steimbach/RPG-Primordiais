@@ -259,17 +259,65 @@ public function updateResources(Request $request)
 }
 
     public function index(Request $request)
-    {
-        $status = $request->query()['status'] ?? null;
+{
+    try {
+        $authUser = $request->user();
+
+        $campaignId = (int) (
+            $request->query()['campaign_id'] ?? 0
+        );
+
+        $status =
+            $request->query()['status'] ?? null;
+
+        if ($campaignId <= 0) {
+            throw new ValidationException(
+                'Campanha inválida.',
+                [
+                    'campaign_id' => [
+                        'campaign_id é obrigatório.'
+                    ]
+                ]
+            );
+        }
+
+        if (
+            $status !== null &&
+            !in_array(
+                $status,
+                ['pending', 'active', 'finished'],
+                true
+            )
+        ) {
+            throw new ValidationException(
+                'Status inválido.',
+                [
+                    'status' => [
+                        'status deve ser pending, active ou finished.'
+                    ]
+                ]
+            );
+        }
 
         $service = new GetAllEncountersService();
 
-        $encounters = $service->execute($status);
+        $encounters = $service->execute(
+            campaignId: $campaignId,
+            status: $status,
+            userId: $authUser->id
+        );
 
         return Response::json([
             'encounters' => $encounters,
         ]);
+    } catch (ValidationException $e) {
+        return Response::json([
+            'error' => true,
+            'message' => $e->getMessage(),
+            'errors' => $e->getErrors()
+        ], 400);
     }
+}
     public function show(Request $request)
     {
         $encounterId = (int) ($request->params()['id'] ?? 0);

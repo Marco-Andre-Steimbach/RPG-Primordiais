@@ -50,38 +50,51 @@ class EncounterRepository extends BaseRepository
             'id'     => $id,
         ]);
     }
-    
-    public function findAllBasic(?string $status = null): array
-    {
-        $order = "
-        ORDER BY 
-            FIELD(status, 'active', 'pending', 'finished'),
+
+    public function findAllBasic(
+    int $campaignId,
+    ?string $status = null
+): array {
+    $sql = "
+        SELECT
+            id,
+            name,
+            status
+        FROM {$this->table}
+        WHERE campaign_id = :campaign_id
+    ";
+
+    $params = [
+        'campaign_id' => $campaignId
+    ];
+
+    if ($status !== null) {
+        $sql .= "
+            AND status = :status
+        ";
+
+        $params['status'] = $status;
+    }
+
+    $sql .= "
+        ORDER BY
+            FIELD(
+                status,
+                'active',
+                'pending',
+                'finished'
+            ),
             created_at DESC
     ";
 
-        if ($status) {
-            $sql = "
-            SELECT id, name, status
-            FROM {$this->table}
-            WHERE status = :status
-            {$order}
-        ";
+    $stmt = $this->db->prepare($sql);
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute(['status' => $status]);
-        } else {
-            $sql = "
-            SELECT id, name, status
-            FROM {$this->table}
-            {$order}
-        ";
+    $stmt->execute($params);
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-        }
-
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    }
+    return $stmt->fetchAll(
+        \PDO::FETCH_ASSOC
+    );
+}
 
 
     private function mapToModel(array $row): Encounter
