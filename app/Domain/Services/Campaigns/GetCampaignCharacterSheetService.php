@@ -14,6 +14,8 @@ use App\Infrastructure\Repositories\OrderAttributeRepository;
 use App\Infrastructure\Repositories\CampaignCharacterPerkRepository;
 use App\Infrastructure\Repositories\PerkRepository;
 use App\Infrastructure\Repositories\PerkAttributeRepository;
+use App\Infrastructure\Repositories\PerkAbilityRepository;
+use App\Infrastructure\Repositories\PerkElementTypeRepository;
 use App\Infrastructure\Repositories\CampaignCharacterWeaponRepository;
 use App\Infrastructure\Repositories\WeaponRepository;
 use App\Infrastructure\Repositories\WeaponElementTypeRepository;
@@ -34,7 +36,6 @@ use App\Infrastructure\Repositories\AbilityRepository;
 use App\Infrastructure\Repositories\AbilityElementTypeRepository;
 use App\Infrastructure\Repositories\CampaignCharacterXPRepository;
 use App\Infrastructure\Repositories\CampaignCharacterGoldRepository;
-use App\Infrastructure\Repositories\PerkAbilityRepository;
 
 class GetCampaignCharacterSheetService
 {
@@ -53,6 +54,7 @@ class GetCampaignCharacterSheetService
         $perkBaseRepo = new PerkRepository();
         $perkAttributesRepo = new PerkAttributeRepository();
         $perkAbilityRepo = new PerkAbilityRepository();
+        $perkElementRepo = new PerkElementTypeRepository();
 
         $weaponRepo = new CampaignCharacterWeaponRepository();
         $weaponBaseRepo = new WeaponRepository();
@@ -219,6 +221,7 @@ class GetCampaignCharacterSheetService
 
             $rawPerkAttributes = $perkAttributesRepo->getByPerk($perk->id);
             $perkAbilities = $perkAbilityRepo->findByPerk($perk->id);
+            $perkElements = $perkElementRepo->getElementTypesByPerk($perk->id);
 
             foreach ($rawPerkAttributes as $attr) {
                 if (
@@ -271,6 +274,7 @@ class GetCampaignCharacterSheetService
 
             $perkData = $perk->toArray();
 
+            $perkData['element_types'] = $perkElements;
             $perkData['has_attributes'] = !empty($rawPerkAttributes);
             $perkData['has_ability'] = !empty($perkAbilities);
 
