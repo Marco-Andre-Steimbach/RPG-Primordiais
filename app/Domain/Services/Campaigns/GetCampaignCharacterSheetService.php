@@ -75,6 +75,7 @@ class GetCampaignCharacterSheetService
         $abilityRepo = new CampaignCharacterAbilityRepository();
         $abilityBaseRepo = new AbilityRepository();
         $abilityElementRepo = new AbilityElementTypeRepository();
+
         $xpRepo = new CampaignCharacterXPRepository();
         $goldRepo = new CampaignCharacterGoldRepository();
 
@@ -95,8 +96,8 @@ class GetCampaignCharacterSheetService
         $goldData = $goldRepo->findByCampaignCharacterId($campaignCharacterId);
 
         $currentXP = $xpData ? (int) $xpData['current_xp'] : 0;
-        $totalXP   = $xpData ? (int) $xpData['total_xp'] : 0;
-        $gold      = $goldData ? (int) $goldData['gold'] : 0;
+        $totalXP = $xpData ? (int) $xpData['total_xp'] : 0;
+        $gold = $goldData ? (int) $goldData['gold'] : 0;
 
         $level = (int) $campaignCharacter['level'];
 
@@ -109,7 +110,9 @@ class GetCampaignCharacterSheetService
             $xpRemaining = $xpToNextLevel - $currentXP;
         }
 
-        $attributes = $attributesRepo->findByCampaignCharacterId($campaignCharacterId);
+        $attributes = $attributesRepo->findByCampaignCharacterId(
+            $campaignCharacterId
+        );
 
         if (!$attributes) {
             throw new ValidationException(
@@ -118,28 +121,34 @@ class GetCampaignCharacterSheetService
             );
         }
 
-        $character = $characterRepo->findById((int) $campaignCharacter['character_id']);
-        $race = $character ? $raceRepo->findById($character->race_id) : null;
+        $character = $characterRepo->findById(
+            (int) $campaignCharacter['character_id']
+        );
+
+        $race = $character
+            ? $raceRepo->findById($character->race_id)
+            : null;
+
         $order = $character && $character->order_id
             ? $orderRepo->findById($character->order_id)
             : null;
 
         $baseAttributes = [
-            'str'  => (int) $attributes['str'],
-            'dex'  => (int) $attributes['dex'],
-            'con'  => (int) $attributes['con'],
+            'str' => (int) $attributes['str'],
+            'dex' => (int) $attributes['dex'],
+            'con' => (int) $attributes['con'],
             'intt' => (int) $attributes['intt'],
-            'wis'  => (int) $attributes['wis'],
-            'cha'  => (int) $attributes['cha'],
+            'wis' => (int) $attributes['wis'],
+            'cha' => (int) $attributes['cha'],
         ];
 
         $raceAttributes = [
-            'str'  => 0,
-            'dex'  => 0,
-            'con'  => 0,
+            'str' => 0,
+            'dex' => 0,
+            'con' => 0,
             'intt' => 0,
-            'wis'  => 0,
-            'cha'  => 0,
+            'wis' => 0,
+            'cha' => 0,
         ];
 
         if ($race) {
@@ -158,12 +167,12 @@ class GetCampaignCharacterSheetService
         }
 
         $orderAttributes = [
-            'str'  => 0,
-            'dex'  => 0,
-            'con'  => 0,
+            'str' => 0,
+            'dex' => 0,
+            'con' => 0,
             'intt' => 0,
-            'wis'  => 0,
-            'cha'  => 0,
+            'wis' => 0,
+            'cha' => 0,
         ];
 
         if ($order) {
@@ -182,12 +191,12 @@ class GetCampaignCharacterSheetService
         }
 
         $perkAttributes = [
-            'str'  => 0,
-            'dex'  => 0,
-            'con'  => 0,
+            'str' => 0,
+            'dex' => 0,
+            'con' => 0,
             'intt' => 0,
-            'wis'  => 0,
-            'cha'  => 0,
+            'wis' => 0,
+            'cha' => 0,
         ];
 
         $perkHpMax = 0;
@@ -196,69 +205,77 @@ class GetCampaignCharacterSheetService
         $perkArmorClass = 0;
         $perkSpeed = 0;
 
-$perks = [];
+        $perks = [];
 
-foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perkRow) {
-    $perk = $perkBaseRepo->findById($perkRow['perk_id']);
+        foreach (
+            $perkRepo->findByCampaignCharacter($campaignCharacterId)
+            as $perkRow
+        ) {
+            $perk = $perkBaseRepo->findById($perkRow['perk_id']);
 
-    if (!$perk) {
-        continue;
-    }
+            if (!$perk) {
+                continue;
+            }
 
-    $rawPerkAttributes = $perkAttributesRepo->getByPerk($perk->id);
-    $perkAbilities = $perkAbilityRepo->findByPerk($perk->id);
+            $rawPerkAttributes = $perkAttributesRepo->getByPerk($perk->id);
+            $perkAbilities = $perkAbilityRepo->findByPerk($perk->id);
 
-    foreach ($rawPerkAttributes as $attr) {
-        if (!isset($attr['attribute_name'], $attr['attribute_value'])) {
-            continue;
+            foreach ($rawPerkAttributes as $attr) {
+                if (
+                    !isset(
+                        $attr['attribute_name'],
+                        $attr['attribute_value']
+                    )
+                ) {
+                    continue;
+                }
+
+                $name = $attr['attribute_name'] === 'int'
+                    ? 'intt'
+                    : $attr['attribute_name'];
+
+                $value = (int) $attr['attribute_value'];
+
+                if (array_key_exists($name, $perkAttributes)) {
+                    $perkAttributes[$name] += $value;
+                    continue;
+                }
+
+                if ($name === 'hp_max') {
+                    $perkHpMax += $value;
+                    continue;
+                }
+
+                if ($name === 'mana_max') {
+                    $perkManaMax += $value;
+                    continue;
+                }
+
+                if ($name === 'sanity') {
+                    $perkSanityMax += $value;
+                    continue;
+                }
+
+                if ($name === 'armor_class') {
+                    $perkArmorClass += $value;
+                    continue;
+                }
+
+                if ($name === 'speed') {
+                    $perkSpeed += $value;
+                }
+            }
+
+            $perk->attributes = $rawPerkAttributes;
+            $perk->ability = $perkAbilities;
+
+            $perkData = $perk->toArray();
+
+            $perkData['has_attributes'] = !empty($rawPerkAttributes);
+            $perkData['has_ability'] = !empty($perkAbilities);
+
+            $perks[] = $perkData;
         }
-
-        $name = $attr['attribute_name'] === 'int'
-            ? 'intt'
-            : $attr['attribute_name'];
-
-        $value = (int) $attr['attribute_value'];
-
-        if (array_key_exists($name, $perkAttributes)) {
-            $perkAttributes[$name] += $value;
-            continue;
-        }
-
-        if ($name === 'hp_max') {
-            $perkHpMax += $value;
-            continue;
-        }
-
-        if ($name === 'mana_max') {
-            $perkManaMax += $value;
-            continue;
-        }
-
-        if ($name === 'sanity') {
-            $perkSanityMax += $value;
-            continue;
-        }
-
-        if ($name === 'armor_class') {
-            $perkArmorClass += $value;
-            continue;
-        }
-
-        if ($name === 'speed') {
-            $perkSpeed += $value;
-        }
-    }
-
-    $perk->attributes = $rawPerkAttributes;
-    $perk->ability = $perkAbilities;
-
-    $perkData = $perk->toArray();
-
-    $perkData['has_attributes'] = !empty($rawPerkAttributes);
-    $perkData['has_ability'] = !empty($perkAbilities);
-
-    $perks[] = $perkData;
-}
 
         $sheet = new CampaignCharacterSheet(
             campaign_character_id: $campaignCharacterId,
@@ -272,143 +289,239 @@ foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perkRow) {
             sanity_current: (int) $attributes['sanity']
         );
 
-        $dexModifier =
-    $baseAttributes['dex']
-    + $raceAttributes['dex']
-    + $orderAttributes['dex']
-    + $perkAttributes['dex'];
+        $baseArr = $sheet->toArray();
 
-$dexSpeedBonus = intdiv(max(0, $dexModifier), 5) * 2;
+        $baseArr['hp_max'] = max(
+            1,
+            (int) $baseArr['hp_max'] + $perkHpMax
+        );
 
-$speed = 4 + $perkSpeed + $dexSpeedBonus;
+        $baseArr['mana_max'] = max(
+            0,
+            (int) $baseArr['mana_max'] + $perkManaMax
+        );
 
-$armorClass = $sheet->getBaseArmorClass() + $perkArmorClass;
-        $armorClass = $sheet->getBaseArmorClass() + $perkArmorClass;
+        $dexModifier = (int) ($baseArr['modifiers']['dex'] ?? 0);
+
+        $dexSpeedBonus = intdiv(
+            max(0, $dexModifier),
+            5
+        ) * 2;
+
+        $speed = 4 + $perkSpeed + $dexSpeedBonus;
+
+        $armorClass =
+            $sheet->getBaseArmorClass()
+            + $perkArmorClass;
 
         $armors = [];
 
-        foreach ($armorRepo->findActiveByCampaignCharacter($campaignCharacterId) as $armorRow) {
-            $armor = $armorBaseRepo->findById((int) $armorRow['armor_id']);
+        foreach (
+            $armorRepo->findActiveByCampaignCharacter($campaignCharacterId)
+            as $armorRow
+        ) {
+            $armor = $armorBaseRepo->findById(
+                (int) $armorRow['armor_id']
+            );
+
             if (!$armor) {
                 continue;
             }
 
-            $itemInfo = $itemBaseRepo->findNameDescriptionByItemId((int) $armorRow['item_id']);
+            $itemInfo = $itemBaseRepo->findNameDescriptionByItemId(
+                (int) $armorRow['item_id']
+            );
 
-            $slot = $armorSlotRepo->findById($armor->armor_slot_id);
+            $slot = $armorSlotRepo->findById(
+                $armor->armor_slot_id
+            );
 
-            $abilityIds = $armorArmorAbilityRepo->getByArmorId($armor->id);
+            $abilityIds = $armorArmorAbilityRepo->getByArmorId(
+                $armor->id
+            );
+
             $abilities = [];
 
             foreach ($abilityIds as $abilityId) {
-                $ability = $armorAbilityRepo->findById((int) $abilityId);
+                $ability = $armorAbilityRepo->findById(
+                    (int) $abilityId
+                );
+
                 if ($ability) {
                     $abilities[] = $ability->toArray();
                 }
             }
 
-            $isEquipped = (int) ($armorRow['is_equipped'] ?? 0) === 1;
+            $isEquipped =
+                (int) ($armorRow['is_equipped'] ?? 0) === 1;
 
             if ($isEquipped) {
-                $armorClass += (int) $armor->armor_class_bonus;
-                $speed -= (int) ($armor->speed_penalty ?? 0);
+                $armorClass +=
+                    (int) $armor->armor_class_bonus;
+
+                $speed -=
+                    (int) ($armor->speed_penalty ?? 0);
             }
 
             $armors[] = [
                 'armor' => array_merge(
                     $armor->toArray(),
                     [
-                        'item_name' => $itemInfo['name'] ?? null,
-                        'item_description' => $itemInfo['description'] ?? null,
+                        'item_name' =>
+                            $itemInfo['name'] ?? null,
+                        'item_description' =>
+                            $itemInfo['description'] ?? null,
                     ]
                 ),
                 'slot' => $slot,
-                'elements' => $armorElementRepo->getByArmorId($armor->id),
+                'elements' =>
+                    $armorElementRepo->getByArmorId($armor->id),
                 'abilities' => $abilities,
                 'is_equipped' => $isEquipped,
             ];
         }
 
-
         $weapons = [];
         $weaponAbilityIds = [];
 
-        foreach ($weaponRepo->findActiveByCampaignCharacter($campaignCharacterId) as $weaponRow) {
-            $weapon = $weaponBaseRepo->findByIdWithItemAndDamageType($weaponRow['weapon_id']);
+        foreach (
+            $weaponRepo->findActiveByCampaignCharacter(
+                $campaignCharacterId
+            )
+            as $weaponRow
+        ) {
+            $weapon =
+                $weaponBaseRepo->findByIdWithItemAndDamageType(
+                    $weaponRow['weapon_id']
+                );
+
             if (!$weapon) {
                 continue;
             }
 
-            $weapon['element_types'] = $weaponElementRepo->getByWeaponId($weaponRow['weapon_id']);
+            $weapon['element_types'] =
+                $weaponElementRepo->getByWeaponId(
+                    $weaponRow['weapon_id']
+                );
 
-            $abilities = $weaponAbilityRepo->findByWeaponId($weaponRow['weapon_id']);
+            $abilities =
+                $weaponAbilityRepo->findByWeaponId(
+                    $weaponRow['weapon_id']
+                );
+
             foreach ($abilities as $index => $ability) {
                 $weaponAbilityIds[] = (int) $ability->id;
+
                 $ability->element_types =
-                    $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
-                $abilities[$index] = $ability->toArray();
+                    $weaponAbilityElementRepo
+                        ->getByWeaponAbilityId(
+                            $ability->id
+                        );
+
+                $abilities[$index] =
+                    $ability->toArray();
             }
 
             $weapon['abilities'] = $abilities;
-            $weapon['is_equipped'] = isset($weaponRow['is_equipped'])
-                ? (bool) $weaponRow['is_equipped']
-                : false;
+
+            $weapon['is_equipped'] =
+                isset($weaponRow['is_equipped'])
+                    ? (bool) $weaponRow['is_equipped']
+                    : false;
 
             $weapons[] = $weapon;
         }
 
-        $weaponAbilityIds = array_values(array_unique($weaponAbilityIds));
+        $weaponAbilityIds = array_values(
+            array_unique($weaponAbilityIds)
+        );
 
         $items = [];
-        foreach ($itemRepo->findActiveByCampaignCharacter($campaignCharacterId) as $itemRow) {
-            $item = $itemBaseRepo->findById($itemRow['item_id']);
+
+        foreach (
+            $itemRepo->findActiveByCampaignCharacter(
+                $campaignCharacterId
+            )
+            as $itemRow
+        ) {
+            $item = $itemBaseRepo->findById(
+                $itemRow['item_id']
+            );
+
             if (!$item) {
                 continue;
             }
 
-            $abilityIds = $itemAbilityRepo->getByItemId($item->id);
+            $abilityIds =
+                $itemAbilityRepo->getByItemId(
+                    $item->id
+                );
 
             $abilities = [];
+
             foreach ($abilityIds as $abilityId) {
-                $ability = $itemAbilityRepo->findById($abilityId);
+                $ability =
+                    $itemAbilityRepo->findById(
+                        $abilityId
+                    );
+
                 if ($ability) {
-                    $abilities[] = $ability->toArray();
+                    $abilities[] =
+                        $ability->toArray();
                 }
             }
 
             $items[] = [
                 'item' => $item->toArray(),
-                'quantity' => (int) $itemRow['quantity'],
-                'elements' => $itemElementRepo->getByItemId($item->id),
+                'quantity' =>
+                    (int) $itemRow['quantity'],
+                'elements' =>
+                    $itemElementRepo->getByItemId(
+                        $item->id
+                    ),
                 'abilities' => $abilities,
             ];
         }
 
-
         $abilities = [];
-        foreach ($abilityRepo->findByCampaignCharacter($campaignCharacterId) as $abilityRow) {
-            $ability = $abilityBaseRepo->findById($abilityRow['ability_id']);
+
+        foreach (
+            $abilityRepo->findByCampaignCharacter(
+                $campaignCharacterId
+            )
+            as $abilityRow
+        ) {
+            $ability =
+                $abilityBaseRepo->findById(
+                    $abilityRow['ability_id']
+                );
+
             if (!$ability) {
                 continue;
             }
 
             $abilities[] = [
-                'ability' => $ability->toArray(),
-                'elements' => $abilityElementRepo->getByAbilityId($ability->id),
+                'ability' =>
+                    $ability->toArray(),
+                'elements' =>
+                    $abilityElementRepo
+                        ->getByAbilityId(
+                            $ability->id
+                        ),
             ];
         }
 
-        $baseArr = $sheet->toArray();
-        $baseArr['hp_max'] = max(1, (int) $baseArr['hp_max'] + $perkHpMax);
-        $baseArr['mana_max'] = max(0, (int) $baseArr['mana_max'] + $perkManaMax);
-
         return [
             'base' => $baseArr,
-            'race' => $race ? $race->toArray() : null,
-            'order' => $order ? $order->toArray() : null,
+            'race' =>
+                $race ? $race->toArray() : null,
+            'order' =>
+                $order ? $order->toArray() : null,
             'derived' => [
-                'armor_class' => max(0, $armorClass),
-                'speed' => max(0, $speed),
+                'armor_class' =>
+                    max(0, $armorClass),
+                'speed' =>
+                    max(0, $speed),
             ],
             'perks' => $perks,
             'weapons' => $weapons,
@@ -417,12 +530,17 @@ $armorClass = $sheet->getBaseArmorClass() + $perkArmorClass;
             'abilities' => $abilities,
             'progression' => [
                 'level' => $level,
-                'pending_level_ups' => $pendingLevelUps,
+                'pending_level_ups' =>
+                    $pendingLevelUps,
                 'xp' => [
-                    'current' => $currentXP,
-                    'total' => $totalXP,
-                    'to_next_level' => $xpRemaining,
-                    'required_for_next_level' => $xpToNextLevel,
+                    'current' =>
+                        $currentXP,
+                    'total' =>
+                        $totalXP,
+                    'to_next_level' =>
+                        $xpRemaining,
+                    'required_for_next_level' =>
+                        $xpToNextLevel,
                 ],
                 'gold' => $gold,
             ],
