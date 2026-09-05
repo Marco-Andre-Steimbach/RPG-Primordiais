@@ -272,7 +272,17 @@ foreach ($perkRepo->findByCampaignCharacter($campaignCharacterId) as $perkRow) {
             sanity_current: (int) $attributes['sanity']
         );
 
-        $speed = 4 + $perkSpeed;
+        $dexModifier =
+    $baseAttributes['dex']
+    + $raceAttributes['dex']
+    + $orderAttributes['dex']
+    + $perkAttributes['dex'];
+
+$dexSpeedBonus = intdiv(max(0, $dexModifier), 5) * 2;
+
+$speed = 4 + $perkSpeed + $dexSpeedBonus;
+
+$armorClass = $sheet->getBaseArmorClass() + $perkArmorClass;
         $armorClass = $sheet->getBaseArmorClass() + $perkArmorClass;
 
         $armors = [];
