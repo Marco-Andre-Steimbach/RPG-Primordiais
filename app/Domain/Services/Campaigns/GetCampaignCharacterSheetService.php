@@ -305,14 +305,9 @@ class GetCampaignCharacterSheetService
             (int) $baseArr['mana_max'] + $perkManaMax
         );
 
-        $dexModifier = (int) ($baseArr['modifiers']['dex'] ?? 0);
+        $strModifier = (int) ($baseArr['modifiers']['str'] ?? 0);
 
-        $dexSpeedBonus = intdiv(
-            max(0, $dexModifier),
-            5
-        ) * 2;
-
-        $speed = 4 + $perkSpeed + $dexSpeedBonus;
+        $speed = 4 + $perkSpeed;
 
         $armorClass =
             $sheet->getBaseArmorClass()
@@ -363,8 +358,13 @@ class GetCampaignCharacterSheetService
                 $armorClass +=
                     (int) $armor->armor_class_bonus;
 
-                $speed -=
-                    (int) ($armor->speed_penalty ?? 0);
+                $minStrengthRequired =
+                    (int) ($armor->min_strength_required ?? 0);
+
+                if ($strModifier < $minStrengthRequired) {
+                    $speed -=
+                        (int) ($armor->speed_penalty ?? 0);
+                }
             }
 
             $armors[] = [
