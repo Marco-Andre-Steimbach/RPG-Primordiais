@@ -17,19 +17,22 @@ class WeaponController
         $schema = new ValidateSchemaMiddleware([
             'item_id' => 'int|required',
             'weapon_damage_type_id' => 'int|required',
-        
+
             'dice_formula' => 'string|required',
-        
+
             'base_damage' => 'int',
             'bonus_accuracy' => 'int',
             'bonus_speed' => 'int',
             'range' => 'int',
-        
+
+            'required_modifier' => 'string|required',
+            'required_modifier_value' => 'int|required',
+
             'ammo_item_id' => 'int',
             'ammo_per_use' => 'int',
-        
+
             'element_types' => 'array|required',
-        ]);        
+        ]);
 
         $schema->handle($request->body());
 
@@ -43,6 +46,7 @@ class WeaponController
             'weapon' => $weapon,
         ], 201);
     }
+
     public function index(Request $request)
     {
         $service = new GetAllWeaponsService();
@@ -52,6 +56,7 @@ class WeaponController
             'weapons' => $weapons,
         ]);
     }
+
     public function show(Request $request)
     {
         $params = $request->params();

@@ -15,6 +15,9 @@ class CreateWeaponDTO
     public int $bonus_speed;
     public int $range;
 
+    public string $required_modifier;
+    public int $required_modifier_value;
+
     public ?int $ammo_item_id;
     public int $ammo_per_use;
 
@@ -31,6 +34,14 @@ class CreateWeaponDTO
         $this->bonus_accuracy = (int) ($data['bonus_accuracy'] ?? 0);
         $this->bonus_speed = (int) ($data['bonus_speed'] ?? 0);
         $this->range = (int) ($data['range'] ?? 1);
+
+        $this->required_modifier = strtolower(
+            trim((string) ($data['required_modifier'] ?? ''))
+        );
+
+        $this->required_modifier_value = array_key_exists('required_modifier_value', $data)
+            ? (int) $data['required_modifier_value']
+            : -1;
 
         $this->ammo_item_id = isset($data['ammo_item_id'])
             ? (int) $data['ammo_item_id']
@@ -75,6 +86,26 @@ class CreateWeaponDTO
             }
         }
 
+        $allowedModifiers = [
+            'str',
+            'dex',
+            'con',
+            'int',
+            'wis',
+            'cha',
+        ];
+
+        if (!in_array($this->required_modifier, $allowedModifiers, true)) {
+            $errors['required_modifier'][] = 'required_modifier inválido.';
+        }
+
+        if (
+            $this->required_modifier_value < 0 ||
+            $this->required_modifier_value > 20
+        ) {
+            $errors['required_modifier_value'][] = 'required_modifier_value deve estar entre 0 e 20.';
+        }
+
         if ($this->ammo_per_use <= 0) {
             $errors['ammo_per_use'][] = 'ammo_per_use deve ser maior que zero.';
         }
@@ -102,6 +133,7 @@ class CreateWeaponDTO
 
         foreach ($value as $id) {
             $intId = (int) $id;
+
             if ($intId > 0) {
                 $ids[] = $intId;
             }

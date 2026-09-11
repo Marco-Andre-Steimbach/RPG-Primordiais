@@ -81,39 +81,37 @@ class GetLupidaService
 
         $armors = array_values(array_filter(
             $armorRepo->findAllWithItemAndSlot(),
-            fn($a) => !isset($ownedArmorIds[(int) $a['armor_id']])
+            fn($armor) => !isset($ownedArmorIds[(int) $armor['armor_id']])
         ));
 
         $weapons = array_values(array_filter(
             $weaponRepo->findAllWithItemAndDamageType(),
-            fn($w) => !isset($ownedWeaponIds[(int) $w['id']])
+            fn($weapon) => !isset($ownedWeaponIds[(int) $weapon['id']])
         ));
 
         $items = array_values(array_filter(
             $itemRepo->findAllNonEquipable(),
-            fn($i) => !isset($ownedItemIds[(int) $i['id']])
+            fn($item) => !isset($ownedItemIds[(int) $item['id']])
         ));
 
         shuffle($armors);
-        shuffle($weapons);
         shuffle($items);
 
         $armors = array_slice($armors, 0, 5);
-        $weapons = array_slice($weapons, 0, 5);
         $items = array_slice($items, 0, 5);
+
         $listedItemIds = array_map(
-    fn($item) => (int) $item['id'],
-    $items
-);
+            fn($item) => (int) $item['id'],
+            $items
+        );
 
-$ammoItem = $weaponRepo->findRandomAmmoItemExcludingIds([
-    ...array_keys($ownedItemIds),
-    ...$listedItemIds,
-]);
+        $ammoItem = $weaponRepo->findRandomAmmoItemExcludingIds(
+            $listedItemIds
+        );
 
-if ($ammoItem) {
-    $items[] = $ammoItem;
-}
+        if ($ammoItem) {
+            $items[] = $ammoItem;
+        }
 
         foreach ($armors as &$armor) {
             $armorId = (int) $armor['armor_id'];
@@ -129,11 +127,14 @@ if ($ammoItem) {
             }
 
             $abilityIds = $armorArmorAbilityRepo->getByArmorId($armorId);
+
             $armor['abilities'] = array_map(
                 fn($id) => $armorAbilityRepo->findById($id)->toArray(),
                 $abilityIds
             );
         }
+
+        unset($armor);
 
         foreach ($weapons as &$weapon) {
             $weaponId = (int) $weapon['id'];
@@ -143,14 +144,20 @@ if ($ammoItem) {
             $weapon['elements'] = $weaponElementRepo->getByWeaponId($weaponId);
 
             $abilities = $weaponAbilityRepo->findByWeaponId($weaponId);
+
             foreach ($abilities as &$ability) {
                 $ability->element_types =
                     $weaponAbilityElementRepo->getByWeaponAbilityId($ability->id);
+
                 $ability = $ability->toArray();
             }
 
+            unset($ability);
+
             $weapon['abilities'] = $abilities;
         }
+
+        unset($weapon);
 
         $items = array_map(function ($item) use (
             $itemRepo,

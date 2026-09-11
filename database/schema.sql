@@ -783,18 +783,33 @@ CREATE TABLE weapons (
 
     weapon_damage_type_id INT NOT NULL,
 
-    `range` INT NOT NULL DEFAULT 0,
-
+    `range` INT NOT NULL DEFAULT 1,
 
     dice_formula VARCHAR(50) NOT NULL,
     base_damage INT NOT NULL DEFAULT 0,
     bonus_accuracy INT NOT NULL DEFAULT 0,
     bonus_speed INT NOT NULL DEFAULT 0,
 
+    required_modifier ENUM(
+        'str',
+        'dex',
+        'con',
+        'int',
+        'wis',
+        'cha'
+    ) NOT NULL,
+
+    required_modifier_value TINYINT UNSIGNED NOT NULL,
+
     ammo_item_id INT NULL,
     ammo_per_use INT NOT NULL DEFAULT 1,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_weapons_required_modifier_value
+        CHECK (
+            required_modifier_value BETWEEN 0 AND 20
+        ),
 
     CONSTRAINT fk_weapons_item
         FOREIGN KEY (item_id) REFERENCES items(id)
