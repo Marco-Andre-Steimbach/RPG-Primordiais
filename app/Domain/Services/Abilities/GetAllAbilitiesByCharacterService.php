@@ -4,7 +4,7 @@ namespace App\Domain\Services\Abilities;
 
 use App\Core\Exceptions\ValidationException;
 use App\Infrastructure\Repositories\CharacterAbilityRepository;
-use App\Infrastructure\Repositories\AbilityRepository;
+use App\Infrastructure\Repositories\AbilityNewRepository;
 
 class GetAllAbilitiesByCharacterService
 {
@@ -13,22 +13,44 @@ class GetAllAbilitiesByCharacterService
         if ($characterId <= 0) {
             throw new ValidationException(
                 'Dados inválidos.',
-                ['character_id' => ['character_id inválido.']]
+                [
+                    'character_id' => [
+                        'character_id inválido.'
+                    ]
+                ]
             );
         }
 
-        $charAbilityRepo = new CharacterAbilityRepository();
-        $abilityRepo = new AbilityRepository();
+        $charAbilityRepo =
+            new CharacterAbilityRepository();
 
-        $abilityIds = $charAbilityRepo->getAbilitiesByCharacter($characterId);
+        $abilityNewRepo =
+            new AbilityNewRepository();
+
+        $abilityIds =
+            $charAbilityRepo
+                ->getAbilitiesByCharacter(
+                    $characterId
+                );
+
         $abilities = [];
 
         foreach ($abilityIds as $abilityId) {
-            $ability = $abilityRepo->findByIdWithElements((int) $abilityId);
+            $ability =
+                $abilityNewRepo
+                    ->findCompleteById(
+                        (int) $abilityId
+                    );
 
-            if ($ability) {
-                $abilities[] = $ability;
+            if (!$ability) {
+                continue;
             }
+
+            $abilities[] = [
+                'ability' => $ability,
+                'elements' => [],
+                'schema' => 'new',
+            ];
         }
 
         return $abilities;
