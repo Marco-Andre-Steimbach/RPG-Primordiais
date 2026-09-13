@@ -33,6 +33,7 @@ use App\Infrastructure\Repositories\ItemElementTypeRepository;
 use App\Infrastructure\Repositories\ItemAbilityRepository;
 use App\Infrastructure\Repositories\CampaignCharacterAbilityRepository;
 use App\Infrastructure\Repositories\AbilityRepository;
+use App\Infrastructure\Repositories\AbilityNewRepository;
 use App\Infrastructure\Repositories\AbilityElementTypeRepository;
 use App\Infrastructure\Repositories\CampaignCharacterXPRepository;
 use App\Infrastructure\Repositories\CampaignCharacterGoldRepository;
@@ -76,6 +77,7 @@ class GetCampaignCharacterSheetService
 
         $abilityRepo = new CampaignCharacterAbilityRepository();
         $abilityBaseRepo = new AbilityRepository();
+        $abilityNewRepo = new AbilityNewRepository();
         $abilityElementRepo = new AbilityElementTypeRepository();
 
         $xpRepo = new CampaignCharacterXPRepository();
@@ -495,9 +497,26 @@ class GetCampaignCharacterSheetService
             )
             as $abilityRow
         ) {
+            $abilityId = (int) $abilityRow['ability_id'];
+
+            $newAbility =
+                $abilityNewRepo->findCompleteById(
+                    $abilityId
+                );
+
+            if ($newAbility) {
+                $abilities[] = [
+                    'ability' => $newAbility,
+                    'elements' => [],
+                    'schema' => 'new',
+                ];
+
+                continue;
+            }
+
             $ability =
                 $abilityBaseRepo->findById(
-                    $abilityRow['ability_id']
+                    $abilityId
                 );
 
             if (!$ability) {
@@ -512,6 +531,7 @@ class GetCampaignCharacterSheetService
                         ->getByAbilityId(
                             $ability->id
                         ),
+                'schema' => 'legacy',
             ];
         }
 
