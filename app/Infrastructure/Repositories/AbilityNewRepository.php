@@ -21,7 +21,10 @@ class AbilityNewRepository extends BaseRepository
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row =
+            $stmt->fetch(
+                PDO::FETCH_ASSOC
+            );
 
         if (!$row) {
             return null;
@@ -29,41 +32,73 @@ class AbilityNewRepository extends BaseRepository
 
         return [
             'id' => (int) $row['id'],
-            'required_race_id' => $row['required_race_id'] !== null
-                ? (int) $row['required_race_id']
-                : null,
-            'required_order_id' => $row['required_order_id'] !== null
-                ? (int) $row['required_order_id']
-                : null,
-            'created_at' => $row['created_at'] ?? null,
-            'updated_at' => $row['updated_at'] ?? null,
+            'required_race_id' =>
+                $row['required_race_id'] !== null
+                    ? (int) $row['required_race_id']
+                    : null,
+            'required_order_id' =>
+                $row['required_order_id'] !== null
+                    ? (int) $row['required_order_id']
+                    : null,
+            'created_at' =>
+                $row['created_at'] ?? null,
+            'updated_at' =>
+                $row['updated_at'] ?? null,
         ];
     }
 
-    public function findCompleteById(int $id): ?array
-    {
-        $ability = $this->findById($id);
+    public function findCompleteById(
+        int $id
+    ): ?array {
+        $ability =
+            $this->findById($id);
 
         if (!$ability) {
             return null;
         }
 
-        $formRepo = new AbilityNewFormRepository();
-        $ruleNodeRepo = new AbilityNewRuleNodeRepository();
+        $formRepo =
+            new AbilityNewFormRepository();
 
-        $forms = $formRepo->findByAbilityId($id);
+        $ruleNodeRepo =
+            new AbilityNewRuleNodeRepository();
+
+        $formElementRepo =
+            new AbilityNewFormElementTypeRepository();
+
+        $forms =
+            $formRepo->findByAbilityId(
+                $id
+            );
+
+        $elementTypesByForm =
+            $formElementRepo->findByAbilityId(
+                $id
+            );
 
         $mappedForms = [];
 
         foreach ($forms as $form) {
-            $form['rules'] = $ruleNodeRepo->getTreeByFormId(
-                (int) $form['id']
-            );
+            $formId =
+                (int) $form['id'];
 
-            $mappedForms[$form['form_type']] = $form;
+            $form['element_type_ids'] =
+                $elementTypesByForm[$formId]
+                ?? [];
+
+            $form['rules'] =
+                $ruleNodeRepo
+                    ->getTreeByFormId(
+                        $formId
+                    );
+
+            $mappedForms[
+                $form['form_type']
+            ] = $form;
         }
 
-        $ability['forms'] = $mappedForms;
+        $ability['forms'] =
+            $mappedForms;
 
         return $ability;
     }
@@ -77,9 +112,16 @@ class AbilityNewRepository extends BaseRepository
             LIMIT 1
         ";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
+        $stmt =
+            $this->db->prepare(
+                $sql
+            );
 
-        return (bool) $stmt->fetchColumn();
+        $stmt->execute([
+            'id' => $id,
+        ]);
+
+        return (bool)
+            $stmt->fetchColumn();
     }
 }
