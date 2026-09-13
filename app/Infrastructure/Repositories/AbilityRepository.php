@@ -12,92 +12,197 @@ class AbilityRepository extends BaseRepository
 
     public function create(array $data): int
     {
-        $columns = array_map(
-            fn($col) => $col === 'range' ? '`range`' : $col,
-            array_keys($data)
-        );
+        $columns =
+            implode(
+                ', ',
+                array_keys($data)
+            );
+
+        $params =
+            ':' . implode(
+                ', :',
+                array_keys($data)
+            );
 
         $sql = "
             INSERT INTO {$this->table}
-            (" . implode(', ', $columns) . ")
-            VALUES (:" . implode(', :', array_keys($data)) . ")
+            (
+                {$columns}
+            )
+            VALUES
+            (
+                {$params}
+            )
         ";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($data);
 
-        return (int) $this->db->lastInsertId();
+        $stmt =
+            $this->db->prepare(
+                $sql
+            );
+
+        $stmt->execute(
+            $data
+        );
+
+        return (int)
+            $this->db->lastInsertId();
     }
 
-    public function findById(int $id): ?Ability
-    {
-        $sql = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
+    public function findById(
+        int $id
+    ): ?Ability {
+        $sql = "
+            SELECT *
+            FROM {$this->table}
+            WHERE id = :id
+            LIMIT 1
+        ";
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt =
+            $this->db->prepare(
+                $sql
+            );
 
-        return $row ? $this->mapToModel($row) : null;
+        $stmt->execute([
+            'id' => $id,
+        ]);
+
+        $row =
+            $stmt->fetch(
+                PDO::FETCH_ASSOC
+            );
+
+        return $row
+            ? $this->mapToModel($row)
+            : null;
     }
 
-    public function findByIdWithElements(int $id): ?array
-    {
-        $ability = $this->findById($id);
+    public function findByIdWithElements(
+        int $id
+    ): ?array {
+        $ability =
+            $this->findById($id);
 
         if (!$ability) {
             return null;
         }
 
-        $elementRepo = new AbilityElementTypeRepository();
-        $elements = $elementRepo->getElementsByAbility($id);
+        $elementRepo =
+            new AbilityElementTypeRepository();
 
-        return [
-            'id' => $ability->id,
-            'title' => $ability->title,
-            'description' => $ability->description,
+        $ability->normal_element_types =
+            $elementRepo->getByAbilityIdAndForm(
+                $id,
+                'normal'
+            );
 
-            'arcane_title' => $ability->arcane_title,
-            'arcane_description' => $ability->arcane_description,
+        $ability->arcane_element_types =
+            $elementRepo->getByAbilityIdAndForm(
+                $id,
+                'arcane'
+            );
 
-            'mana_cost' => $ability->mana_cost,
-            'arcane_mana_cost' => $ability->arcane_mana_cost,
-
-            'dice_formula' => $ability->dice_formula,
-            'base_damage' => $ability->base_damage,
-            'bonus_speed' => $ability->bonus_speed,
-            'range' => $ability->range,
-
-            'required_race_id' => $ability->required_race_id,
-            'required_order_id' => $ability->required_order_id,
-
-            'element_types' => $elements,
-        ];
+        return $ability->toArray();
     }
 
-    private function mapToModel(array $row): Ability
-    {
+    public function findByCharacterId(
+        int $characterId
+    ): array {
+        $sql = "
+            SELECT *
+            FROM {$this->table}
+            WHERE character_id = :character_id
+            ORDER BY id DESC
+        ";
+
+        $stmt =
+            $this->db->prepare(
+                $sql
+            );
+
+        $stmt->execute([
+            'character_id' =>
+                $characterId,
+        ]);
+
+        $rows =
+            $stmt->fetchAll(
+                PDO::FETCH_ASSOC
+            );
+
+        return array_map(
+            fn(array $row) =>
+                $this->mapToModel($row),
+            $rows
+        );
+    }
+
+    private function mapToModel(
+        array $row
+    ): Ability {
         return new Ability(
-            id: (int) $row['id'],
-            title: $row['title'],
-            description: $row['description'],
-            arcane_title: $row['arcane_title'] ?? null,
-            arcane_description: $row['arcane_description'] ?? null,
-            mana_cost: (int) $row['mana_cost'],
-            arcane_mana_cost: $row['arcane_mana_cost'] !== null
-                ? (int) $row['arcane_mana_cost']
-                : null,
-            dice_formula: $row['dice_formula'] ?? null,
-            base_damage: (int) $row['base_damage'],
-            bonus_speed: (int) $row['bonus_speed'],
-            range: (int) $row['range'],
-            element_types: [],
-            required_race_id: $row['required_race_id'] !== null
-                ? (int) $row['required_race_id']
-                : null,
-            required_order_id: $row['required_order_id'] !== null
-                ? (int) $row['required_order_id']
-                : null,
-            created_at: $row['created_at'] ?? null,
-            updated_at: $row['updated_at'] ?? null
+            id:
+                (int) $row['id'],
+
+            character_id:
+                $row['character_id'] !== null
+                    ? (int) $row['character_id']
+                    : null,
+
+            title:
+                $row['title'],
+
+            description:
+                $row['description'],
+
+            arcane_title:
+                $row['arcane_title']
+                ?? null,
+
+            arcane_description:
+                $row['arcane_description']
+                ?? null,
+
+            mana_cost:
+                (int) $row['mana_cost'],
+
+            arcane_mana_cost:
+                $row['arcane_mana_cost'] !== null
+                    ? (int) $row['arcane_mana_cost']
+                    : null,
+
+            normal_element_types:
+                [],
+
+            arcane_element_types:
+                [],
+
+            required_race_id:
+                $row['required_race_id'] !== null
+                    ? (int) $row['required_race_id']
+                    : null,
+
+            required_order_id:
+                $row['required_order_id'] !== null
+                    ? (int) $row['required_order_id']
+                    : null,
+
+            status:
+                $row['status']
+                ?? 'draft',
+
+            converted_ability_id:
+                $row['converted_ability_id'] !== null
+                    ? (int) $row['converted_ability_id']
+                    : null,
+
+            created_at:
+                $row['created_at']
+                ?? null,
+
+            updated_at:
+                $row['updated_at']
+                ?? null
         );
     }
 }

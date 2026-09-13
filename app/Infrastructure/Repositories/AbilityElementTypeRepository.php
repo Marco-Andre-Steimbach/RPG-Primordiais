@@ -7,51 +7,131 @@ use PDO;
 
 class AbilityElementTypeRepository extends BaseRepository
 {
-    protected string $table = 'ability_element_types';
+    protected string $table =
+        'ability_element_types';
 
-    public function attach(int $abilityId, int $elementTypeId): void
-    {
+    public function attach(
+        int $abilityId,
+        string $formType,
+        int $elementTypeId
+    ): void {
         $sql = "
-            INSERT INTO {$this->table} (ability_id, element_type_id)
-            VALUES (:ability_id, :element_type_id)
+            INSERT IGNORE INTO {$this->table}
+            (
+                ability_id,
+                form_type,
+                element_type_id
+            )
+            VALUES
+            (
+                :ability_id,
+                :form_type,
+                :element_type_id
+            )
         ";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt =
+            $this->db->prepare(
+                $sql
+            );
+
         $stmt->execute([
-            'ability_id' => $abilityId,
-            'element_type_id' => $elementTypeId,
+            'ability_id' =>
+                $abilityId,
+
+            'form_type' =>
+                $formType,
+
+            'element_type_id' =>
+                $elementTypeId,
         ]);
     }
 
-    public function getByAbilityId(int $abilityId): array
-    {
+    public function getByAbilityIdAndForm(
+        int $abilityId,
+        string $formType
+    ): array {
         $sql = "
             SELECT element_type_id
             FROM {$this->table}
             WHERE ability_id = :ability_id
+              AND form_type = :form_type
+            ORDER BY element_type_id
         ";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['ability_id' => $abilityId]);
+        $stmt =
+            $this->db->prepare(
+                $sql
+            );
+
+        $stmt->execute([
+            'ability_id' =>
+                $abilityId,
+
+            'form_type' =>
+                $formType,
+        ]);
 
         return array_map(
-            fn($row) => (int) $row['element_type_id'],
-            $stmt->fetchAll(PDO::FETCH_ASSOC)
+            fn(array $row) =>
+                (int) $row['element_type_id'],
+
+            $stmt->fetchAll(
+                PDO::FETCH_ASSOC
+            )
         );
     }
-    public function getElementsByAbility(int $abilityId): array
-    {
+
+    public function getElementsByAbilityAndForm(
+        int $abilityId,
+        string $formType
+    ): array {
         $sql = "
-        SELECT et.id, et.name
-        FROM ability_element_types aet
-        JOIN element_types et ON et.id = aet.element_type_id
-        WHERE aet.ability_id = :ability_id
-    ";
+            SELECT
+                et.id,
+                et.name
+            FROM {$this->table} aet
+            INNER JOIN element_types et
+                ON et.id = aet.element_type_id
+            WHERE aet.ability_id = :ability_id
+              AND aet.form_type = :form_type
+            ORDER BY et.id
+        ";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['ability_id' => $abilityId]);
+        $stmt =
+            $this->db->prepare(
+                $sql
+            );
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute([
+            'ability_id' =>
+                $abilityId,
+
+            'form_type' =>
+                $formType,
+        ]);
+
+        return $stmt->fetchAll(
+            PDO::FETCH_ASSOC
+        );
     }
 
+    public function deleteByAbilityId(
+        int $abilityId
+    ): void {
+        $sql = "
+            DELETE FROM {$this->table}
+            WHERE ability_id = :ability_id
+        ";
+
+        $stmt =
+            $this->db->prepare(
+                $sql
+            );
+
+        $stmt->execute([
+            'ability_id' =>
+                $abilityId,
+        ]);
+    }
 }

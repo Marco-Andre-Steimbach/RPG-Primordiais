@@ -19,12 +19,17 @@ class AbilityController
             $authUser = $request->user();
 
             $params = $request->params();
+
             $characterId = (int) ($params['id'] ?? 0);
 
             if ($characterId <= 0) {
                 throw new ValidationException(
                     'Dados inválidos.',
-                    ['character_id' => ['character_id inválido ou ausente na rota.']]
+                    [
+                        'character_id' => [
+                            'character_id inválido ou ausente na rota.'
+                        ]
+                    ]
                 );
             }
 
@@ -38,23 +43,24 @@ class AbilityController
                 'mana_cost' => 'int|required',
                 'arcane_mana_cost' => 'int',
 
-                'dice_formula' => 'string',
-                'range' => 'int',
-
-                'base_damage' => 'int',
-                'bonus_speed' => 'int',
-
-                'element_types' => 'array|required',
+                'normal_element_types' => 'array|required',
+                'arcane_element_types' => 'array',
 
                 'required_race_id' => 'int',
                 'required_order_id' => 'int',
             ]);
 
-            $schema->handle($request->body());
+            $body = $request->body();
 
-            $dto = new CreateAbilityDTO($request->body());
+            $schema->handle($body);
+
+            $dto = new CreateAbilityDTO([
+                ...$body,
+                'character_id' => $characterId,
+            ]);
 
             $service = new CreateAbilityService();
+
             $ability = $service->execute(
                 characterId: $characterId,
                 dto: $dto,
@@ -65,52 +71,81 @@ class AbilityController
                 'message' => 'Habilidade criada com sucesso.',
                 'ability' => $ability,
             ], 201);
+
         } catch (ValidationException $e) {
             return Response::json([
                 'error' => true,
                 'message' => $e->getMessage(),
-                'errors' => $e->getErrors()
+                'errors' => $e->getErrors(),
             ], 400);
         }
     }
 
     public function index(Request $request)
     {
-        $characterId = (int) ($request->params()['id'] ?? 0);
+        $characterId = (int) (
+            $request->params()['id']
+            ?? 0
+        );
 
         if ($characterId <= 0) {
             throw new ValidationException(
                 'Dados inválidos.',
-                ['character_id' => ['character_id inválido ou ausente na rota.']]
+                [
+                    'character_id' => [
+                        'character_id inválido ou ausente na rota.'
+                    ]
+                ]
             );
         }
 
-        $service = new GetAllAbilitiesByCharacterService();
+        $service =
+            new GetAllAbilitiesByCharacterService();
 
         return Response::json([
-            'abilities' => $service->execute($characterId),
+            'abilities' =>
+                $service->execute(
+                    $characterId
+                ),
         ]);
     }
 
     public function show(Request $request)
     {
-        $params = $request->params();
+        $params =
+            $request->params();
 
-        $characterId = (int) ($params['character_id'] ?? 0);
-        $abilityId   = (int) ($params['ability_id'] ?? 0);
+        $characterId =
+            (int) ($params['character_id'] ?? 0);
 
-        if ($characterId <= 0 || $abilityId <= 0) {
+        $abilityId =
+            (int) ($params['ability_id'] ?? 0);
+
+        if (
+            $characterId <= 0
+            || $abilityId <= 0
+        ) {
             throw new ValidationException(
                 'Dados inválidos.',
                 [
-                    'character_id' => ['character_id inválido.'],
-                    'ability_id' => ['ability_id inválido.'],
+                    'character_id' => [
+                        'character_id inválido.'
+                    ],
+                    'ability_id' => [
+                        'ability_id inválido.'
+                    ],
                 ]
             );
         }
 
-        $service = new GetAbilityByCharacterService();
-        $ability = $service->execute($characterId, $abilityId);
+        $service =
+            new GetAbilityByCharacterService();
+
+        $ability =
+            $service->execute(
+                $characterId,
+                $abilityId
+            );
 
         return Response::json([
             'ability' => $ability,
