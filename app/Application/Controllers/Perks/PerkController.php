@@ -30,14 +30,25 @@ class PerkController
             'flags' => 'array',
             'attributes' => 'array',
             'ability' => 'array',
+
+            'required_perk_ids' => 'array',
+            'sheet_perk_ids' => 'array',
+            'sheet' => 'array',
         ]);
 
-        $schema->handle($request->body());
+        $schema->handle(
+            $request->body()
+        );
 
-        $dto = new CreatePerkDTO($request->body());
+        $dto = new CreatePerkDTO(
+            $request->body()
+        );
 
         $service = new CreatePerkService();
-        $perk = $service->execute($dto);
+
+        $perk = $service->execute(
+            $dto
+        );
 
         return Response::json([
             'message' => 'Perk criado com sucesso.',
@@ -47,14 +58,21 @@ class PerkController
 
     public function byRace(Request $request)
     {
-        $raceId = (int) ($request->params()['id'] ?? 0);
+        $raceId = (int) (
+            $request->params()['id'] ?? 0
+        );
 
         if ($raceId <= 0) {
-            throw new ValidationException('ID da raça inválido.');
+            throw new ValidationException(
+                'ID da raça inválido.'
+            );
         }
 
         $service = new GetPerksByRaceService();
-        $perks = $service->execute($raceId);
+
+        $perks = $service->execute(
+            $raceId
+        );
 
         return Response::json([
             'perks' => array_map(
@@ -66,14 +84,21 @@ class PerkController
 
     public function byOrder(Request $request)
     {
-        $orderId = (int) ($request->params()['id'] ?? 0);
+        $orderId = (int) (
+            $request->params()['id'] ?? 0
+        );
 
         if ($orderId <= 0) {
-            throw new ValidationException('ID da ordem inválido.');
+            throw new ValidationException(
+                'ID da ordem inválido.'
+            );
         }
 
         $service = new GetPerksByOrderService();
-        $perks = $service->execute($orderId);
+
+        $perks = $service->execute(
+            $orderId
+        );
 
         return Response::json([
             'perks' => array_map(
@@ -82,16 +107,24 @@ class PerkController
             ),
         ]);
     }
+
     public function show(Request $request)
     {
-        $perkId = (int) ($request->params()['id'] ?? 0);
+        $perkId = (int) (
+            $request->params()['id'] ?? 0
+        );
 
         if ($perkId <= 0) {
-            throw new ValidationException('ID do perk inválido.');
+            throw new ValidationException(
+                'ID do perk inválido.'
+            );
         }
 
         $service = new GetPerkByIdService();
-        $perk = $service->execute($perkId);
+
+        $perk = $service->execute(
+            $perkId
+        );
 
         return Response::json([
             'perk' => $perk->toArray(),

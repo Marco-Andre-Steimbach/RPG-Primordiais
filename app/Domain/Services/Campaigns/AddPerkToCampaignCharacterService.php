@@ -25,88 +25,203 @@ class AddPerkToCampaignCharacterService
 
     public function __construct()
     {
-        $this->campaignCharacters = new CampaignCharacterRepository();
-        $this->campaignPerks      = new CampaignCharacterPerkRepository();
+        $this->campaignCharacters =
+            new CampaignCharacterRepository();
 
-        $this->characters         = new CharacterRepository();
-        $this->perks              = new PerkRepository();
+        $this->campaignPerks =
+            new CampaignCharacterPerkRepository();
 
-        $this->racePerks          = new RacePerkRepository();
-        $this->orderPerks         = new OrderPerkRepository();
+        $this->characters =
+            new CharacterRepository();
+
+        $this->perks =
+            new PerkRepository();
+
+        $this->racePerks =
+            new RacePerkRepository();
+
+        $this->orderPerks =
+            new OrderPerkRepository();
     }
 
     public function execute(
         int $campaignCharacterId,
         AddPerkToCampaignCharacterDTO $dto
     ): void {
-        $cc = $this->campaignCharacters->findById($campaignCharacterId);
+        $cc = $this->campaignCharacters->findById(
+            $campaignCharacterId
+        );
 
         if (!$cc) {
             throw new ValidationException(
                 'Personagem inválido.',
-                ['campaign_character_id' => ['Não encontrado.']]
+                [
+                    'campaign_character_id' => [
+                        'Não encontrado.',
+                    ],
+                ]
             );
         }
 
-        $perk = $this->perks->findById($dto->perk_id);
+        $perk = $this->perks->findById(
+            $dto->perk_id
+        );
 
         if (!$perk) {
             throw new ValidationException(
                 'Perk inválido.',
-                ['perk_id' => ['Perk não encontrado.']]
+                [
+                    'perk_id' => [
+                        'Perk não encontrado.',
+                    ],
+                ]
             );
         }
 
-        if ($this->campaignPerks->exists($campaignCharacterId, $dto->perk_id)) {
-            throw new ConflictException('Perk já adicionado.');
+        if (
+            $this->campaignPerks->exists(
+                $campaignCharacterId,
+                $dto->perk_id
+            )
+        ) {
+            throw new ConflictException(
+                'Perk já adicionado.'
+            );
         }
 
-        $currentPerks = $this->campaignPerks->countByCampaignCharacter($campaignCharacterId);
+        $currentPerks =
+            $this->campaignPerks
+                ->countByCampaignCharacter(
+                    $campaignCharacterId
+                );
 
-        if ($currentPerks >= (int) $cc['level']) {
+        if (
+            $currentPerks >=
+            (int) $cc['level']
+        ) {
             throw new ValidationException(
                 'Limite atingido.',
-                ['perks' => ['Quantidade de perks excede o nível do personagem.']]
+                [
+                    'perks' => [
+                        'Quantidade de perks excede o nível do personagem.',
+                    ],
+                ]
             );
         }
 
-        $character = $this->characters->findById((int) $cc['character_id']);
+        $character =
+            $this->characters->findById(
+                (int) $cc['character_id']
+            );
 
         if (!$character) {
             throw new ValidationException(
                 'Personagem inválido.',
-                ['character_id' => ['Personagem base não encontrado.']]
+                [
+                    'character_id' => [
+                        'Personagem base não encontrado.',
+                    ],
+                ]
             );
         }
 
-        $level = (int) $cc['level'];
+        $level =
+            (int) $cc['level'];
 
-        $allowedByRace = $this->racePerks->isAllowed(
-            (int) $character->race_id,
-            (int) $dto->perk_id,
-            $level
-        );
+        $allowedByRace =
+            $this->racePerks->isAllowed(
+                (int) $character->race_id,
+                (int) $dto->perk_id,
+                $level
+            );
 
         $allowedByOrder = false;
 
         if (!empty($character->order_id)) {
-            $allowedByOrder = $this->orderPerks->isAllowed(
-                (int) $character->order_id,
-                (int) $dto->perk_id,
-                $level
-            );
+            $allowedByOrder =
+                $this->orderPerks->isAllowed(
+                    (int) $character->order_id,
+                    (int) $dto->perk_id,
+                    $level
+                );
         }
 
-        if (!$allowedByRace && !$allowedByOrder) {
+        if (
+            !$allowedByRace
+            && !$allowedByOrder
+        ) {
             throw new ValidationException(
                 'Perk inválido.',
-                ['perk_id' => ['Este perk não está disponível para este personagem (raça/ordem/nível).']]
+                [
+                    'perk_id' => [
+                        'Este perk não está disponível para este personagem (raça/ordem/nível).',
+                    ],
+                ]
             );
         }
 
-        $this->campaignPerks->create([
-            'campaign_character_id' => $campaignCharacterId,
-            'perk_id'               => (int) $dto->perk_id,
-        ]);
+        $this->validateRequirements(
+            $campaignCharacterId,
+            $perk->required_perk_ids
+        );
+
+        $created =
+            $this->campaignPerks->create([
+                'campaign_character_id' =>
+                    $campaignCharacterId,
+
+                'perk_id' =>
+                    (int) $dto->perk_id,
+            ]);
+
+        if (!$created) {
+            throw new ValidationException(
+                'Falha ao adicionar perk.',
+                [
+                    'perk_id' => [
+                        'Não foi possível adicionar o perk ao personagem.',
+                    ],
+                ]
+            );
+        }
+    }
+
+    private function validateRequirements(
+        int $campaignCharacterId,
+        array $requiredPerkIds
+    ): void {
+        if ($requiredPerkIds === []) {
+            return;
+        }
+
+        $missingPerkIds = [];
+
+        foreach ($requiredPerkIds as $requiredPerkId) {
+            if (
+                !$this->campaignPerks->exists(
+                    $campaignCharacterId,
+                    (int) $requiredPerkId
+                )
+            ) {
+                $missingPerkIds[] =
+                    (int) $requiredPerkId;
+            }
+        }
+
+        if ($missingPerkIds === []) {
+            return;
+        }
+
+        throw new ValidationException(
+            'Requisitos do perk não atendidos.',
+            [
+                'required_perk_ids' =>
+                    array_map(
+                        fn(int $requiredPerkId) =>
+                            "O personagem precisa possuir o perk {$requiredPerkId}.",
+                        $missingPerkIds
+                    ),
+            ]
+        );
     }
 }
