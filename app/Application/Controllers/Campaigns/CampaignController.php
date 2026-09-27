@@ -12,6 +12,7 @@ use App\Domain\Services\Campaigns\GetAllCampaignsService;
 use App\Domain\Services\Campaigns\GetCampaignByIdService;
 use App\Domain\Services\Campaigns\GetCampaignCharacterSheetService;
 use App\Domain\Services\Campaigns\GetCampaignCharacterInfosService;
+use App\Domain\Services\Campaigns\GetCampaignCharacterPerkSheetsService;
 use App\Domain\Services\Campaigns\GetLupidaService;
 use App\Domain\Services\Campaigns\GetMyCampaignsService;
 
@@ -26,122 +27,266 @@ class CampaignController
             'description' => 'string',
         ]);
 
-        $schema->handle($request->body());
+        $schema->handle(
+            $request->body()
+        );
 
-        $dto = new CreateCampaignDTO($request->body());
+        $dto = new CreateCampaignDTO(
+            $request->body()
+        );
 
-        $service = new CreateCampaignService();
-        $campaign = $service->execute($dto, $authUser->id);
+        $service =
+            new CreateCampaignService();
+
+        $campaign =
+            $service->execute(
+                $dto,
+                $authUser->id
+            );
 
         return Response::json([
-            'message' => 'Campanha criada com sucesso.',
-            'campaign' => $campaign,
+            'message' =>
+                'Campanha criada com sucesso.',
+
+            'campaign' =>
+                $campaign,
         ], 201);
     }
 
     public function index()
     {
-        $service = new GetAllCampaignsService();
+        $service =
+            new GetAllCampaignsService();
 
         return Response::json([
-            'campaigns' => $service->execute(),
+            'campaigns' =>
+                $service->execute(),
         ]);
     }
 
     public function show(Request $request)
     {
-        $campaignId = (int) ($request->params()['id'] ?? 0);
+        $campaignId =
+            (int) (
+                $request->params()['id']
+                ?? 0
+            );
 
-        $service = new GetCampaignByIdService();
-        $campaign = $service->execute($campaignId);
+        $service =
+            new GetCampaignByIdService();
+
+        $campaign =
+            $service->execute(
+                $campaignId
+            );
 
         return Response::json([
-            'campaign' => $campaign,
+            'campaign' =>
+                $campaign,
         ]);
     }
 
-    public function getCharacterSheet(Request $request)
-    {
-        $params = $request->params();
+    public function getCharacterSheet(
+        Request $request
+    ) {
+        $params =
+            $request->params();
 
-        $campaignId = (int) ($params['campaign_id'] ?? 0);
-        $campaignCharacterId = (int) ($params['character_id'] ?? 0);
+        $campaignId =
+            (int) (
+                $params['campaign_id']
+                ?? 0
+            );
 
-        if ($campaignId <= 0 || $campaignCharacterId <= 0) {
+        $characterId =
+            (int) (
+                $params['character_id']
+                ?? 0
+            );
+
+        if (
+            $campaignId <= 0 ||
+            $characterId <= 0
+        ) {
             throw new ValidationException(
                 'Dados inválidos.',
                 [
-                    'campaign_id' => ['ID da campanha inválido.'],
-                    'character_id' => ['ID do personagem inválido.'],
+                    'campaign_id' => [
+                        'ID da campanha inválido.',
+                    ],
+                    'character_id' => [
+                        'ID do personagem inválido.',
+                    ],
                 ]
             );
         }
 
-        $service = new GetCampaignCharacterSheetService();
-        $sheet = $service->execute($campaignId, $campaignCharacterId);
+        $service =
+            new GetCampaignCharacterSheetService();
+
+        $sheet =
+            $service->execute(
+                $campaignId,
+                $characterId
+            );
 
         return Response::json([
-            'sheet' => $sheet,
+            'sheet' =>
+                $sheet,
         ]);
     }
 
-    public function getCharacterInfos(Request $request)
-    {
-        $params = $request->params();
+    public function getCharacterPerkSheets(
+        Request $request
+    ) {
+        $params =
+            $request->params();
 
-        $campaignId = (int) ($params['campaign_id'] ?? 0);
-        $campaignCharacterId = (int) ($params['character_id'] ?? 0);
+        $campaignId =
+            (int) (
+                $params['campaign_id']
+                ?? 0
+            );
 
-        if ($campaignId <= 0 || $campaignCharacterId <= 0) {
+        $characterId =
+            (int) (
+                $params['character_id']
+                ?? 0
+            );
+
+        if (
+            $campaignId <= 0 ||
+            $characterId <= 0
+        ) {
             throw new ValidationException(
                 'Dados inválidos.',
                 [
-                    'campaign_id' => ['ID da campanha inválido.'],
-                    'character_id' => ['ID do personagem inválido.'],
+                    'campaign_id' => [
+                        'ID da campanha inválido.',
+                    ],
+                    'character_id' => [
+                        'ID do personagem inválido.',
+                    ],
                 ]
             );
         }
 
-        $service = new GetCampaignCharacterInfosService();
-        $infos = $service->execute($campaignId, $campaignCharacterId);
+        $service =
+            new GetCampaignCharacterPerkSheetsService();
+
+        $perkSheets =
+            $service->execute(
+                $campaignId,
+                $characterId
+            );
 
         return Response::json([
-            'infos' => $infos,
+            'perk_sheets' =>
+                $perkSheets,
         ]);
     }
 
-    public function myCampaigns(Request $request)
-    {
-        $authUser = $request->user();
+    public function getCharacterInfos(
+        Request $request
+    ) {
+        $params =
+            $request->params();
 
-        $service = new GetMyCampaignsService();
+        $campaignId =
+            (int) (
+                $params['campaign_id']
+                ?? 0
+            );
+
+        $characterId =
+            (int) (
+                $params['character_id']
+                ?? 0
+            );
+
+        if (
+            $campaignId <= 0 ||
+            $characterId <= 0
+        ) {
+            throw new ValidationException(
+                'Dados inválidos.',
+                [
+                    'campaign_id' => [
+                        'ID da campanha inválido.',
+                    ],
+                    'character_id' => [
+                        'ID do personagem inválido.',
+                    ],
+                ]
+            );
+        }
+
+        $service =
+            new GetCampaignCharacterInfosService();
+
+        $infos =
+            $service->execute(
+                $campaignId,
+                $characterId
+            );
 
         return Response::json([
-            'campaigns' => $service->execute($authUser->id),
+            'infos' =>
+                $infos,
         ]);
     }
 
+    public function myCampaigns(
+        Request $request
+    ) {
+        $authUser =
+            $request->user();
 
-    public function getLupida(Request $request)
-    {
-        $params = $request->params();
+        $service =
+            new GetMyCampaignsService();
 
-        $campaignId = (int) ($params['id'] ?? 0);
+        return Response::json([
+            'campaigns' =>
+                $service->execute(
+                    $authUser->id
+                ),
+        ]);
+    }
+
+    public function getLupida(
+        Request $request
+    ) {
+        $params =
+            $request->params();
+
+        $campaignId =
+            (int) (
+                $params['id']
+                ?? 0
+            );
 
         if ($campaignId <= 0) {
             throw new ValidationException(
                 'Dados inválidos.',
                 [
-                    'campaign_id' => ['ID da campanha inválido.'],
+                    'campaign_id' => [
+                        'ID da campanha inválido.',
+                    ],
                 ]
             );
         }
 
-        $service = new GetLupidaService();
-        $lupida = $service->execute($campaignId);
+        $service =
+            new GetLupidaService();
+
+        $lupida =
+            $service->execute(
+                $campaignId
+            );
 
         return Response::json([
-            'lupida' => $lupida,
+            'lupida' =>
+                $lupida,
         ]);
     }
 }
