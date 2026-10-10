@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Domain\Services\Encounters;
-
 use App\Application\DTOs\Encounters\UpdateEncounterResourcesDTO;
 use App\Core\Exceptions\ValidationException;
 use App\Core\Exceptions\ForbiddenException;
@@ -13,7 +11,6 @@ use App\Infrastructure\Repositories\EncounterPlayerRepository;
 use App\Infrastructure\Repositories\EncounterPlayerStatsRepository;
 use App\Infrastructure\Repositories\CampaignCharacterResourcesRepository;
 use App\Infrastructure\Repositories\CampaignCharacterRepository;
-
 class UpdateEncounterResourcesService
 {
     private EncounterRepository $encounters;
@@ -23,7 +20,6 @@ class UpdateEncounterResourcesService
     private EncounterPlayerStatsRepository $encounterPlayerStats;
     private CampaignCharacterResourcesRepository $characterResources;
     private CampaignCharacterRepository $campaignCharacters;
-
     public function __construct()
     {
         $this->encounters = new EncounterRepository();
@@ -34,7 +30,6 @@ class UpdateEncounterResourcesService
         $this->characterResources = new CampaignCharacterResourcesRepository();
         $this->campaignCharacters = new CampaignCharacterRepository();
     }
-
     public function execute(
         UpdateEncounterResourcesDTO $dto,
         int $userId
@@ -45,20 +40,17 @@ class UpdateEncounterResourcesService
                 $userId
             );
         }
-
         return $this->updatePlayer(
             $dto,
             $userId
         );
     }
-
     private function updateMonster(
         UpdateEncounterResourcesDTO $dto,
         int $userId
     ): array {
         $encounterMonster = $this->encounterMonsters
             ->findById($dto->encounter_monster_id);
-
         if (!$encounterMonster) {
             throw new ValidationException(
                 'Registro de monstro inválido.',
@@ -69,36 +61,29 @@ class UpdateEncounterResourcesService
                 ]
             );
         }
-
         $encounter = $this->encounters
             ->findById($encounterMonster->encounter_id);
-
         if (!$encounter) {
             throw new ValidationException(
                 'Encontro inválido.'
             );
         }
-
         $this->validatePermission(
             (int) $encounter->campaign_id,
             $userId
         );
-
         $currentHp = (int) $encounterMonster->current_hp;
         $maxHp = (int) $encounterMonster->max_hp;
-
         $newCurrentHp = $this->applyOperation(
             current: $currentHp,
             max: $maxHp,
             mode: $dto->mode,
             value: $dto->value
         );
-
         $this->encounterMonsters->updateHp(
             $dto->encounter_monster_id,
             $newCurrentHp
         );
-
         return [
             'type' => 'monster',
             'encounter_monster_id' => $dto->encounter_monster_id,
@@ -106,14 +91,12 @@ class UpdateEncounterResourcesService
             'max_hp' => $maxHp,
         ];
     }
-
     private function updatePlayer(
         UpdateEncounterResourcesDTO $dto,
         int $userId
     ): array {
         $encounterPlayer = $this->encounterPlayers
             ->findById($dto->encounter_player_id);
-
         if (!$encounterPlayer) {
             throw new ValidationException(
                 'Registro de player inválido.',
@@ -124,157 +107,127 @@ class UpdateEncounterResourcesService
                 ]
             );
         }
-
         $encounterId = (int) $this->value(
             $encounterPlayer,
             'encounter_id'
         );
-
         $campaignCharacterId = (int) $this->value(
             $encounterPlayer,
             'campaign_character_id'
         );
-
         $encounter = $this->encounters
             ->findById($encounterId);
-
         if (!$encounter) {
             throw new ValidationException(
                 'Encontro inválido.'
             );
         }
-
         $this->validatePermission(
             (int) $encounter->campaign_id,
             $userId
         );
-
         $stats = $this->encounterPlayerStats
             ->findByEncounterPlayerId(
                 $dto->encounter_player_id
             );
-
         if (!$stats) {
             throw new ValidationException(
                 'Recursos do player não encontrados.'
             );
         }
-
         $campaignCharacter = $this->campaignCharacters
             ->findById($campaignCharacterId);
-
         if (!$campaignCharacter) {
             throw new ValidationException(
                 'Personagem da campanha não encontrado.'
             );
         }
-
         $characterId = (int) $this->value(
             $campaignCharacter,
             'character_id'
         );
-
         if ($characterId <= 0) {
             throw new ValidationException(
                 'Personagem inválido.'
             );
         }
-
         $sheetService =
             new GetCampaignCharacterSheetService();
-
         $sheet = $sheetService->execute(
             campaignId: (int) $encounter->campaign_id,
             characterId: $characterId
         );
-
         $newMaxHp = max(
             1,
             (int) ($sheet['base']['hp_max'] ?? 1)
         );
-
         $newMaxMana = max(
             0,
             (int) ($sheet['base']['mana_max'] ?? 0)
         );
-
         $newMaxSanity = max(
             0,
             (int) ($sheet['base']['sanity']['max'] ?? 0)
         );
-
         $oldMaxHp = (int) $this->value(
             $stats,
             'max_hp',
             $newMaxHp
         );
-
         $oldMaxMana = (int) $this->value(
             $stats,
             'max_mana',
             $newMaxMana
         );
-
         $oldMaxSanity = (int) $this->value(
             $stats,
             'max_sanity',
             $newMaxSanity
         );
-
         $currentHp = (int) $this->value(
             $stats,
             'current_hp',
             0
         );
-
         $currentMana = (int) $this->value(
             $stats,
             'current_mana',
             0
         );
-
         $currentSanity = (int) $this->value(
             $stats,
             'current_sanity',
             0
         );
-
-        $currentHp = $this->synchronizeCurrent(
+        $currentHp = $this->synchronizeCurrentWithBonus(
             current: $currentHp,
             oldMax: $oldMaxHp,
             newMax: $newMaxHp
         );
-
-        $currentMana = $this->synchronizeCurrent(
+        $currentMana = $this->synchronizeCurrentWithBonus(
             current: $currentMana,
             oldMax: $oldMaxMana,
             newMax: $newMaxMana
         );
-
         $currentSanity = $this->synchronizeCurrent(
             current: $currentSanity,
             oldMax: $oldMaxSanity,
             newMax: $newMaxSanity
         );
-
         if ($dto->resource === 'hp') {
-            $currentHp = $this->applyOperation(
+            $currentHp = $this->applyOperationWithBonus(
                 current: $currentHp,
-                max: $newMaxHp,
                 mode: $dto->mode,
                 value: $dto->value
             );
         }
-
         if ($dto->resource === 'mana') {
-            $currentMana = $this->applyOperation(
+            $currentMana = $this->applyOperationWithBonus(
                 current: $currentMana,
-                max: $newMaxMana,
                 mode: $dto->mode,
                 value: $dto->value
             );
         }
-
         if ($dto->resource === 'sanity') {
             $currentSanity = $this->applyOperation(
                 current: $currentSanity,
@@ -283,7 +236,6 @@ class UpdateEncounterResourcesService
                 value: $dto->value
             );
         }
-
         $this->encounterPlayerStats
             ->updateStats(
                 $dto->encounter_player_id,
@@ -296,18 +248,15 @@ class UpdateEncounterResourcesService
                     'max_sanity' => $newMaxSanity,
                 ]
             );
-
         $resourceUpdates = [
             'current_hp' => $currentHp,
             'current_mana' => $currentMana,
             'current_sanity' => $currentSanity,
         ];
-
         $resources = $this->characterResources
             ->findByCampaignCharacterId(
                 $campaignCharacterId
             );
-
         if (!$resources) {
             $this->characterResources->create([
                 'campaign_character_id' => $campaignCharacterId,
@@ -322,17 +271,40 @@ class UpdateEncounterResourcesService
                     $resourceUpdates
                 );
         }
-
         return [
             'type' => 'player',
             'encounter_player_id' => $dto->encounter_player_id,
-            'current_hp' => $currentHp,
+            'current_hp' => min($currentHp, $newMaxHp),
+            'bonus_hp' => max(0, $currentHp - $newMaxHp),
+            'total_hp' => $currentHp,
             'max_hp' => $newMaxHp,
-            'current_mana' => $currentMana,
+            'current_mana' => min($currentMana, $newMaxMana),
+            'bonus_mana' => max(0, $currentMana - $newMaxMana),
+            'total_mana' => $currentMana,
             'max_mana' => $newMaxMana,
             'current_sanity' => $currentSanity,
             'max_sanity' => $newMaxSanity,
         ];
+    }
+    // O banco mantém o total (recurso normal + bônus), sem coluna adicional.
+    private function synchronizeCurrentWithBonus(
+        int $current,
+        int $oldMax,
+        int $newMax
+    ): int {
+        return max(0, $current + ($newMax - $oldMax));
+    }
+
+    private function applyOperationWithBonus(
+        int $current,
+        string $mode,
+        int $value
+    ): int {
+        if ($mode === 'delta') {
+            $value = $current + $value;
+        }
+
+        return max(0, $value);
     }
 
     private function synchronizeCurrent(
@@ -341,7 +313,6 @@ class UpdateEncounterResourcesService
         int $newMax
     ): int {
         $difference = $newMax - $oldMax;
-
         return max(
             0,
             min(
@@ -350,7 +321,6 @@ class UpdateEncounterResourcesService
             )
         );
     }
-
     private function applyOperation(
         int $current,
         int $max,
@@ -360,7 +330,6 @@ class UpdateEncounterResourcesService
         if ($mode === 'delta') {
             $value = $current + $value;
         }
-
         return max(
             0,
             min(
@@ -369,27 +338,23 @@ class UpdateEncounterResourcesService
             )
         );
     }
-
     private function validatePermission(
         int $campaignId,
         int $userId
     ): void {
         $campaign = $this->campaigns
             ->findById($campaignId);
-
         if (!$campaign) {
             throw new ValidationException(
                 'Campanha inválida.'
             );
         }
-
         if ($campaign->created_by !== $userId) {
             throw new ForbiddenException(
                 'Você não tem permissão para alterar este encontro.'
             );
         }
     }
-
     private function value(
         array|object|null $source,
         string $key,
@@ -398,11 +363,9 @@ class UpdateEncounterResourcesService
         if ($source === null) {
             return $default;
         }
-
         if (is_array($source)) {
             return $source[$key] ?? $default;
         }
-
         return $source->{$key} ?? $default;
     }
 }
