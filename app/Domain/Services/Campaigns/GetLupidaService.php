@@ -1,3 +1,4 @@
+
 <?php
 
 namespace App\Domain\Services\Campaigns;
@@ -89,28 +90,64 @@ class GetLupidaService
             fn($weapon) => !isset($ownedWeaponIds[(int) $weapon['id']])
         ));
 
-        $items = array_values(array_filter(
+        // Busca todos os itens não equipáveis.
+        $availableItems = array_values(array_filter(
             $itemRepo->findAllNonEquipable(),
             fn($item) => !isset($ownedItemIds[(int) $item['id']])
         ));
 
+        // Separa os itens comuns dos itens especiais de Dorag.
+        $commonItems = array_values(array_filter(
+            $availableItems,
+            fn($item) => (int) ($item['dorag'] ?? 0) !== 1
+        ));
+
+        $doragItems = array_values(array_filter(
+            $availableItems,
+            fn($item) => (int) ($item['dorag'] ?? 0) === 1
+        ));
+
+        // Sorteio padrão da loja.
         shuffle($armors);
-        shuffle($items);
+        shuffle($commonItems);
+        shuffle($doragItems);
 
         $armors = array_slice($armors, 0, 5);
-        $items = array_slice($items, 0, 5);
+        $items = array_slice($commonItems, 0, 5);
 
+        // IDs dos itens já selecionados.
         $listedItemIds = array_map(
             fn($item) => (int) $item['id'],
             $items
         );
 
+        // Adiciona uma munição, mantendo a regra existente.
         $ammoItem = $weaponRepo->findRandomAmmoItemExcludingIds(
             $listedItemIds
         );
 
         if ($ammoItem) {
             $items[] = $ammoItem;
+            $listedItemIds[] = (int) $ammoItem['id'];
+        }
+
+        // Adiciona um item Dorag, se existir algum disponível.
+        // Não ocupa nenhuma das cinco vagas dos itens comuns.
+        $doragItem = null;
+
+        foreach ($doragItems as $candidate) {
+            $candidateId = (int) $candidate['id'];
+
+            if (in_array($candidateId, $listedItemIds, true)) {
+                continue;
+            }
+
+            $doragItem = $candidate;
+            break;
+        }
+
+        if ($doragItem !== null) {
+            $items[] = $doragItem;
         }
 
         foreach ($armors as &$armor) {
@@ -159,21 +196,32 @@ class GetLupidaService
 
         unset($weapon);
 
+        $doragItemId = $doragItem !== null
+            ? (int) $doragItem['id']
+            : null;
+
         $items = array_map(function ($item) use (
             $itemRepo,
             $itemElementRepo,
             $itemAbilityRepo,
-            $weaponRepo
+            $weaponRepo,
+            $doragItemId
         ) {
             $itemId = (int) $item['id'];
 
             $isAmmo = $weaponRepo->existsByAmmoItemId($itemId);
+            $isDorag = $doragItemId !== null
+                && $itemId === $doragItemId;
+
+            $quantity = $isDorag
+                ? random_int(1, 5)
+                : ($isAmmo ? 30 : random_int(1, 10));
 
             return [
                 'item_id' => $itemId,
                 'item_name' => $item['name'],
                 'item_description' => $item['description'],
-                'quantity' => $isAmmo ? 30 : random_int(1, 10),
+                'quantity' => $quantity,
                 'value' => $itemRepo->getValueById($itemId),
                 'elements' => $itemElementRepo->getByItemId($itemId),
                 'abilities' => $itemAbilityRepo->getByItemId($itemId),

@@ -78,14 +78,15 @@ class ItemRepository extends BaseRepository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public function findAllNonEquipable(): array
-    {
-        $sql = "
+public function findAllNonEquipable(): array
+{
+    $sql = "
         SELECT
             i.id,
             i.name,
             i.description,
-            i.created_at
+            i.created_at,
+            i.dorag
         FROM items i
         LEFT JOIN weapons w ON w.item_id = i.id
         LEFT JOIN armors a ON a.item_id = i.id
@@ -94,11 +95,11 @@ class ItemRepository extends BaseRepository
         ORDER BY i.name
     ";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     public function getValueById(int $itemId): int
     {
         $sql = "SELECT value FROM items WHERE id = :id LIMIT 1";
